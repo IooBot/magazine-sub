@@ -1,0 +1,111 @@
+/* CSS declarations go here */
+body {
+  font-family: sans-serif;
+
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  padding: 0;
+  margin: 0;
+
+  font-size: 14px;
+}
+
+.tabBar-top{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 45px;
+  padding: 0 15px;
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f0;
+}
+.tabBar-top a{
+  color: #ff5f16;
+}
+.tabBar-top > span{
+  width: 50%;
+  text-align: center;
+  font-size: 18px;
+  color: #ff5f16;
+}
+
+.tabBar-top > span:first-child{
+  width: 25%;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.tabBar-top > span:last-child{
+  width: 25%;
+  text-align: right;
+  font-size: 14px;
+}
+
+.tab-top{
+  font-size: 15px;
+  height: 43.5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  color: rgba(0, 0, 0, 0.65);
+  border-bottom: 1px solid #f0f0f0;
+  line-height: 43.5px;
+}
+
+.tab-top > span{
+  width: 50%;
+  text-align: center;
+  height:  43.5px;
+  line-height:  43.5px;
+}
+
+.tab-top > span.active{
+  color: #108ee9;
+  border-bottom: 2px solid #108ee9;
+}
+
+.am-tab-bar-bar {
+  position: fixed!important;
+}
+
+button{
+  background-color: #fff;
+  color: #108ee9 !important;
+  border-radius: 5px;
+  border: 1px solid #108ee9;
+}
+
+.color-button{
+  background-color: #108ee9;
+  color: #fff !important;
+  border-radius: 5px;
+  border: 1px solid #108ee9;
+}
+
+.long-button{
+  height: 35px;
+  background: #108ee9;
+  color: #fff!important;
+  width: 100%;
+  font-size: 17px;
+}
+
+.scroll-content{
+  background-color: #f5f5f9;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;  /*解决ios里 overflow-y: auto;滑动不顺畅问题*/
+}
+
+.ant-avatar-lg {
+  width: 50px!important;
+  height: 50px!important;
+  line-height: 50px!important;
+  border-radius: 50%!important;
+}

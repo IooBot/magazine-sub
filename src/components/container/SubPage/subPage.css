@@ -1,0 +1,51 @@
+#subPage .am-card-header-content img {
+    height: 150px;
+    width: 80%;
+}
+
+#subPage .magazine-title {
+    text-align: left;
+    color: black;
+}
+
+#subPage .magazine-title p:nth-child(2){
+    color: #0282f9;
+    font-weight: 600;
+}
+
+#subPage .magazine-title p:last-child{
+    color: #f9692b;
+    font-size: 15px;
+    margin-bottom: 0;
+}
+
+.magazine-footer{
+    color: #464545;
+    font-size: 14px;
+}
+
+.magazine-footer span {
+    float: left;
+    width:70%;
+}
+
+.sub-button {
+    position: absolute;
+    right: 20px;
+}
+
+.am-card-body{
+    position: initial;
+    border: none;
+    padding: 0 0 0 15px;
+}
+
+.am-card.am-card-full {
+    border-bottom: 1px solid #ddd !important;
+    margin-bottom: 5px;
+}
+
+.am-button {
+    height: 35px!important;
+    line-height: 35px!important;
+}
