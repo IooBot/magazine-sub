@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 
-// import UserSubPage from './UserSubPage.jsx';
-// import UserNotPaid from './UserNotPaid.jsx';
-// import UserInfoPage from './UserInfoPage.jsx';
+import UserSubPage from './UserSubPage.jsx';
+import UserNotPaid from './UserNotPaid.jsx';
+import UserInfoPage from './UserInfoPage.jsx';
 
 import './userPage.css';
 
@@ -28,24 +28,24 @@ export default class UserPage extends Component{
 
     render(){
         let contentHeight = window.innerHeight - 138.5;
-        // let {openid} = this.props;
-        let {tab} = this.state;
+        let {openid} = this.props;
+        let tab = this.state.tab;
         // const tabs = [
         //     { title: <Badge>我的订阅</Badge> },
         //     { title: <Badge>个人中心</Badge> },
         // ];
         let content = 'test';
-        // switch (tab){
-        //     case '0':
-        //         content =  <UserSubPage openid={openid} changeTab={this.props.changeTab}/>;
-        //         break;
-        //     case '1':
-        //         content =  <UserNotPaid openid={openid} changeTab={this.props.changeTab}/>;
-        //         break;
-        //     case '2':
-        //         content =  <UserInfoPage openid={openid}/>;
-        //         break;
-        // }
+        switch (tab){
+            case '0':
+                content =  <UserSubPage openid={openid} changeTab={this.props.changeTab}/>;
+                break;
+            case '1':
+                content =  <UserNotPaid openid={openid} changeTab={this.props.changeTab}/>;
+                break;
+            case '2':
+                content =  <UserInfoPage openid={openid}/>;
+                break;
+        }
         return(
             <div id="userPage">
                 <div className="tab-top">
