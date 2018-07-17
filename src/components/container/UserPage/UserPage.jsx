@@ -30,12 +30,10 @@ export default class UserPage extends Component{
         let contentHeight = window.innerHeight - 138.5;
         let {openid} = this.props;
         let tab = this.state.tab;
-        // const tabs = [
-        //     { title: <Badge>我的订阅</Badge> },
-        //     { title: <Badge>个人中心</Badge> },
-        // ];
-        let content = 'test';
-        switch (tab){
+
+        let content;
+        // eslint-disable-next-line
+        switch(tab){
             case '0':
                 content =  <UserSubPage openid={openid} changeTab={this.props.changeTab}/>;
                 break;

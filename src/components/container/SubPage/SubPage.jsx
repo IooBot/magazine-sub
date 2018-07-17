@@ -53,7 +53,7 @@ class SubPage extends Component{
             {({ loading, error, data }) => {
                 console.log('data',data);
                 if (loading)
-                    return<div style={{width:'100%',height:contentHeight}}>
+                    return <div style={{width:'100%',height:contentHeight}}>
                         <Spin style={{
                             position: 'relative',
                             top: '50%',
