@@ -1,0 +1,51 @@
+.noSub{
+    text-align: center;
+    margin-top: 50%;
+}
+
+.sub-record{
+    padding: 10px 15px;
+}
+
+.sub-record div{
+    display: flex;
+    justify-content: space-between;
+}
+
+.sub-content{
+    color: black;
+    background-color: #ffffff;
+    margin-top: 10px;
+    line-height: 30px;
+}
+
+.sub-title{
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.sub-title span:first-child{
+    color: #888;
+    padding-left: 15px;
+}
+
+.sub-title span:last-child{
+    color: #ff5f16;
+    width: 25%;
+    text-align: right;
+    padding-right: 15px;
+}
+
+#userSubPage a{
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

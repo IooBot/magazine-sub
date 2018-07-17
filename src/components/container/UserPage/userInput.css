@@ -1,0 +1,46 @@
+#userInput .list-content{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#userInput .list-content span:nth-child(2){
+    color: #525252;
+    font-size: 15px;
+}
+
+#userInfoPage .am-list-header {
+    padding: 5px 15px!important;
+}
+
+#userInput .am-list-line{
+    border-bottom: 1px solid #f0f0f0 !important;
+}
+
+.ant-message-notice:first-child {
+    margin-top: 40%!important;
+}
+
+#userInput .am-list-extra{
+    flex-basis: 66%;
+}
+
+.am-list-item .am-input-control input{
+    text-align: right;
+}
+
+.am-list-item .am-input-label.am-input-label-5{
+    width: 40%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.am-list-item .am-input-control input{
+    color: #525252;
+}
+
+.am-list-item .am-list-line .am-list-extra{
+    color: #525252;
+}
+

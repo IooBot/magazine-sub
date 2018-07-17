@@ -1,0 +1,18 @@
+.user-info{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    margin-top: 10px;
+    padding: 10px 0;
+}
+
+.user-info span:first-child{
+    margin-top: 10px;
+}
+
+.user-info p{
+    padding-top:10px;
+    font-weight:500
+}
+
