@@ -1,0 +1,25 @@
+#userSubConfirm .list{
+    padding-bottom: 8px;
+    padding-top: 8px;
+    padding-right: 15px;
+    margin-left: 15px;
+    border-bottom: 1px solid #f0f0f0;
+    color: black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.am-modal-body{
+    color: black!important;
+}
+
+#userSubConfirm .list-left{
+    padding-left:15px;
+    text-align:left;
+    display: flex;
+}
+
+#userSubConfirm .am-list-extra{
+    flex-basis: 10%;
+}
