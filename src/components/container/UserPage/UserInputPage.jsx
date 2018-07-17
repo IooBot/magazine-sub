@@ -1,21 +1,17 @@
-import { Meteor } from 'meteor/meteor';
-import { createContainer } from 'meteor/react-meteor-data';
 import React, {Component} from 'react';
 // import PropTypes from 'prop-types';
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 
-import { getCookie } from "../BasicInfo/BindWechat.jsx";
-import { wechatUser } from "../../../../api/wechatUser.js";
-import UserInput from './UserInput.jsx';
+// import UserInput from './UserInput.jsx';
 
-class UserInputPage extends Component{
-    constructor(props){
-        super(props);
-
-    }
+export default class UserInputPage extends Component{
+    // constructor(props){
+    //     super(props);
+    //
+    // }
 
     componentWillMount(){
         document.title = '地址信息'
@@ -35,38 +31,38 @@ class UserInputPage extends Component{
     };
 
     render(){
-        let {openid,inputInfo} = this.props;
-        let model1Type = inputInfo ? "re-edit" : "create";
+        // let {openid,inputInfo} = this.props;
+        // let model1Type = inputInfo ? "re-edit" : "create";
 
         return(
             <div id="userInputPage">
                 {this.renderTitle()}
-                <UserInput type={model1Type} openid={openid} />
+                {/*<UserInput type={model1Type} openid={openid} />*/}
             </div>
 
         )
     }
 }
 
-export default createContainer(()=>{
-    // console.log('SubPage openid',openid);
-    let openid =  getCookie("wechat_openid");
-    let inputInfo = Meteor.subscribe('wechatUser.inputInfo',openid);
-
-    if(inputInfo.ready()){
-
-        let wxInput = wechatUser.findOne({openid:openid});
-        let {inputInfo=false} = wxInput;
-
-        // console.log('inputInfo',inputInfo);
-        return {
-            openid,
-            inputInfo
-        };
-    }
-
-    return {
-        loading: false
-    }
-
-},(UserInputPage));
+// export default createContainer(()=>{
+//     // console.log('SubPage openid',openid);
+//     let openid =  getCookie("wechat_openid");
+//     let inputInfo = Meteor.subscribe('wechatUser.inputInfo',openid);
+//
+//     if(inputInfo.ready()){
+//
+//         let wxInput = wechatUser.findOne({openid:openid});
+//         let {inputInfo=false} = wxInput;
+//
+//         // console.log('inputInfo',inputInfo);
+//         return {
+//             openid,
+//             inputInfo
+//         };
+//     }
+//
+//     return {
+//         loading: false
+//     }
+//
+// },(UserInputPage));

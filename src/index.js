@@ -5,6 +5,9 @@ import { ApolloProvider } from 'react-apollo';
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 
 import HomePage from './components/container/HomePage/HomePage.jsx';
+import BindWechat from './components/container/BasicInfo/BindWechat.jsx';
+import UserInputPage from "./components/container/UserPage/UserInputPage.jsx";
+import UserPayPage from "./components/container/UserPage/UserPayPage.jsx";
 import './main.css';
 
 
@@ -24,6 +27,9 @@ class MainApp extends Component{
                 <Router>
                     <Switch>
                         <Route path="/" exact component={HomePage} />
+                        <Route path = '/bindWechat'  component = { BindWechat }/>
+                        <Route path = '/address'  component = { UserInputPage }/>
+                        <Route path = '/pay'  component = { UserPayPage }/>
                     </Switch>
                 </Router>
             </ApolloProvider>

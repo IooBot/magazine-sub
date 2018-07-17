@@ -16,6 +16,7 @@ import './subPage.css';
 const GET_MAGAZINE = gql`
   {
     magazineList:all_magazines {
+    id
     magazineName:name,
     picture,
     magazineIntro,
@@ -64,7 +65,7 @@ class SubPage extends Component{
                 if (error) return <p>Error :(</p>;
 
                 return data.magazineList.map((magazine, idx) => {
-                    let {magazineName,picture,magazineIntro,unitPrice} = magazine;
+                    let {id,magazineName,picture,magazineIntro,unitPrice} = magazine;
                     return <Card full key={idx}>
                         <Card.Header
                             thumb={picture}
@@ -86,7 +87,7 @@ class SubPage extends Component{
                                                 // Session.set('subMagazine', magazineName);
                                                 // Session.set('unitPrice', unitPrice);
                                                 if(allInfo){
-                                                    this.props.history.push("/pay");
+                                                    this.props.history.push(`/pay?id=${id}&magazineName=${magazineName}&unitPrice=${unitPrice}`);
                                                 }else {
                                                     this.props.history.push("/address");
                                                 }
@@ -141,7 +142,7 @@ class SubPage extends Component{
 
 SubPage.defaultProps = {
     magazineList: [],
-    inputInfo:false
+    inputInfo:true
 };
 
 export default withRouter(SubPage);

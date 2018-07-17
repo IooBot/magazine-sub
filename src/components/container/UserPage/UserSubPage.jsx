@@ -7,9 +7,9 @@ import 'antd/lib/spin/style/css';
 
 import './userSubPage.css';
 
-const GET_CUSTOMER_ORDER = gql`
- query getCustomerOrder($openid: String!) {
-  subRecord:list_orders_by_customer(openid: $openid) {
+const GET_CUSTOMER_FINISH_PAY_ORDER = gql`
+query getCustomerOrder($openid: String! $orderStatus: String!) {
+  subRecord:list_orders_by_customer(openid: $openid,orderStatus:$orderStatus) {    
     createAt
     magazines {
       magazineName:name 
@@ -68,7 +68,7 @@ export default class UserSubPage extends Component{
         let {openid} = this.props;
 
         return(
-            <Query query={GET_CUSTOMER_ORDER} variables={{openid}}>
+            <Query query={GET_CUSTOMER_FINISH_PAY_ORDER} variables={{openid,"orderStatus":"finishPay"}}>
                 {({ loading, error, data }) => {
                     if (loading)
                         return <div style={{width:'100%',height:contentHeight}}>

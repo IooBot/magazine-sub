@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
 import { withRouter } from "react-router-dom";
+import { Query,Mutation } from "react-apollo";
+import gql from "graphql-tag";
+// import $ from 'jquery';
 
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
@@ -9,12 +12,38 @@ import 'antd/lib/spin/style/css';
 // import 'antd/lib/message/style/css';
 import Modal from 'antd-mobile/lib/modal/index';
 import 'antd-mobile/lib/modal/style/css';
-// import $ from 'jquery';
 
 // import { XMLSign } from '../../../../api/wx.js';
 // let config = require('../../../../api/config.js');
 import './userSubPage.css';
 const alert = Modal.alert;
+
+const GET_CUSTOMER_WAIT_PAY_ORDER = gql`
+query getCustomerOrder($openid: String! $orderStatus: String!) {
+  notPaid:list_orders_by_customer(openid: $openid,orderStatus:$orderStatus) {    
+    createAt
+    orderId:id
+    magazines {
+      magazineName:name 
+      unitPrice
+    }
+    subCount
+    subMonthCount
+    startDate
+    endDate
+    havePay
+    orderStatus
+  }
+}
+`;
+
+const DELETE_WAIT_PAY_ORDER = gql`
+mutation deleteWaitPayOrder($id: ID!) {
+    delete_waitPay_order(id: $id) {
+        id
+    }
+}
+`;
 
 class UserNotPaid extends Component{
 
@@ -80,11 +109,12 @@ class UserNotPaid extends Component{
     //     });
     // };
 
-    deleteNotPaidOrder = (e,openid,orderId) =>{
+    deleteNotPaidOrder = (e,deleteWaitPayOrder,openid,orderId) =>{
         e.stopPropagation();
         alert("删除订单",<div>确定删除此订单吗？</div>,[
             {text: '取消'},
             {text: '确定', onPress: () => {
+                deleteWaitPayOrder({ variables: {id:orderId} });
                 // Meteor.call('orderNotPaid.delete',openid,orderId)
                 }
             }
@@ -92,86 +122,102 @@ class UserNotPaid extends Component{
     };
 
     renderUserOrder = (notPaid) => {
-        let userOrder = notPaid.reverse();
-        // console.log('userOrder',userOrder);
+        // console.log('notPaid',notPaid);
 
         let {openid} = this.props;
-        return userOrder.map((oder,idx)=>{
-            let {createAt,orderId,magazineName,unitPrice,subCount,needPay,subMonthCount,startDate,endDate} = oder;
+        return notPaid.map((oder,idx)=>{
+            let {createAt,orderId,subCount,havePay,subMonthCount,startDate,endDate} = oder;
+            let {magazineName,unitPrice} = oder.magazines;
+
             // const confirmContent = {openid,orderId,subMagazine:magazineName,subCount,startDate,endDate,unitPrice,havePay:needPay,subMonthCount};
             return <div key={'order'+idx}>
-                <div className="sub-content">
-                    <div className="sub-title">
-                        <span>创建时间: {createAt}</span>
-                        <span onClick={(e)=>this.deleteNotPaidOrder(e,openid,orderId)}>
-                           <Icon type="delete" />
-                        </span>
-                    </div>
-                    <div className="sub-record">
+                <Mutation mutation={DELETE_WAIT_PAY_ORDER}>
+                    {(deleteWaitPayOrder, { loading, error }) => (
                         <div>
-                            <span style={{fontSize:'17px'}}>{magazineName}</span>
-                            <span>¥{unitPrice}/月</span>
+                            <div className="sub-content">
+                                <div className="sub-title">
+                                    <span>创建时间: {createAt}</span>
+                                    <span onClick={(e)=>this.deleteNotPaidOrder(e,deleteWaitPayOrder,openid,orderId)}>
+                                            <Icon type="delete" />
+                                        </span>
+                                </div>
+                                <div className="sub-record">
+                                    <div>
+                                        <span style={{fontSize:'17px'}}>{magazineName}</span>
+                                        <span>¥{unitPrice}/月</span>
+                                    </div>
+                                    <div style={{color:'#888'}}>
+                                        <span>{startDate}至{endDate ? endDate : startDate}</span>
+                                        <span>x{subCount}</span>
+                                    </div>
+                                    <div>
+                                        <span style={{color:'#888'}}>共{subMonthCount}个月</span>
+                                        <span>合计:&nbsp;&nbsp;<span style={{color:"#108ee9"}}>¥{havePay}</span></span>
+                                    </div>
+                                    <div>
+                                        <span style={{color:"#ff5f16"}}> </span>
+                                        <span >
+                                                <button className="color-button" style={{width:'90px',height:'30px'}}
+                                                    // onClick={()=>this.onBridgeReady(confirmContent,needPay)}
+                                                >确认支付</button>
+                                            </span>
+                                    </div>
+                                </div>
+                            </div>
+                            {loading && <p>Loading...</p>}
+                            {error && <p>Error :( Please try again</p>}
                         </div>
-                        <div style={{color:'#888'}}>
-                            <span>{startDate}至{endDate ? endDate : startDate}</span>
-                            <span>x{subCount}</span>
-                        </div>
-                        <div>
-                            <span style={{color:'#888'}}>共{subMonthCount}个月</span>
-                            <span>合计:&nbsp;&nbsp;<span style={{color:"#108ee9"}}>¥{needPay}</span></span>
-                        </div>
-                        <div>
-                            <span style={{color:"#ff5f16"}}> </span>
-                            <span >
-                            <button className="color-button" style={{width:'90px',height:'30px'}}
-                                    // onClick={()=>this.onBridgeReady(confirmContent,needPay)}
-                            >
-                                确认支付
-                            </button>
-                        </span>
-                        </div>
-                    </div>
-                </div>
+                    )}
+                </Mutation>
             </div>
         });
     };
 
     render(){
-        let {notPaid,loading} = this.props;
-        // console.log('notPaid',notPaid);
-        if(loading){
-            let contentHeight = window.innerHeight - 138.5;
-            return<div style={{width:'100%',height:contentHeight}}>
-                <Spin style={{
-                    position: 'relative',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%,-50%)'
-                }}/>
-            </div>
-        }
+        let contentHeight = window.innerHeight - 138.5;
+        let {openid} = this.props;
 
         return(
-            <div id="userSubPage">
-                {!notPaid || notPaid === [] ?
-                    <div className="noSub">
-                        <span>暂无未支付订单哦！</span>
-                        <div style={{paddingTop:'20px'}}>
-                            <button style={{width:'90px',height:'30px'}} onClick={()=>{this.props.changeTab("订阅");window.location.hash = 'index=1'}}>
-                                去逛逛
-                            </button>
+            <Query query={GET_CUSTOMER_WAIT_PAY_ORDER} variables={{openid,"orderStatus":"waitPay"}}>
+                {({ loading, error, data }) => {
+                    if (loading)
+                        return <div style={{width:'100%',height:contentHeight}}>
+                            <Spin style={{
+                                position: 'relative',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%,-50%)'
+                            }}/>
+                        </div>;
+                    if (error) return `Error! ${error.message}`;
+                    let notPaid = data.notPaid;
+                    console.log('notPaid',notPaid);
+
+                    return (
+                        <div id="userSubPage">
+                            {!notPaid || notPaid === [] ?
+                                <div className="noSub">
+                                    <span>暂无未支付订单哦！</span>
+                                    <div style={{paddingTop:'20px'}}>
+                                        <button style={{width:'90px',height:'30px'}}
+                                                onClick={()=>{this.props.changeTab("订阅");
+                                                window.location.hash = 'index=1'}}>
+                                            去逛逛
+                                        </button>
+                                    </div>
+                                </div>:
+                                this.renderUserOrder(notPaid)
+                            }
                         </div>
-                    </div>:
-                    this.renderUserOrder(notPaid)
-                }
-            </div>
+                    );
+                }}
+            </Query>
         )
     }
 }
 
 UserNotPaid.defaultProps = {
-    notPaid: [],
-    loading:false
+    notPaid: []
 };
 
 export default withRouter(UserNotPaid);
