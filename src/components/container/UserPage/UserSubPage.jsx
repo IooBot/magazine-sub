@@ -1,29 +1,11 @@
 import React, {Component} from 'react';
 import { Query  } from "react-apollo";
-import gql from "graphql-tag";
 
 import Spin from 'antd/lib/spin';
 import 'antd/lib/spin/style/css';
 
 import './userSubPage.css';
-
-const GET_CUSTOMER_FINISH_PAY_ORDER = gql`
-query getCustomerOrder($openid: String! $orderStatus: String!) {
-  subRecord:list_orders_by_customer(openid: $openid,orderStatus:$orderStatus) {    
-    createAt
-    magazines {
-      magazineName:name 
-      unitPrice
-    }
-    subCount
-    subMonthCount
-    startDate
-    endDate
-    havePay
-    orderStatus
-  }
-}
-`;
+import {GET_ORDER_BY_PROPS} from '../../graphql/order.js';
 
 export default class UserSubPage extends Component{
 
@@ -31,34 +13,36 @@ export default class UserSubPage extends Component{
         // console.log('subRecord',subRecord);
 
         return subRecord.map((oder,idx)=>{
-            let {createAt,subCount,havePay,subMonthCount,startDate,endDate,orderStatus} = oder;
-            let {magazineName,unitPrice} = oder.magazines;
+            // let {id,createAt,subCount,havePay,subMonthCount,startDate,endDate,orderStatus} = oder;
+            // let {magazineName,unitPrice} = oder.magazine;
+            let {id} = oder;
 
             return <div key={'order'+idx}>
-                <div className="sub-content">
-                    <div className="sub-title">
-                        <span>创建时间: {createAt}</span>
-                        <span> </span>
-                    </div>
-                    <div className="sub-record">
-                        <div>
-                            <span style={{fontSize:'17px'}}>{magazineName}</span>
-                            <span>¥{unitPrice}/月</span>
-                        </div>
-                        <div style={{color:'#888'}}>
-                            <span>{startDate}至{endDate ? endDate : startDate}</span>
-                            <span>x{subCount}</span>
-                        </div>
-                        <div>
-                            <span style={{color:'#888'}}>共{subMonthCount}个月</span>
-                            <span>合计:&nbsp;&nbsp;<span style={{color:"#108ee9"}}>¥{havePay}</span></span>
-                        </div>
-                        <div>
-                            <span> </span>
-                            <span style={{color:"#ff5f16"}}>{orderStatus}</span>
-                        </div>
-                    </div>
-                </div>
+                {id}
+                {/*<div className="sub-content">*/}
+                    {/*<div className="sub-title">*/}
+                        {/*<span>创建时间: {createAt}</span>*/}
+                        {/*<span> </span>*/}
+                    {/*</div>*/}
+                    {/*<div className="sub-record">*/}
+                        {/*<div>*/}
+                            {/*<span style={{fontSize:'17px'}}>{magazineName}</span>*/}
+                            {/*<span>¥{unitPrice}/月</span>*/}
+                        {/*</div>*/}
+                        {/*<div style={{color:'#888'}}>*/}
+                            {/*<span>{startDate}至{endDate ? endDate : startDate}</span>*/}
+                            {/*<span>x{subCount}</span>*/}
+                        {/*</div>*/}
+                        {/*<div>*/}
+                            {/*<span style={{color:'#888'}}>共{subMonthCount}个月</span>*/}
+                            {/*<span>合计:&nbsp;&nbsp;<span style={{color:"#108ee9"}}>¥{havePay}</span></span>*/}
+                        {/*</div>*/}
+                        {/*<div>*/}
+                            {/*<span> </span>*/}
+                            {/*<span style={{color:"#ff5f16"}}>{orderStatus}</span>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
+                {/*</div>*/}
             </div>
         });
     };
@@ -68,7 +52,7 @@ export default class UserSubPage extends Component{
         let {openid} = this.props;
 
         return(
-            <Query query={GET_CUSTOMER_FINISH_PAY_ORDER} variables={{openid,"orderStatus":"finishPay"}}>
+            <Query query={GET_ORDER_BY_PROPS} variables={{openid,"orderStatus":"finishPay"}}>
                 {({ loading, error, data }) => {
                     if (loading)
                         return <div style={{width:'100%',height:contentHeight}}>
@@ -80,12 +64,12 @@ export default class UserSubPage extends Component{
                             }}/>
                         </div>;
                     if (error) return `Error! ${error.message}`;
-                    let subRecord = data.subRecord;
+                    let subRecord = data.orderList;
                     console.log('subRecord',subRecord);
 
                     return (
                         <div id="userSubPage">
-                            {!subRecord ?
+                            {!subRecord || !subRecord.length ?
                                 <div className="noSub">
                                     <span>您还未订阅过哦！</span>
                                     <div style={{paddingTop:'20px'}}>

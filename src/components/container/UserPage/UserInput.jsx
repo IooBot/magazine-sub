@@ -4,7 +4,6 @@ import React, {Component} from 'react';
 import { withRouter } from "react-router-dom";
 import { createForm } from 'rc-form';
 import { Query,Mutation } from "react-apollo";
-import gql from "graphql-tag";
 
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
@@ -14,25 +13,7 @@ import InputItem from 'antd-mobile/lib/input-item/index';
 import 'antd-mobile/lib/input-item/style/css';
 
 import './userInput.css';
-
-const GET_CUSTOMER = gql`
- query getCustomer($openid: String!) {
-  customer:customer_by_openid(openid: $openid) {
-    openid,
-    username
-  }
-}
-`;
-
-const UPDATE_CUSTOMER = gql`
-mutation updateCustomer($openid: String!,$username:String) {
-  customer:update_customerName(openid: $openid,username:$username) {
-    openid,
-    username
-  }
-}
-
-`;
+import {GET_CUSTOMER_BY_OPENID,UPDATE_CUSTOMER} from '../../graphql/customer.js';
 
 class UserInput extends Component{
     constructor(props){
@@ -66,7 +47,7 @@ class UserInput extends Component{
 
         return(
             <Query
-                query={GET_CUSTOMER}
+                query={GET_CUSTOMER_BY_OPENID}
                 variables={{ openid }}
             >
                 {({ loading, error, data }) => {

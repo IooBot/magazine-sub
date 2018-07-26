@@ -29,7 +29,8 @@ export default class UserPayPage extends Component{
     };
 
     render(){
-        let openid =  getCookie("wechat_openid") || "1234";
+        let openid =  getCookie("wechat_openid") || "12345";
+        console.log('openid',openid);
         // let {openid} = this.props;
 
         let search = this.props.location.search;

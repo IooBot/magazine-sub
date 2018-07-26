@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { withRouter } from "react-router-dom";
 import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
 
 import moment from 'moment';
 import Icon from 'antd/lib/icon';
@@ -19,6 +18,8 @@ import 'antd/lib/message/style/css';
 // 日期选择汉化
 import 'moment/locale/zh-cn';
 import './userSubConfirm.css';
+
+import {CREATE_ORDER,GET_ORDER_BY_PROPS} from '../../graphql/order.js';
 moment.locale('zh-CN');
 // import { XMLSign } from '../../../../api/wx.js';
 // let config = require('../../../../api/config.js');
@@ -26,28 +27,14 @@ const Item = List.Item;
 const Brief = Item.Brief;
 const { MonthPicker } = DatePicker;
 
-const CREATE_ORDER = gql`
- mutation createOrder($id:ID!,$magazineId: String!,$openid:String!,$subCount:Int!,$subMonthCount:Int!,
-    $havePay:Float!,$startDate:String,$endDate:String,$createAt:String,$orderStatus:String)
-    {
-    createOrder:create_order(
-    id:$id,
-    magazineId : $magazineId, openid :$openid,
-    subCount : $subCount, subMonthCount : $subMonthCount, havePay: $havePay,
-    startDate : $startDate, endDate: $endDate,
-    createAt: $createAt, orderStatus: $orderStatus){
-    id
-    }
-}
-`;
-
 class UserSubConfirm extends Component{
     constructor(props){
         super(props);
         this.state = {
             subCount:1,
             startDate:'',
-            endDate:''
+            endDate:'',
+            addContent:{}
         }
     }
 
@@ -128,20 +115,24 @@ class UserSubConfirm extends Component{
 
     onBridgeReady = (createOrder,confirmContent,needPay) => {
         // console.log('confirmContent',confirmContent);
-        // console.log('needPay',needPay,typeof(needPay),needPay != 0);
+        console.log('needPay',needPay,typeof(needPay),needPay !== 0);
         confirmContent.createAt = moment().format('YYYY-MM-DD HH:mm:ss');
-        confirmContent.id = Date.now();
+        confirmContent.id = Math.floor(new Date().getTime()/1000);
+        console.log('id',confirmContent.id);
+        // console.log('onBridgeReady confirmContent',confirmContent);
+        // this.setState({addContent:confirmContent});
 
         if(needPay !== 0){
-            // message.success('支付成功，等待发货');
-            // confirmContent.orderStatus = "finishPay";
-            // createOrder({ variables: confirmContent });
-            // this.props.history.push("/#index=2&tab=0");
-
-            message.error('支付失败，请稍后重试');
-            confirmContent.orderStatus = "waitPay";
+            message.success('支付成功，等待发货');
+            confirmContent.orderStatus = "finishPay";
             createOrder({ variables: confirmContent });
-            this.props.history.push("/#index=2&tab=1");
+            console.log('confirmContent',confirmContent);
+            this.props.history.push("/#index=2&tab=0");
+
+            // message.error('支付失败，请稍后重试');
+            // confirmContent.orderStatus = "waitPay";
+            // createOrder({ variables: confirmContent });
+            // this.props.history.push("/#index=2&tab=1");
 
             // let $this = this;
             // $.ajax({
@@ -207,17 +198,21 @@ class UserSubConfirm extends Component{
         }
 
         let needPay = (unitPrice * subMonthCount * this.state.subCount).toFixed(2);
-        // console.log('needPay',needPay);
+        console.log('needPay',needPay);
         // console.log('subMonthCount',subMonthCount);
         const confirmContent = {
             openid,
-            magazineId,
+            magazine_id:magazineId,
             subCount:this.state.subCount,
             startDate:this.state.startDate,
             endDate:this.state.endDate,
             havePay:needPay,
             subMonthCount
         };
+        // confirmContent.createAt = moment().format('YYYY-MM-DD HH:mm:ss');
+        // confirmContent.id = Math.floor(new Date().getTime()/1000);
+        // console.log('confirmContent1',confirmContent);
+        // this.setState({addContent:confirmContent});
 
         return(
             <div id="userSubConfirm">
@@ -280,7 +275,23 @@ class UserSubConfirm extends Component{
                         <span style={{color:"#ff5f16"}}>¥{needPay}</span>
                     </div>
                 </List>
-                <Mutation mutation={CREATE_ORDER}>
+                <Mutation mutation={CREATE_ORDER}
+                          update={(cache, { data:{createOrder} }) => {
+                              // console.log('createOrder',createOrder);
+                              // const newData = {
+                              //     ...createOrder,
+                              //     ...confirmContent
+                              // };
+                              // console.log('newData',newData);
+                              // Read the data from the cache for this query.
+                              const data = cache.readQuery({ query: GET_ORDER_BY_PROPS,variables: {openid,"orderStatus":"finishPay"} });
+                              // Add our channel from the mutation to the end.
+                              data.orderList.push(createOrder);
+                              // Write the data back to the cache.
+                              cache.writeQuery({ query: GET_ORDER_BY_PROPS,variables: {openid,"orderStatus":"finishPay"}, data });
+                              console.log('CREATE_ORDER cache',cache);
+                          }}
+                >
                     {(createOrder, { loading, error }) => (
                         <div>
                             <List.Item>

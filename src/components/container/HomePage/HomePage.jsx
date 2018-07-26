@@ -71,7 +71,7 @@ export default class HomePage extends Component{
     render(){
         let {index,tab}  = this.getHash();
         // let openid =  getCookie("wechat_openid");
-        let openid =  '1234';
+        let openid =  '12345';
 
         return(
             <div id="homePage">

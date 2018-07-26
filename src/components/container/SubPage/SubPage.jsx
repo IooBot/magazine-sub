@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import { withRouter } from "react-router-dom";
 // import PropTypes from 'prop-types';
 import { Query  } from "react-apollo";
-import gql from "graphql-tag";
 
 import Spin from 'antd/lib/spin';
 import 'antd/lib/spin/style/css';
@@ -12,18 +11,7 @@ import Card from 'antd-mobile/lib/card/index';
 import 'antd-mobile/lib/card/style/css';
 
 import './subPage.css';
-
-const GET_MAGAZINE = gql`
-  {
-    magazineList:all_magazines {
-    id
-    magazineName:name,
-    picture,
-    magazineIntro,
-    unitPrice
-    }
-  }
-`;
+import {GET_MAGAZINE} from '../../graphql/magazine.js';
 
 class SubPage extends Component{
     constructor(props){

@@ -17,7 +17,7 @@ class BindWechat extends Component {
         // let codeContent =  location.search.split("&")[0];
         // let code = codeContent.substr(codeContent.indexOf("=")+1);
         // let $this = this;
-        setCookie("wechat_openid","1234",30);
+        setCookie("wechat_openid","12345",30);
         // console.log('code',code);
         console.log('BindWechat openid',getCookie("wechat_openid"));
 

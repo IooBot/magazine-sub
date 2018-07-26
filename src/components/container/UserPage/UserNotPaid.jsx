@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { withRouter } from "react-router-dom";
 import { Query,Mutation } from "react-apollo";
-import gql from "graphql-tag";
 // import $ from 'jquery';
 
 import Icon from 'antd/lib/icon';
@@ -16,36 +15,18 @@ import 'antd-mobile/lib/modal/style/css';
 // import { XMLSign } from '../../../../api/wx.js';
 // let config = require('../../../../api/config.js');
 import './userSubPage.css';
+import {GET_ORDER_BY_PROPS,DELETE_ORDER} from '../../graphql/order.js';
+
 const alert = Modal.alert;
 
-const GET_CUSTOMER_WAIT_PAY_ORDER = gql`
-query getCustomerOrder($openid: String! $orderStatus: String!) {
-  notPaid:list_orders_by_customer(openid: $openid,orderStatus:$orderStatus) {    
-    createAt
-    orderId:id
-    magazines {
-      magazineName:name 
-      unitPrice
-    }
-    subCount
-    subMonthCount
-    startDate
-    endDate
-    havePay
-    orderStatus
-  }
-}
-`;
-
-const DELETE_WAIT_PAY_ORDER = gql`
-mutation deleteWaitPayOrder($id: ID!) {
-    delete_waitPay_order(id: $id) {
-        id
-    }
-}
-`;
-
 class UserNotPaid extends Component{
+
+    shouldComponentUpdate(nextProps,nextState){
+        if(nextProps){
+            console.log('nextProps',nextProps);
+            return true;
+        }
+    }
 
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
     // jsApiPay = (prepay_id,confirmContent) => {
@@ -109,35 +90,37 @@ class UserNotPaid extends Component{
     //     });
     // };
 
-    deleteNotPaidOrder = (e,deleteWaitPayOrder,openid,orderId) =>{
+    deleteNotPaidOrder = (e,deleteOrder,refetch,openid,orderId) =>{
         e.stopPropagation();
         alert("删除订单",<div>确定删除此订单吗？</div>,[
             {text: '取消'},
             {text: '确定', onPress: () => {
-                deleteWaitPayOrder({ variables: {id:orderId} });
+                deleteOrder({ variables: {id:orderId} });
+                refetch();
                 // Meteor.call('orderNotPaid.delete',openid,orderId)
                 }
             }
         ]);
     };
 
-    renderUserOrder = (notPaid) => {
-        // console.log('notPaid',notPaid);
+    renderUserOrder = (notPaid,refetch) => {
+        console.log('renderUserOrder notPaid',notPaid);
 
         let {openid} = this.props;
         return notPaid.map((oder,idx)=>{
-            let {createAt,orderId,subCount,havePay,subMonthCount,startDate,endDate} = oder;
-            let {magazineName,unitPrice} = oder.magazines;
+            let {createAt,id:orderId,subCount,havePay,subMonthCount,startDate,endDate} = oder;
+            let {magazineName,unitPrice} = oder.magazine;
+            console.log('idx',idx,"orderId",orderId);
 
             // const confirmContent = {openid,orderId,subMagazine:magazineName,subCount,startDate,endDate,unitPrice,havePay:needPay,subMonthCount};
             return <div key={'order'+idx}>
-                <Mutation mutation={DELETE_WAIT_PAY_ORDER}>
-                    {(deleteWaitPayOrder, { loading, error }) => (
+                <Mutation mutation={DELETE_ORDER}>
+                    {(deleteOrder, { loading, error }) => (
                         <div>
                             <div className="sub-content">
                                 <div className="sub-title">
                                     <span>创建时间: {createAt}</span>
-                                    <span onClick={(e)=>this.deleteNotPaidOrder(e,deleteWaitPayOrder,openid,orderId)}>
+                                    <span onClick={(e)=>this.deleteNotPaidOrder(e,deleteOrder,refetch,openid,orderId)}>
                                             <Icon type="delete" />
                                         </span>
                                 </div>
@@ -178,8 +161,8 @@ class UserNotPaid extends Component{
         let {openid} = this.props;
 
         return(
-            <Query query={GET_CUSTOMER_WAIT_PAY_ORDER} variables={{openid,"orderStatus":"waitPay"}}>
-                {({ loading, error, data }) => {
+            <Query query={GET_ORDER_BY_PROPS} variables={{openid,"orderStatus":"waitPay"}}>
+                {({ loading, error, data, refetch }) => {
                     if (loading)
                         return <div style={{width:'100%',height:contentHeight}}>
                             <Spin style={{
@@ -190,12 +173,12 @@ class UserNotPaid extends Component{
                             }}/>
                         </div>;
                     if (error) return `Error! ${error.message}`;
-                    let notPaid = data.notPaid;
-                    console.log('notPaid',notPaid);
+                    let notPaid = data.orderList;
+                    console.log('notPaid',notPaid,notPaid === [],!notPaid.length);
 
                     return (
                         <div id="userSubPage">
-                            {!notPaid || notPaid === [] ?
+                            {!notPaid || !notPaid.length ?
                                 <div className="noSub">
                                     <span>暂无未支付订单哦！</span>
                                     <div style={{paddingTop:'20px'}}>
@@ -206,7 +189,7 @@ class UserNotPaid extends Component{
                                         </button>
                                     </div>
                                 </div>:
-                                this.renderUserOrder(notPaid)
+                                this.renderUserOrder(notPaid,refetch)
                             }
                         </div>
                     );
