@@ -13,36 +13,36 @@ export default class UserSubPage extends Component{
         // console.log('subRecord',subRecord);
 
         return subRecord.map((oder,idx)=>{
-            // let {id,createAt,subCount,havePay,subMonthCount,startDate,endDate,orderStatus} = oder;
-            // let {magazineName,unitPrice} = oder.magazine;
-            let {id} = oder;
+            let {createAt,subCount,havePay,subMonthCount,startDate,endDate,orderStatus} = oder;
+            let {magazineName,unitPrice} = oder.magazine;
+            // let {id} = oder;
 
             return <div key={'order'+idx}>
-                {id}
-                {/*<div className="sub-content">*/}
-                    {/*<div className="sub-title">*/}
-                        {/*<span>创建时间: {createAt}</span>*/}
-                        {/*<span> </span>*/}
-                    {/*</div>*/}
-                    {/*<div className="sub-record">*/}
-                        {/*<div>*/}
-                            {/*<span style={{fontSize:'17px'}}>{magazineName}</span>*/}
-                            {/*<span>¥{unitPrice}/月</span>*/}
-                        {/*</div>*/}
-                        {/*<div style={{color:'#888'}}>*/}
-                            {/*<span>{startDate}至{endDate ? endDate : startDate}</span>*/}
-                            {/*<span>x{subCount}</span>*/}
-                        {/*</div>*/}
-                        {/*<div>*/}
-                            {/*<span style={{color:'#888'}}>共{subMonthCount}个月</span>*/}
-                            {/*<span>合计:&nbsp;&nbsp;<span style={{color:"#108ee9"}}>¥{havePay}</span></span>*/}
-                        {/*</div>*/}
-                        {/*<div>*/}
-                            {/*<span> </span>*/}
-                            {/*<span style={{color:"#ff5f16"}}>{orderStatus}</span>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
-                {/*</div>*/}
+                {/*{id}*/}
+                <div className="sub-content">
+                    <div className="sub-title">
+                        <span>创建时间: {createAt}</span>
+                        <span> </span>
+                    </div>
+                    <div className="sub-record">
+                        <div>
+                            <span style={{fontSize:'17px'}}>{magazineName}</span>
+                            <span>¥{unitPrice}/月</span>
+                        </div>
+                        <div style={{color:'#888'}}>
+                            <span>{startDate}至{endDate ? endDate : startDate}</span>
+                            <span>x{subCount}</span>
+                        </div>
+                        <div>
+                            <span style={{color:'#888'}}>共{subMonthCount}个月</span>
+                            <span>合计:&nbsp;&nbsp;<span style={{color:"#108ee9"}}>¥{havePay}</span></span>
+                        </div>
+                        <div>
+                            <span> </span>
+                            <span style={{color:"#ff5f16"}}>{orderStatus}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         });
     };

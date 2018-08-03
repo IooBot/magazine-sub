@@ -19,7 +19,7 @@ import 'antd/lib/message/style/css';
 import 'moment/locale/zh-cn';
 import './userSubConfirm.css';
 
-import {CREATE_ORDER,GET_ORDER_BY_PROPS} from '../../graphql/order.js';
+import {CREATE_ORDER} from '../../graphql/order.js';
 moment.locale('zh-CN');
 // import { XMLSign } from '../../../../api/wx.js';
 // let config = require('../../../../api/config.js');
@@ -276,21 +276,21 @@ class UserSubConfirm extends Component{
                     </div>
                 </List>
                 <Mutation mutation={CREATE_ORDER}
-                          update={(cache, { data:{createOrder} }) => {
-                              // console.log('createOrder',createOrder);
-                              // const newData = {
-                              //     ...createOrder,
-                              //     ...confirmContent
-                              // };
-                              // console.log('newData',newData);
-                              // Read the data from the cache for this query.
-                              const data = cache.readQuery({ query: GET_ORDER_BY_PROPS,variables: {openid,"orderStatus":"finishPay"} });
-                              // Add our channel from the mutation to the end.
-                              data.orderList.push(createOrder);
-                              // Write the data back to the cache.
-                              cache.writeQuery({ query: GET_ORDER_BY_PROPS,variables: {openid,"orderStatus":"finishPay"}, data });
-                              console.log('CREATE_ORDER cache',cache);
-                          }}
+                          // update={(cache, { data:{createOrder} }) => {
+                          //     // console.log('createOrder',createOrder);
+                          //     // const newData = {
+                          //     //     ...createOrder,
+                          //     //     ...confirmContent
+                          //     // };
+                          //     // console.log('newData',newData);
+                          //     // Read the data from the cache for this query.
+                          //     const data = cache.readQuery({ query: GET_ORDER_BY_PROPS,variables: {openid,"orderStatus":"finishPay"} });
+                          //     // Add our channel from the mutation to the end.
+                          //     data.orderList.push(createOrder);
+                          //     // Write the data back to the cache.
+                          //     cache.writeQuery({ query: GET_ORDER_BY_PROPS,variables: {openid,"orderStatus":"finishPay"}, data });
+                          //     console.log('CREATE_ORDER cache',cache);
+                          // }}
                 >
                     {(createOrder, { loading, error }) => (
                         <div>

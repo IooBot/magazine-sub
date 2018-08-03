@@ -4,17 +4,17 @@ export const CREATE_ORDER = gql`
     mutation createOrder($id:Int!,$magazine_id: String!,$openid:String!,$subCount:Int!,$subMonthCount:Int,
     $havePay:Float,$startDate:String,$endDate:String,$createAt:String,$orderStatus:String){
         createOrder:create_order (
-        id:$id
-        magazine_id : $magazine_id
-        openid :$openid
-        subCount : $subCount
-        subMonthCount : $subMonthCount
-        havePay: $havePay
-        startDate : $startDate
-        endDate: $endDate
-        createAt: $createAt
-        orderStatus: $orderStatus){
-        id
+            id:$id
+            magazine_id : $magazine_id
+            openid :$openid
+            subCount : $subCount
+            subMonthCount : $subMonthCount
+            havePay: $havePay
+            startDate : $startDate
+            endDate: $endDate
+            createAt: $createAt
+            orderStatus: $orderStatus){
+            id
         }
     }
 `;
@@ -46,3 +46,4 @@ export const DELETE_ORDER = gql`
         delete_order(id: $id)
     }
 `;
+
