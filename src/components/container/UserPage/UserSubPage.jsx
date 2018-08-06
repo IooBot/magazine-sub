@@ -8,13 +8,20 @@ import './userSubPage.css';
 import {GET_ORDER_BY_PROPS} from '../../graphql/order.js';
 
 export default class UserSubPage extends Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+            errors: false,
+            canSubmit: true,
+        };
+    }
 
     renderUserOrder = (subRecord) => {
         // console.log('subRecord',subRecord);
 
         return subRecord.map((oder,idx)=>{
             let {createAt,subCount,havePay,subMonthCount,startDate,endDate,orderStatus} = oder;
-            let {magazineName,unitPrice} = oder.magazine;
+            // let {magazineName,unitPrice} = oder.magazine;
             // let {id} = oder;
 
             return <div key={'order'+idx}>
@@ -26,8 +33,8 @@ export default class UserSubPage extends Component{
                     </div>
                     <div className="sub-record">
                         <div>
-                            <span style={{fontSize:'17px'}}>{magazineName}</span>
-                            <span>¥{unitPrice}/月</span>
+                            {/*<span style={{fontSize:'17px'}}>{magazineName}</span>*/}
+                            {/*<span>¥{unitPrice}/月</span>*/}
                         </div>
                         <div style={{color:'#888'}}>
                             <span>{startDate}至{endDate ? endDate : startDate}</span>
@@ -65,7 +72,7 @@ export default class UserSubPage extends Component{
                         </div>;
                     if (error) return `Error! ${error.message}`;
                     let subRecord = data.orderList;
-                    console.log('subRecord',subRecord);
+                    console.log('subRecord',subRecord,new Date().getTime());
 
                     return (
                         <div id="userSubPage">

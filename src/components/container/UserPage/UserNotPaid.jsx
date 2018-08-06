@@ -21,12 +21,12 @@ const alert = Modal.alert;
 
 class UserNotPaid extends Component{
 
-    shouldComponentUpdate(nextProps,nextState){
-        if(nextProps){
-            console.log('nextProps',nextProps);
-            return true;
-        }
-    }
+    // shouldComponentUpdate(nextProps,nextState){
+    //     if(nextProps){
+    //         console.log('nextProps',nextProps);
+    //         return true;
+    //     }
+    // }
 
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
     // jsApiPay = (prepay_id,confirmContent) => {

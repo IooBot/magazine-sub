@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const CREATE_ORDER = gql`
-    mutation createOrder($id:Int!,$magazine_id: String!,$openid:String!,$subCount:Int!,$subMonthCount:Int,
+    mutation createOrder($id:Int!,$magazine_id:String,$openid:String,$subCount:Int,$subMonthCount:Int,
     $havePay:Float,$startDate:String,$endDate:String,$createAt:String,$orderStatus:String){
         createOrder:create_order (
             id:$id
@@ -23,14 +23,11 @@ export const GET_ORDER_BY_PROPS = gql`
     query getCustomerOrder($openid: String $orderStatus: String!) {
         orderList:order_by_props(openid: $openid,orderStatus:$orderStatus) {
             id
-            customer{
-                openid
-            }
             createAt
-            magazine {
-                magazineName:name
-                unitPrice
-            }
+#            magazine {
+#                magazineName:name
+#                unitPrice
+#            }
             subCount
             subMonthCount
             startDate
