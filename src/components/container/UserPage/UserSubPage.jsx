@@ -16,12 +16,19 @@ export default class UserSubPage extends Component{
         };
     }
 
+    componentWillReceiveProps(nextProps) {
+        // we don't resubscribe on changed props, because it never happens in our app
+        console.log('this.props',this.props);
+        console.log('nextProps',nextProps);
+    }
+
     renderUserOrder = (subRecord) => {
         // console.log('subRecord',subRecord);
 
         return subRecord.map((oder,idx)=>{
             let {createAt,subCount,havePay,subMonthCount,startDate,endDate,orderStatus} = oder;
-            // let {magazineName,unitPrice} = oder.magazine;
+            let {magazineName,unitPrice} = oder.magazine;
+            // console.log('oder.magazine',oder.magazine);
             // let {id} = oder;
 
             return <div key={'order'+idx}>
@@ -33,8 +40,8 @@ export default class UserSubPage extends Component{
                     </div>
                     <div className="sub-record">
                         <div>
-                            {/*<span style={{fontSize:'17px'}}>{magazineName}</span>*/}
-                            {/*<span>¥{unitPrice}/月</span>*/}
+                            <span style={{fontSize:'17px'}}>{magazineName}</span>
+                            <span>¥{unitPrice}/月</span>
                         </div>
                         <div style={{color:'#888'}}>
                             <span>{startDate}至{endDate ? endDate : startDate}</span>
@@ -60,7 +67,7 @@ export default class UserSubPage extends Component{
 
         return(
             <Query query={GET_ORDER_BY_PROPS} variables={{openid,"orderStatus":"finishPay"}}>
-                {({ loading, error, data }) => {
+                {({ loading, error, data, refetch }) => {
                     if (loading)
                         return <div style={{width:'100%',height:contentHeight}}>
                             <Spin style={{
@@ -87,7 +94,7 @@ export default class UserSubPage extends Component{
                                         </button>
                                     </div>
                                 </div>:
-                                this.renderUserOrder(subRecord)
+                                this.renderUserOrder(subRecord,refetch)
                             }
                         </div>
                     );
@@ -96,9 +103,5 @@ export default class UserSubPage extends Component{
         )
     }
 }
-
-UserSubPage.defaultProps = {
-    subRecord: []
-};
 
 

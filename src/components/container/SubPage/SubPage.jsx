@@ -40,7 +40,7 @@ class SubPage extends Component{
 
         return <Query query={GET_MAGAZINE}>
             {({ loading, error, data }) => {
-                console.log('data',data);
+                // console.log('data',data);
                 if (loading)
                     return <div style={{width:'100%',height:contentHeight}}>
                         <Spin style={{

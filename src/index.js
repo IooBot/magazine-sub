@@ -9,13 +9,17 @@ import BindWechat from './components/container/BasicInfo/BindWechat.jsx';
 import UserInputPage from "./components/container/UserPage/UserInputPage.jsx";
 import UserPayPage from "./components/container/UserPage/UserPayPage.jsx";
 import './main.css';
+import UserSubPage from "./components/container/UserPage/UserSubPage.jsx";
 
 const client = new ApolloClient({
     // uri: "http://7e8ea2a8f79e48ccb2e14be502d8d37e.apigw.cn-north-1.huaweicloud.com/graphql",    // 华为云
     // uri:`http://1b56aa4e99084a7693733dc0e26ff49c-cn-shanghai.alicloudapi.com/graphql`,                // 阿里云mongodb
+    uri:`http://20932081b4dd4c40b93693520609c6c1-cn-hangzhou.alicloudapi.com/graphql`,                // 阿里云mongodb
     // uri:`http://1b56aa4e99084a7693733dc0e26ff49c-cn-shanghai.alicloudapi.com/ql`,                     // 阿里云内存db
-    // uri:`http://service-cfu0rfii-1257076714.ap-guangzhou.apigateway.myqcloud.com/prepub/graphql`      // 腾讯云
-    uri: "http://localhost:8888/graphql"
+
+    // uri:`http://service-ci2tk8iu-1254337200.ap-guangzhou.apigateway.myqcloud.com/prepub/graphql`      // 腾讯云
+    // uri:`http://service-cfu0rfii-1257076714.ap-guangzhou.apigateway.myqcloud.com/prepub/graphql`      // 腾讯云pre
+    // uri: "http://localhost:8888/graphql"
 });
 
 class MainApp extends Component{
@@ -50,6 +54,7 @@ class MainApp extends Component{
                         <Route path = '/bindWechat'  component = { BindWechat }/>
                         <Route path = '/address'  component = { UserInputPage }/>
                         <Route path = '/pay'  component = { UserPayPage }/>
+                        <Route path = '/test'  component = { UserSubPage }/>
                     </Switch>
                 </Router>
             </ApolloProvider>

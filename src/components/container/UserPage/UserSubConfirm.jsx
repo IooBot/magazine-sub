@@ -18,88 +18,16 @@ import 'antd/lib/message/style/css';
 // 日期选择汉化
 import 'moment/locale/zh-cn';
 import './userSubConfirm.css';
-
-// import {CREATE_ORDER} from '../../graphql/order.js';
+// eslint-disable-next-line
 import {CREATE_ORDER,GET_ORDER_BY_PROPS} from '../../graphql/order.js';
+// eslint-disable-next-line
+import {GET_ORDER_PROPS} from '../../graphql/order.js';
 moment.locale('zh-CN');
 // import { XMLSign } from '../../../../api/wx.js';
 // let config = require('../../../../api/config.js');
 const Item = List.Item;
 const Brief = Item.Brief;
 const { MonthPicker } = DatePicker;
-
-class SubOrder extends Component {
-    // constructor(props) {
-    //     super(props);
-    // }
-
-    onBridgeReady = (event) => {
-        event.preventDefault();
-        let {confirmContent,needPay,submit} = this.props;
-        // console.log('confirmContent',confirmContent);
-        console.log('needPay',needPay,typeof(needPay),needPay !== 0);
-        confirmContent.createAt = moment().format('YYYY-MM-DD HH:mm:ss');
-        confirmContent.id = Math.floor(new Date().getTime()/1000);
-        console.log('id',confirmContent.id);
-        // console.log('onBridgeReady confirmContent',confirmContent);
-
-        if(needPay !== 0){
-            message.success('支付成功，等待发货');
-            confirmContent.orderStatus = "finishPay";
-            // createOrder({ variables: confirmContent });
-            let { id, magazine_id, openid , subCount , subMonthCount , havePay, startDate , endDate, createAt, orderStatus} = confirmContent;
-            console.log('confirmContent',confirmContent);
-            submit({
-                id, magazine_id, openid , subCount , subMonthCount , havePay, startDate , endDate, createAt, orderStatus
-            }).then(res => {
-                console.log('res',res);
-            });
-            this.props.history.push("/#index=2&tab=0");
-
-            // message.error('支付失败，请稍后重试');
-            // confirmContent.orderStatus = "waitPay";
-            // createOrder({ variables: confirmContent });
-            // this.props.history.push("/#index=2&tab=1");
-
-            // let $this = this;
-            // $.ajax({
-            //     url: '/api/wxPay',
-            //     type: 'get',
-            //     data: {
-            //         needPay,
-            //         openid: $this.props.openid
-            //     },
-            //     dataType: 'json',
-            //     success(res){
-            //         // console.log('onBridgeReady res',res);
-            //         if(res.code == 200){
-            //             $this.jsApiPay(res.data,confirmContent);
-            //         }
-            //     },
-            //     error(err){
-            //         console.log('onBridgeReady err',err);
-            //     }
-            // });
-        }else {
-            message.warning('支付金额不能为0');
-        }
-
-    };
-
-    render() {
-        return (
-            <div>
-                <List.Item>
-                    <button className="long-button"
-                            onClick={(e)=>this.onBridgeReady(e)}
-                    >确认并支付</button>
-                </List.Item>
-                {/*{loading && <p>Loading...</p>}*/}
-                {/*{error && <p>Error :( Please try again</p>}*/}
-            </div>
-        );
-    }
-}
 
 class UserSubConfirm extends Component{
     constructor(props){
@@ -187,62 +115,25 @@ class UserSubConfirm extends Component{
     //     );
     // };
 
-    onBridgeReady = (e,mutate,confirmContent,needPay) => {
+    onBridgeReady = (createOrder,confirmContent,needPay) => {
         // console.log('confirmContent',confirmContent);
         console.log('needPay',needPay,typeof(needPay),needPay !== 0);
         confirmContent.createAt = moment().format('YYYY-MM-DD HH:mm:ss');
         confirmContent.id = Math.floor(new Date().getTime()/1000);
         console.log('id',confirmContent.id);
-        // console.log('onBridgeReady confirmContent',confirmContent);
+        console.log('onBridgeReady confirmContent',confirmContent);
+        // this.setState({addContent:confirmContent});
 
-        e.preventDefault();
         if(needPay !== 0){
-            message.success('支付成功，等待发货');
-            confirmContent.orderStatus = "finishPay";
-            // createOrder({ variables: confirmContent });
-            let { id, magazine_id, openid , subCount , subMonthCount , havePay, startDate , endDate, createAt, orderStatus} = confirmContent;
-            console.log('confirmContent',confirmContent);
-            mutate({
-                    variables: {id, magazine_id, openid, subCount , subMonthCount, havePay, startDate, endDate, createAt, orderStatus},
-                    optimisticResponse: {
-                        __typename: "Mutation",
-                        createOrder: {
-                            __typename: "Order",
-                            id,
-                            magazine_id,
-                            openid,
-                            subCount ,
-                            subMonthCount,
-                            havePay,
-                            startDate,
-                            endDate,
-                            createAt,
-                            orderStatus
-                        }
-                    },
+            // message.success('支付成功，等待发货');
+            // confirmContent.orderStatus = "finishPay";
+            // createOrder({ variables:confirmContent });
+            // this.props.history.push("/#index=2&tab=0");
 
-                    update:(cache, { data: { createOrder } }) => {
-                        console.log('createOrder',createOrder);
-                        // Read the data from the cache for this query.
-                        const queryData = {
-                            query: GET_ORDER_BY_PROPS,
-                            variables: { openid,"orderStatus":"finishPay" }
-                        };
-                        const data = cache.readQuery(queryData);
-                        // Add our channel from the mutation to the end.
-                        data.orderList.push(createOrder);
-                        // Write the data back to the cache.
-                        cache.writeQuery({...queryData, data });
-                        console.log('CREATE_ORDER cache',cache);
-                    }
-                });
-
-            this.props.history.push("/#index=2&tab=0");
-
-            // message.error('支付失败，请稍后重试');
-            // confirmContent.orderStatus = "waitPay";
-            // createOrder({ variables: confirmContent });
-            // this.props.history.push("/#index=2&tab=1");
+            message.error('支付失败，请稍后重试');
+            confirmContent.orderStatus = "waitPay";
+            createOrder({ variables:confirmContent });
+            this.props.history.push("/#index=2&tab=1");
 
             // let $this = this;
             // $.ajax({
@@ -266,7 +157,6 @@ class UserSubConfirm extends Component{
         }else {
             message.warning('支付金额不能为0');
         }
-
     };
 
     render(){
@@ -310,6 +200,7 @@ class UserSubConfirm extends Component{
         let needPay = (unitPrice * subMonthCount * this.state.subCount).toFixed(2);
         console.log('needPay',needPay);
         // console.log('subMonthCount',subMonthCount);
+        // eslint-disable-next-line
         const confirmContent = {
             openid,
             magazine_id:magazineId,
@@ -385,57 +276,33 @@ class UserSubConfirm extends Component{
                         <span style={{color:"#ff5f16"}}>¥{needPay}</span>
                     </div>
                 </List>
-                <Mutation mutation={CREATE_ORDER}>
-                    {mutate => (
-                        <SubOrder
-                            confirmContent = {confirmContent}
-                            needPay = {needPay}
-                            submit={({ id , subCount , subMonthCount , havePay, startDate , endDate, createAt, orderStatus }) =>
-                                mutate({
-                                    variables: {id, subCount , subMonthCount, havePay, startDate, endDate, createAt, orderStatus},
-                                    optimisticResponse: {
-                                        __typename: "Mutation",
-                                        createOrder: {
-                                            __typename: "Order",
-                                            id,
-                                            subCount ,
-                                            subMonthCount,
-                                            havePay,
-                                            startDate,
-                                            endDate,
-                                            createAt,
-                                            orderStatus
-                                        }
-                                    },
-                                    update:(cache, { data: { createOrder } }) => {
-                                        console.log('createOrder',createOrder);
-                                        // Read the data from the cache for this query.
-                                        const queryData = {
-                                            query: GET_ORDER_BY_PROPS,
-                                            variables: { openid,"orderStatus":"finishPay" }
-                                        };
-                                        const data = cache.readQuery(queryData);
-                                        // Add our channel from the mutation to the end.
-                                        data.orderList.push(createOrder);
-                                        // Write the data back to the cache.
-                                        cache.writeQuery({...queryData, data });
-                                        console.log('CREATE_ORDER cache',cache);
-                                    }
-                                })
-                            }
-                        />
+                <Mutation mutation={CREATE_ORDER}
+                          update={(cache, { data:{createOrder} }) => {
+                              console.log('createOrder',createOrder);
+                              let {orderStatus} = createOrder;
+                              console.log('orderStatus',orderStatus);
+                              // Read the data from the cache for this query.
+                              const getQuery = { query: GET_ORDER_BY_PROPS,variables: {openid,orderStatus}};
+                              const data = cache.readQuery(getQuery);
+                              console.log('data',data);
+                              // Add our channel from the mutation to the end.
+                              data.orderList.push(createOrder);
+                              // Write the data back to the cache.
+                              cache.writeQuery({ ...getQuery, data });
+                              console.log('CREATE_ORDER cache',cache);
+                          }}
+                >
+                    {(createOrder,{ loading, error }) => (
+                        <div>
+                            <List.Item>
+                                <button className="long-button"
+                                        onClick={()=>this.onBridgeReady(createOrder,confirmContent,needPay)}
+                                >确认并支付</button>
+                            </List.Item>
+                            {loading && <p>Loading...</p>}
+                            {error && <p>Error :( Please try again</p>}
+                        </div>
                     )}
-                    {/*{(createOrder, { loading, error }) => (*/}
-                        {/*<div>*/}
-                            {/*<List.Item>*/}
-                                {/*<button className="long-button"*/}
-                                        {/*onClick={()=>this.onBridgeReady(createOrder,confirmContent,needPay)}*/}
-                                {/*>确认并支付</button>*/}
-                            {/*</List.Item>*/}
-                            {/*/!*{loading && <p>Loading...</p>}*!/*/}
-                            {/*/!*{error && <p>Error :( Please try again</p>}*!/*/}
-                        {/*</div>*/}
-                    {/*)}*/}
                 </Mutation>
             </div>
         )
@@ -451,4 +318,3 @@ UserSubConfirm.defaultProps = {
 };
 
 export default withRouter(UserSubConfirm);
-

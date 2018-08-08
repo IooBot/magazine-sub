@@ -95,8 +95,9 @@ class UserNotPaid extends Component{
         alert("删除订单",<div>确定删除此订单吗？</div>,[
             {text: '取消'},
             {text: '确定', onPress: () => {
-                deleteOrder({ variables: {id:orderId} });
-                refetch();
+                deleteOrder({ variables:{id:orderId}}).then(
+                    refetch()
+                );
                 // Meteor.call('orderNotPaid.delete',openid,orderId)
                 }
             }

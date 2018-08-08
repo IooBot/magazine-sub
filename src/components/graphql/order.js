@@ -15,19 +15,30 @@ export const CREATE_ORDER = gql`
             createAt: $createAt
             orderStatus: $orderStatus){
             id
+            createAt
+            magazine {
+                magazineName:name
+                unitPrice
+            }
+            subCount
+            subMonthCount
+            startDate
+            endDate
+            havePay
+            orderStatus
         }
     }
 `;
 
 export const GET_ORDER_BY_PROPS = gql`
-    query getCustomerOrder($openid: String $orderStatus: String!) {
+    query getCustomerOrder($openid: String $orderStatus: String) {
         orderList:order_by_props(openid: $openid,orderStatus:$orderStatus) {
             id
             createAt
-#            magazine {
-#                magazineName:name
-#                unitPrice
-#            }
+            magazine {
+                magazineName:name
+                unitPrice
+            }
             subCount
             subMonthCount
             startDate
