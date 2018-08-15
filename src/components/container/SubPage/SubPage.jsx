@@ -17,7 +17,7 @@ class SubPage extends Component{
     constructor(props){
         super(props);
         this.state = {
-            data: ['AiyWuByWklrrUDlFignR', 'TekJlZRVCjLFexlOCuWn', 'IJOtIlfsYdTyaDTRVrLI'],
+            data: ['20188916730804', '20188916745673', '20188916738720'],
             imgHeight: 176,
             subMagazine:'',
             unitPrice:''
@@ -28,7 +28,7 @@ class SubPage extends Component{
         // simulate img loading
         setTimeout(() => {
             this.setState({
-                data: ['AiyWuByWklrrUDlFignR', 'TekJlZRVCjLFexlOCuWn', 'IJOtIlfsYdTyaDTRVrLI'],
+                data: ['20188916730804', '20188916745673', '20188916738720'],
             });
         }, 100);
     }
@@ -109,7 +109,7 @@ class SubPage extends Component{
                                 style={{ display: 'inline-block', width: '100%', height: this.state.imgHeight }}
                             >
                                 <img
-                                    src={`https://zos.alipayobjects.com/rmsportal/${val}.png`}
+                                    src={`http://www.snbl.com.cn/administer/eWebEditor/UploadFile/${val}.jpg`}
                                     alt=""
                                     style={{ width: '100%', verticalAlign: 'top',maxHeight: '300px' }}
                                     onLoad={() => {

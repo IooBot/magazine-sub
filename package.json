@@ -2,6 +2,7 @@
   "name": "magazine-graphql",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "main": "src/index.js",
   "dependencies": {
     "antd": "^3.5.3",

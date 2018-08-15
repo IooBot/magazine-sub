@@ -3,6 +3,10 @@
     width: 76%;
 }
 
+#subPage .am-card-header {
+    padding: 15px;
+}
+
 #subPage .magazine-title {
     text-align: left;
     color: black;
