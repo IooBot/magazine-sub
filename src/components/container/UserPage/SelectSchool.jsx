@@ -30,6 +30,15 @@ class SelectSchool extends Component{
         return false;
     }
 
+    componentWillReceiveProps(nextProps){
+        // console.log('SelectSchool this.props',this.props);
+        let {area_name} = this.props;
+        // console.log('SelectSchool nextProps',nextProps);
+        if(area_name !== nextProps.area_name){
+            this.setState({school:["",""]});
+        }
+    }
+
     changeSchoolList = (school) => {
         let hash = {},i = 0,res = [],res1 = [];
 
@@ -40,7 +49,7 @@ class SelectSchool extends Component{
                 name: [name],
             });
         });
-        console.log(res);
+        // console.log("Schools are classified by type",res);
         res.forEach(function(item) {
             let {type,name} = item;
             let schoolName = name.map(item => {
@@ -55,7 +64,7 @@ class SelectSchool extends Component{
                 children:schoolName
             });
         });
-        console.log(res1);
+        // console.log("Change the school structure",res1);
         // console.log(JSON.stringify(res1));
         return res1;
     };
@@ -63,7 +72,7 @@ class SelectSchool extends Component{
     render(){
         // eslint-disable-next-line
         let {herderContent,school,area_name,updateCustomer,openid,gradeClass} = this.props;
-        console.log('SelectSchool this.props',this.props);
+        console.log('SelectSchool area_name',area_name);
 
         return(
             <Query
@@ -73,12 +82,12 @@ class SelectSchool extends Component{
                 {({ loading, error, data }) => {
                     if (loading) return null;
                     if (error) return `Error!: ${error}`;
-                    console.log('school data',data);
+                    console.log('SelectSchool data',data);
 
                     let school1 = this.state.school || school;
-                    console.log('school1',school1);
+                    // console.log('school1',school1);
                     let schoolList = this.changeSchoolList(data.school);
-                    console.log('school schoolList',schoolList);
+                    // console.log('school schoolList',schoolList);
                     return (
                         <div>
                             <Picker
@@ -88,9 +97,9 @@ class SelectSchool extends Component{
                                 title="所在学校"
                                 value={school1}
                                 onOk={value => {
-                                    console.log('onOk school', value);
+                                    // console.log('onOk school', value);
                                     this.setState({ school: value });
-                                    // console.log('schoolArea',openid, value[0]);
+
                                     if(herderContent === '收货信息'){
                                         updateCustomer({ variables: { openid, school_name: value[1]} });
                                     }

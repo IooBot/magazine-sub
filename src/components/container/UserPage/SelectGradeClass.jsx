@@ -75,29 +75,27 @@ class SelectGradeClass extends Component{
         let grade_class = this.getGradeClassArr(startGrade,endGrade,classCount);
 
         return(
-            <div>
-                <Picker
-                    cols={2}
-                    data={grade_class}
-                    title="选择年级-班级"
-                    cascade={false}
-                    extra="请选择"
-                    value={gradeClass1}
-                    onOk={value => {
-                        console.log('onOk grade',value);
-                        this.setState({ gradeClass: value });
+            <Picker
+                cols={2}
+                data={grade_class}
+                title="选择年级-班级"
+                cascade={false}
+                extra="请选择"
+                value={gradeClass1}
+                onOk={value => {
+                    console.log('onOk grade',value);
+                    this.setState({ gradeClass: value });
 
-                        if(herderContent === '收货信息'){
-                            updateCustomer({ variables: { openid, grade: value[0],class:value[1] } });
-                        }
-                    }}
-                >
-                    <List.Item
-                        arrow="horizontal"
-                        thumb={<Icon type="book" style={{color:'#ff5f16',fontSize:20}}/>}
-                    >年级-班级</List.Item>
-                </Picker>
-            </div>
+                    if(herderContent === '收货信息'){
+                        updateCustomer({ variables: { openid, grade: value[0],class:value[1] } });
+                    }
+                }}
+            >
+                <List.Item
+                    arrow="horizontal"
+                    thumb={<Icon type="book" style={{color:'#ff5f16',fontSize:20}}/>}
+                >年级-班级</List.Item>
+            </Picker>
         )
     }
 }
