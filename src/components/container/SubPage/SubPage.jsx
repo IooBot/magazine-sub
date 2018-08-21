@@ -30,7 +30,7 @@ class SubPage extends Component{
             this.setState({
                 data: ['20188916730804', '20188916745673', '20188916738720'],
             });
-        }, 100);
+        }, 200);
     }
 
     renderMagazine = () => {

@@ -16,11 +16,11 @@ export default class UserSubPage extends Component{
         };
     }
 
-    componentWillReceiveProps(nextProps) {
-        // we don't resubscribe on changed props, because it never happens in our app
-        console.log('this.props',this.props);
-        console.log('nextProps',nextProps);
-    }
+    // componentWillReceiveProps(nextProps) {
+    //     // we don't resubscribe on changed props, because it never happens in our app
+    //     console.log('this.props',this.props);
+    //     console.log('nextProps',nextProps);
+    // }
 
     renderUserOrder = (subRecord) => {
         // console.log('subRecord',subRecord);
@@ -79,7 +79,7 @@ export default class UserSubPage extends Component{
                         </div>;
                     if (error) return `Error! ${error.message}`;
                     let subRecord = data.orderList;
-                    console.log('subRecord',subRecord,new Date().getTime());
+                    // console.log('subRecord',subRecord,new Date().getTime());
 
                     return (
                         <div id="userSubPage">
