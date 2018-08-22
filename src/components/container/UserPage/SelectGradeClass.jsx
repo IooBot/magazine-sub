@@ -17,16 +17,15 @@ class SelectGradeClass extends Component{
     }
 
     componentWillReceiveProps(nextProps){
-        // console.log('this.props',this.props);
+        console.log('SelectGradeClass componentWillReceiveProps this.props',this.props,nextProps);
         let {schoolType,openid,updateCustomer} = this.props;
-        // console.log('nextProps',nextProps);
         if(schoolType !== nextProps.schoolType){
             let grade = 1;
             if(nextProps.schoolType === "中学"){
                 grade = 7
             }
             this.setState({gradeClass:[grade,1]});
-            updateCustomer({ variables: { openid, grade,class:1 } });
+            updateCustomer({ variables: { openid,grade,class:1 } });
         }
     }
 
@@ -85,16 +84,14 @@ class SelectGradeClass extends Component{
                 onOk={value => {
                     console.log('onOk grade',value);
                     this.setState({ gradeClass: value });
+                    this.props.changeSchoolTypeByGrade(value[0]);
 
                     if(herderContent === '收货信息'){
-                        updateCustomer({ variables: { openid, grade: value[0],class:value[1] } });
+                        updateCustomer({ variables: { openid, grade: value[0], class:value[1] }});
                     }
                 }}
             >
-                <List.Item
-                    arrow="horizontal"
-                    thumb={<Icon type="book" style={{color:'#ff5f16',fontSize:20}}/>}
-                >年级-班级</List.Item>
+                <List.Item arrow="horizontal" thumb={<Icon type="book" style={{color:'#ff5f16',fontSize:20}}/>}>年级-班级</List.Item>
             </Picker>
         )
     }

@@ -18,14 +18,12 @@ class SelectDistrict extends Component{
         super(props);
 
         this.state = {
-            schoolArea:'',
-            schoolDistrict:'',
-            school:'',
-            gradeClass:''
+            userSchoolArea:'',
+            userSchoolDistrict:'',
         }
     }
 
-    getArea = (area) => {
+    changeAreaList = (area) => {
         let hash = {},obj = {},i = 0,res = [],res1 = [];
         area.forEach(function(item) {
             let {city,name,district,province} = item;
@@ -36,7 +34,7 @@ class SelectDistrict extends Component{
                 province
             });
         });
-        console.log(res);
+        // console.log("area are classified by city",res);
         res.forEach(function(item) {
             let {city,district,province} = item;
             let district1 = district.map(item => {
@@ -55,7 +53,7 @@ class SelectDistrict extends Component{
                 }]
             });
         });
-        console.log(res1);
+        // console.log("Change the area structure",res1);
         // console.log(JSON.stringify(res1));
         return res1;
 
@@ -77,16 +75,18 @@ class SelectDistrict extends Component{
                 {({ loading, error, data }) => {
                     if (loading) return null;
                     if (error) return `Error!: ${error}`;
-                    console.log('SelectDistrict data',data);
-                    let schoolArea = [area["province"],area["city"],area["name"]];
-                    let schoolArea1 = this.state.schoolArea || schoolArea;
-                    let schoolDistrict = this.state.schoolDistrict || area["name"];
-                    console.log('schoolDistrict',schoolDistrict);
-                    let school1 = [school.type,school.name];
-                    console.log('school1',school1);
-                    let gradeClass1 = this.state.gradeClass || gradeClass;
-                    console.log('gradeClass1',gradeClass1);
-                    let districtData = this.getArea(data.area);
+                    console.log('SelectDistrict data: get areaList',data);
+                    let districtData = this.changeAreaList(data.area);
+                    console.log('districtData',districtData);
+
+                    let userSchoolArea = [area["province"] ,area["city"],area["name"]];
+                    let userSchoolArea1 = this.state.userSchoolArea || userSchoolArea;
+
+                    let userSchoolDistrict = this.state.userSchoolDistrict || area["name"];
+                    console.log('userSchoolDistrict',userSchoolDistrict);
+
+                    let school1 = [school.type ,school.name];
+                    // console.log('SelectDistrict school1',school1);
                     return (
                         <div>
                             <Picker
@@ -94,11 +94,11 @@ class SelectDistrict extends Component{
                                 data={districtData}
                                 title="学校所在地区"
                                 {...getFieldProps('district', {
-                                    initialValue: schoolArea1,
+                                    initialValue: userSchoolArea1,
                                 })}
                                 onOk={(value) => {
-                                    this.setState({ schoolArea: value,schoolDistrict:value[2]  });
-                                    console.log('schoolArea onOk', value);
+                                    this.setState({ userSchoolArea: value, userSchoolDistrict:value[2]  });
+                                    console.log('userSchoolArea onOk', value);
                                     // console.log('changeArea', value[2]);
 
                                     if(herderContent === '收货信息'){
@@ -116,9 +116,9 @@ class SelectDistrict extends Component{
                                 herderContent={herderContent}
                                 school={school1}
                                 openid={openid}
-                                area_name={schoolDistrict}
+                                area_name={userSchoolDistrict}
                                 updateCustomer={updateCustomer}
-                                gradeClass={gradeClass1}
+                                gradeClass={gradeClass}
                             />
                         </div>
                     );

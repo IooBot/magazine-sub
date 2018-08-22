@@ -8,3 +8,4 @@ export const GET_SCHOOL_BY_PROPS = gql`
         }
     }
 `;
+

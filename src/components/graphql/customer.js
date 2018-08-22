@@ -19,11 +19,13 @@ export const GET_CUSTOMER_BY_OPENID = gql`
                 type
             }
         }
-        area:area_by_props {
-            city
-            district
-            name
-            province
+    }
+`;
+
+export const GET_USERNAME_BY_OPENID = gql`
+    query getUsername($openid: String!) {
+        username:customer_by_openid(openid: $openid) {
+            username
         }
     }
 `;
@@ -43,6 +45,7 @@ export const UPDATE_CUSTOMER = gql`
             }
             school{
                 name
+                type
             }
         }
     }

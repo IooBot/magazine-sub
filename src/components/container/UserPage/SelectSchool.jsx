@@ -17,13 +17,14 @@ class SelectSchool extends Component{
         super(props);
 
         this.state = {
-            school:''
+            school:'',
+            grade:''
         }
     }
 
     shouldComponentUpdate(nextProps,nextState){
-        console.log('nextProps.school',nextProps.school);
-        console.log('nextState.school[0]',nextState.school[0]);
+        console.log('SelectSchool shouldComponentUpdate this.props',this.props,nextProps);
+        console.log('SelectSchool shouldComponentUpdate this.state',this.state,nextState);
         if(nextProps.school !== nextState.school[0]){
             return true;
         }
@@ -31,13 +32,21 @@ class SelectSchool extends Component{
     }
 
     componentWillReceiveProps(nextProps){
-        // console.log('SelectSchool this.props',this.props);
-        let {area_name} = this.props;
-        // console.log('SelectSchool nextProps',nextProps);
+        console.log('SelectSchool componentWillReceiveProps props',this.props,nextProps);
+        console.log('SelectSchool componentWillReceiveProps this.state',this.state);
+
+        let {area_name,gradeClass} = this.props;
+        console.log('area_name',area_name,"nextProps.area_name",nextProps.area_name);
         if(area_name !== nextProps.area_name){
-            this.setState({school:["",""]});
+            let type = this.state.grade || gradeClass[0] > 6 ? "中学" : "小学";
+            this.setState({school:[type,""]});
         }
     }
+
+    changeSchoolTypeByGrade = (grade) => {
+        console.log('changeSchoolTypeByGrade grade',grade);
+        this.setState({grade:grade});
+    };
 
     changeSchoolList = (school) => {
         let hash = {},i = 0,res = [],res1 = [];
@@ -82,12 +91,14 @@ class SelectSchool extends Component{
                 {({ loading, error, data }) => {
                     if (loading) return null;
                     if (error) return `Error!: ${error}`;
-                    console.log('SelectSchool data',data);
+                    console.log('SelectSchool data: get schoolList',data);
+                    let schoolList = this.changeSchoolList(data.school);
+                    console.log('schoolList',schoolList);
+
+                    console.log('this.state.school',this.state.school);
 
                     let school1 = this.state.school || school;
-                    // console.log('school1',school1);
-                    let schoolList = this.changeSchoolList(data.school);
-                    // console.log('school schoolList',schoolList);
+                    console.log('SelectSchool school1',school1,school1[0]);
                     return (
                         <div>
                             <Picker
@@ -105,10 +116,8 @@ class SelectSchool extends Component{
                                     }
                                 }}
                             >
-                                <List.Item
-                                    arrow="horizontal"
-                                    thumb={<Icon type="team" style={{color:'#ff5f16',fontSize:20}}/>}
-                                    style={{borderBottom:'none!important'}}
+                                <List.Item arrow="horizontal" thumb={<Icon type="team" style={{color:'#ff5f16',fontSize:20}}/>}
+                                           style={{borderBottom:'none!important'}}
                                 >学校</List.Item>
                             </Picker>
                             <SelectGradeClass
@@ -117,6 +126,7 @@ class SelectSchool extends Component{
                                 schoolType={school1[0]}
                                 gradeClass={gradeClass}
                                 updateCustomer={updateCustomer}
+                                changeSchoolTypeByGrade={this.changeSchoolTypeByGrade}
                             />
                         </div>
                     );
