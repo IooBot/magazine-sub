@@ -1,17 +1,14 @@
 import React, {Component} from 'react';
-// import PropTypes from 'prop-types';
-// import { Link } from "react-router-dom";
+import { Query } from "react-apollo";
 
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 
-// import UserInput from './UserInput.jsx';
+import CreateUserInfo from './CreateUserInfo.jsx';
+import {GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
+// import {getCookie} from "../BasicInfo/BindWechat.jsx";
 
 export default class UserInputPage extends Component{
-    // constructor(props){
-    //     super(props);
-    //
-    // }
 
     componentWillMount(){
         document.title = '地址信息'
@@ -31,38 +28,40 @@ export default class UserInputPage extends Component{
     };
 
     render(){
-        // let {openid,inputInfo} = this.props;
-        // let model1Type = inputInfo ? "re-edit" : "create";
+        // let openid =  getCookie("wechat_openid");
+        let openid =  '12346';
 
         return(
-            <div id="userInputPage">
-                {this.renderTitle()}
-                {/*<UserInput type={model1Type} openid={openid} />*/}
-            </div>
+            <Query
+                query={GET_CUSTOMER_BY_OPENID}
+                variables={{ openid}}
+            >
+                {({ loading,error, data }) => {
+                    if (loading) return null;
+                    if (error) return `Error!: ${error}`;
+                    console.log('UserInputPage data',data);
+                    let model1Type = "re-edit";
 
-        )
+                    let username = '',telephone = '',area = '',school = '',gradeClass = '';
+                    if(!data.customer){
+                        model1Type = "create";
+                    }else {
+                        username = data.customer.username;
+                        telephone = data.customer.telephone;
+                        area = data.customer.area;
+                        school = data.customer.school;
+                        let grade = data.customer.grade;
+                        gradeClass = [grade,data.customer.class];
+                    }
+
+                    return (
+                        <div id="userInputPage">
+                            {this.renderTitle()}
+                            <CreateUserInfo type={model1Type} openid={openid} username={username} telephone={telephone} area={area} school={school} gradeClass={gradeClass}/>
+                        </div>
+                    );
+                }}
+            </Query>
+        );
     }
 }
-
-// export default createContainer(()=>{
-//     // console.log('SubPage openid',openid);
-//     let openid =  getCookie("wechat_openid");
-//     let inputInfo = Meteor.subscribe('wechatUser.inputInfo',openid);
-//
-//     if(inputInfo.ready()){
-//
-//         let wxInput = wechatUser.findOne({openid:openid});
-//         let {inputInfo=false} = wxInput;
-//
-//         // console.log('inputInfo',inputInfo);
-//         return {
-//             openid,
-//             inputInfo
-//         };
-//     }
-//
-//     return {
-//         loading: false
-//     }
-//
-// },(UserInputPage));

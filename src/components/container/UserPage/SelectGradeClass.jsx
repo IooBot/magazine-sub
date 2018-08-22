@@ -18,14 +18,18 @@ class SelectGradeClass extends Component{
 
     componentWillReceiveProps(nextProps){
         console.log('SelectGradeClass componentWillReceiveProps this.props',this.props,nextProps);
-        let {schoolType,openid,updateCustomer} = this.props;
+        let {schoolType,openid,updateCustomer,getInputContent,herderContent} = this.props;
         if(schoolType !== nextProps.schoolType){
             let grade = 1;
             if(nextProps.schoolType === "中学"){
-                grade = 7
+                grade = 7;
             }
             this.setState({gradeClass:[grade,1]});
-            updateCustomer({ variables: { openid,grade,class:1 } });
+            if(herderContent === '收货信息'){
+                updateCustomer({ variables: { openid, grade, class:1 }});
+            }else {
+                getInputContent("gradeClass",[grade,1]);
+            }
         }
     }
 
@@ -52,7 +56,7 @@ class SelectGradeClass extends Component{
     };
 
     render(){
-        let {openid,herderContent,schoolType,gradeClass,updateCustomer} = this.props;
+        let {openid,herderContent,schoolType,gradeClass,updateCustomer,getInputContent} = this.props;
         let gradeClass1 = this.state.gradeClass || gradeClass;
         // console.log('gradeClass1',gradeClass1);
 
@@ -88,6 +92,8 @@ class SelectGradeClass extends Component{
 
                     if(herderContent === '收货信息'){
                         updateCustomer({ variables: { openid, grade: value[0], class:value[1] }});
+                    }else {
+                        getInputContent("gradeClass",value);
                     }
                 }}
             >

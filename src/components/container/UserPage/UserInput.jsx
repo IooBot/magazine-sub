@@ -37,12 +37,15 @@ class UserInput extends Component{
         return(
             <Query
                 query={GET_CUSTOMER_BY_OPENID}
-                variables={{ openid }}
+                variables={{ openid}}
             >
                 {({ loading,error, data }) => {
                     if (loading) return null;
                     if (error) return `Error!: ${error}`;
                     console.log('UserInput data',data);
+                    if(!data.customer){
+                        return '';
+                    }
 
                     let {username,telephone,area,school,grade} = data.customer;
                     let gradeClass = [grade,data.customer.class];
@@ -78,7 +81,7 @@ class UserInput extends Component{
                     );
                 }}
             </Query>
-        )
+        );
     }
 }
 

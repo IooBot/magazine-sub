@@ -68,7 +68,7 @@ class SelectDistrict extends Component{
     render(){
         const { getFieldProps } = this.props.form;
         // eslint-disable-next-line
-        let {herderContent,area,school,gradeClass,updateCustomer,openid} = this.props;
+        let {herderContent,area,school,gradeClass,updateCustomer,openid,getInputContent} = this.props;
 
         return(
             <Query query={GET_AREA}>
@@ -79,11 +79,11 @@ class SelectDistrict extends Component{
                     let districtData = this.changeAreaList(data.area);
                     console.log('districtData',districtData);
 
-                    let userSchoolArea = [area["province"] ,area["city"],area["name"]];
+                    let userSchoolArea = [area["province"] || "",area["city"] || "",area["name"] || ""];
                     let userSchoolArea1 = this.state.userSchoolArea || userSchoolArea;
 
-                    let userSchoolDistrict = this.state.userSchoolDistrict || area["name"];
-                    console.log('userSchoolDistrict',userSchoolDistrict);
+                    let userSchoolDistrict = this.state.userSchoolDistrict || area["name"] ;
+                    console.log('userSchoolDistrict',area["name"],userSchoolDistrict);
 
                     let school1 = [school.type ,school.name];
                     // console.log('SelectDistrict school1',school1);
@@ -103,6 +103,9 @@ class SelectDistrict extends Component{
 
                                     if(herderContent === '收货信息'){
                                         updateCustomer({ variables: { openid, area_name: value[2] } });
+                                    }else {
+                                        getInputContent("area_name",value[2]);
+                                        getInputContent("school_name",'');
                                     }
                                 }}
                             >
@@ -119,6 +122,7 @@ class SelectDistrict extends Component{
                                 area_name={userSchoolDistrict}
                                 updateCustomer={updateCustomer}
                                 gradeClass={gradeClass}
+                                getInputContent={getInputContent}
                             />
                         </div>
                     );

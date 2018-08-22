@@ -130,7 +130,7 @@ class SubPage extends Component{
 
 SubPage.defaultProps = {
     magazineList: [],
-    inputInfo:true
+    inputInfo:false
 };
 
 export default withRouter(SubPage);

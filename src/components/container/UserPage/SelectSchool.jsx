@@ -80,13 +80,13 @@ class SelectSchool extends Component{
 
     render(){
         // eslint-disable-next-line
-        let {herderContent,school,area_name,updateCustomer,openid,gradeClass} = this.props;
+        let {herderContent,school,area_name,updateCustomer,openid,gradeClass,getInputContent} = this.props;
         console.log('SelectSchool area_name',area_name);
 
         return(
             <Query
                 query={GET_SCHOOL_BY_PROPS}
-                variables={{area_name:area_name}}
+                variables={{area_name}}
             >
                 {({ loading, error, data }) => {
                     if (loading) return null;
@@ -113,6 +113,8 @@ class SelectSchool extends Component{
 
                                     if(herderContent === '收货信息'){
                                         updateCustomer({ variables: { openid, school_name: value[1]} });
+                                    }else {
+                                        getInputContent("school_name",value[1]);
                                     }
                                 }}
                             >
@@ -127,6 +129,7 @@ class SelectSchool extends Component{
                                 gradeClass={gradeClass}
                                 updateCustomer={updateCustomer}
                                 changeSchoolTypeByGrade={this.changeSchoolTypeByGrade}
+                                getInputContent={getInputContent}
                             />
                         </div>
                     );

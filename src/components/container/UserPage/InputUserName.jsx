@@ -32,6 +32,8 @@ class InputUserName extends Component{
                             this.setState({username:value});
                             if(herderContent === '收货信息'){
                                 updateCustomer({ variables: { openid, username: value } });
+                            }else {
+                                this.props.getInputContent("username",username1)
                             }
                         }
                     }}

@@ -35,8 +35,9 @@ class InputTelephone extends Component{
             });
             // console.log('value1',this.state.telephone);
             if(herderContent === '收货信息'){
-                updateCustomer({ variables: { openid, telephone: value } });
-                // Meteor.call('telephone.insert',this.props.openid,value);
+                updateCustomer({ variables: { openid, telephone: value }});
+            }else {
+                this.props.getInputContent("telephone",value);
             }
         }
         this.setState({
