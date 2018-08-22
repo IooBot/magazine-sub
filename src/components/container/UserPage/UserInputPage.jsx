@@ -6,7 +6,7 @@ import 'antd/lib/icon/style/css';
 
 import CreateUserInfo from './CreateUserInfo.jsx';
 import {GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
-// import {getCookie} from "../BasicInfo/BindWechat.jsx";
+import {getCookie} from "../BasicInfo/BindWechat.jsx";
 
 export default class UserInputPage extends Component{
 
@@ -28,40 +28,48 @@ export default class UserInputPage extends Component{
     };
 
     render(){
-        // let openid =  getCookie("wechat_openid");
-        let openid =  '12346';
+        let openid =  getCookie("wechat_openid");
+        console.log('UserInputPage openid',openid);
 
-        return(
-            <Query
-                query={GET_CUSTOMER_BY_OPENID}
-                variables={{ openid}}
-            >
-                {({ loading,error, data }) => {
-                    if (loading) return null;
-                    if (error) return `Error!: ${error}`;
-                    console.log('UserInputPage data',data);
-                    let model1Type = "re-edit";
+        // let search = this.props.location.search;
+        // 注意userExists类型为string
+        // let userExists = search.substr(search.indexOf("=")+1);
+        let userExists =  sessionStorage.getItem("userExists");
+        console.log('UserInputPage userExists',userExists,typeof userExists);
 
-                    let username = '',telephone = '',area = '',school = '',gradeClass = '';
-                    if(!data.customer){
-                        model1Type = "create";
-                    }else {
-                        username = data.customer.username;
-                        telephone = data.customer.telephone;
-                        area = data.customer.area;
-                        school = data.customer.school;
-                        let grade = data.customer.grade;
-                        gradeClass = [grade,data.customer.class];
-                    }
+        if(userExists === 'false'){
+            let model1Type = "create";
+            let username = '',telephone = '',area = '',school = '',gradeClass = '';
+            return (
+                <div id="userInputPage">
+                    {this.renderTitle()}
+                    <CreateUserInfo type={model1Type} openid={openid} username={username} telephone={telephone} area={area} school={school} gradeClass={gradeClass}/>
+                </div>
+            );
+        }else {
+            return(
+                <Query
+                    query={GET_CUSTOMER_BY_OPENID}
+                    variables={{openid}}
+                >
+                    {({ loading,error, data }) => {
+                        if (loading) return null;
+                        if (error) return `Error!: ${error}`;
+                        console.log('UserInputPage data',data);
 
-                    return (
-                        <div id="userInputPage">
-                            {this.renderTitle()}
-                            <CreateUserInfo type={model1Type} openid={openid} username={username} telephone={telephone} area={area} school={school} gradeClass={gradeClass}/>
-                        </div>
-                    );
-                }}
-            </Query>
-        );
+                        let model1Type = "re-edit";
+                        let {username,telephone,area,school,grade} = data.customer;
+                        let gradeClass = [grade,data.customer.class];
+
+                        return (
+                            <div id="userInputPage">
+                                {this.renderTitle()}
+                                <CreateUserInfo type={model1Type} openid={openid} username={username} telephone={telephone} area={area} school={school} gradeClass={gradeClass}/>
+                            </div>
+                        );
+                    }}
+                </Query>
+            );
+        }
     }
 }

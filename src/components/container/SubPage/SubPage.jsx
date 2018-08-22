@@ -34,13 +34,12 @@ class SubPage extends Component{
     }
 
     renderMagazine = () => {
-        let {inputInfo} = this.props;
+        let {openid} = this.props;
         let contentHeight = window.innerHeight - 295;
-        let allInfo = inputInfo ? true : false;
 
-        return <Query query={GET_MAGAZINE}>
+        return <Query query={GET_MAGAZINE} variables={{openid}}>
             {({ loading, error, data }) => {
-                // console.log('data',data);
+                console.log('data',data);
                 if (loading)
                     return <div style={{width:'100%',height:contentHeight}}>
                         <Spin style={{
@@ -52,6 +51,7 @@ class SubPage extends Component{
                     </div>;
                 if (error) return <p>Error :(</p>;
 
+                let userExists = data.user ? true : false;
                 return data.magazineList.map((magazine, idx) => {
                     let {id,magazineName,picture,magazineIntro,unitPrice} = magazine;
                     return <Card full key={idx}>
@@ -72,12 +72,14 @@ class SubPage extends Component{
                                 <div className="sub-button">
                                     <button style={{width:'60px',height:'30px'}}
                                             onClick={()=>{
-                                                // Session.set('subMagazine', magazineName);
-                                                // Session.set('unitPrice', unitPrice);
-                                                if(allInfo){
-                                                    this.props.history.push(`/pay?id=${id}&magazineName=${magazineName}&unitPrice=${unitPrice}`);
+                                                sessionStorage.setItem("magazineId",id);
+                                                sessionStorage.setItem("subMagazine",magazineName);
+                                                sessionStorage.setItem("unitPrice",unitPrice);
+                                                sessionStorage.setItem("userExists",userExists);
+                                                if(userExists){
+                                                    this.props.history.push(`/pay`);
                                                 }else {
-                                                    this.props.history.push("/address");
+                                                    this.props.history.push(`/address`);
                                                 }
                                             }}>订阅
                                     </button>
@@ -130,7 +132,6 @@ class SubPage extends Component{
 
 SubPage.defaultProps = {
     magazineList: [],
-    inputInfo:false
 };
 
 export default withRouter(SubPage);

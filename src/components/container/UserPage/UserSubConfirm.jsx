@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { withRouter } from "react-router-dom";
-import { Mutation } from "react-apollo";
+import { Query,Mutation } from "react-apollo";
 
 import moment from 'moment';
 import Icon from 'antd/lib/icon';
@@ -20,8 +20,7 @@ import 'moment/locale/zh-cn';
 import './userSubConfirm.css';
 // eslint-disable-next-line
 import {CREATE_ORDER,GET_ORDER_BY_PROPS} from '../../graphql/order.js';
-// eslint-disable-next-line
-import {GET_ORDER_PROPS} from '../../graphql/order.js';
+import {GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
 moment.locale('zh-CN');
 // import { XMLSign } from '../../../../api/wx.js';
 // let config = require('../../../../api/config.js');
@@ -261,16 +260,33 @@ class UserSubConfirm extends Component{
                             onChange={(value)=>this.setState({ subCount:value })}
                         /></span>
                     </div>
-                    <Item
-                        thumb={<Icon type="environment-o"  style={{fontSize: 20, color: '#108ee9'}}/>}
-                        multipleLine
-                        extra={<Icon type="edit"  style={{fontSize: 20, color: '#108ee9'}}/>}
-                        onClick={(e) => { this.props.history.push("/address");}}
+                    <Query
+                        query={GET_CUSTOMER_BY_OPENID}
+                        variables={{openid}}
                     >
-                        收货人:&nbsp;&nbsp;{username}
-                        <Brief>收货地址:&nbsp;&nbsp;{schoolArea[0]}  {schoolArea[1]}  {schoolArea[2]}<br />
-                            {school[0]}  {gradeClass[0]}年级  {gradeClass[1]}班</Brief>
-                    </Item>
+                        {({ loading,error, data }) => {
+                            if (loading) return null;
+                            if (error) return `Error!: ${error}`;
+                            // console.log('UserSubConfirm data',data);
+
+                            let {username,telephone,area,school,grade} = data.customer;
+                            let gClass = data.customer.class;
+
+                            return (
+                                <Item
+                                    thumb={<Icon type="environment-o"  style={{fontSize: 20, color: '#108ee9'}}/>}
+                                    multipleLine
+                                    extra={<Icon type="edit"  style={{fontSize: 20, color: '#108ee9'}}/>}
+                                    onClick={(e) => { this.props.history.push("/address");}}
+                                >
+                                    收货人:&nbsp;&nbsp;{username} <br/>
+                                    <Brief>{telephone}</Brief>
+                                    <Brief>收货地址:&nbsp;&nbsp;{area["province"]} {area["city"]} {area["district"]}<br />
+                                        {school["name"]}  {grade}年级  {gClass}班</Brief>
+                                </Item>
+                            );
+                        }}
+                    </Query>
                     <div className="list" style={{justifyContent: 'flex-end'}}>
                         <span>合计:&nbsp;&nbsp;</span>
                         <span style={{color:"#ff5f16"}}>¥{needPay}</span>

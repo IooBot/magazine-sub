@@ -8,6 +8,7 @@ import 'antd/lib/icon/style/css';
 
 import SubPage from '../SubPage/SubPage.jsx';
 import UserPage from '../UserPage/UserPage.jsx';
+import {setCookie} from "../BasicInfo/BindWechat.jsx";
 
 export default class HomePage extends Component{
     constructor(props){
@@ -72,6 +73,7 @@ export default class HomePage extends Component{
         let {index,tab}  = this.getHash();
         // let openid =  getCookie("wechat_openid");
         let openid =  '12345';
+        setCookie("wechat_openid",openid);
 
         return(
             <div id="homePage">
@@ -81,7 +83,7 @@ export default class HomePage extends Component{
                                  onPress={() => {this.changeTab("订阅");window.location.hash = 'index=1'}}
                                  icon={<Icon type="home" />} selectedIcon={<Icon type="home" style={{color: '#ff5f16'}}/>}
                                  selected={index === "1"}>
-                        <SubPage />
+                        <SubPage openid={openid} />
                     </TabBar.Item>
                     <TabBar.Item title="我的" key="person"
                                  onPress={() => {this.changeTab("我的");window.location.hash = `index=2&tab=${tab}`}}

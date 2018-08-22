@@ -7,9 +7,6 @@ import { getCookie } from "../BasicInfo/BindWechat.jsx";
 import UserSubConfirm from './UserSubConfirm.jsx';
 
 export default class UserPayPage extends Component{
-    // constructor(props){
-    //     super(props);
-    // }
 
     componentWillMount(){
         document.title = '支付页面'
@@ -29,16 +26,12 @@ export default class UserPayPage extends Component{
     };
 
     render(){
-        let openid =  getCookie("wechat_openid") || "12345";
+        let openid =  getCookie("wechat_openid");
         console.log('openid',openid);
-        // let {openid} = this.props;
 
-        let search = this.props.location.search;
-        let [a,b,c] = search.split("&");
-        let magazineId = a.substr(a.indexOf("=")+1);
-        let magazine = b.substr(b.indexOf("=")+1);
-        let unitPrice = c.substr(c.indexOf("=")+1);
-        let subMagazine = decodeURI(magazine);
+        let magazineId = sessionStorage.getItem("magazineId");
+        let subMagazine = sessionStorage.getItem("subMagazine");
+        let unitPrice = sessionStorage.getItem("unitPrice");
         console.log("magazineId",magazineId,'subMagazine',subMagazine,"unitPrice",unitPrice);
 
         return(

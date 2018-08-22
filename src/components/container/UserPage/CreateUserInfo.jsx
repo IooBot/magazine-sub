@@ -32,10 +32,10 @@ class CreateUserInfo extends Component{
     }
 
     saveUserInput = (e,openid,updateCustomer) => {
-        let {username,telephone,area,gradeClass} = this.props;
+        let {username,telephone,area,school,gradeClass} = this.props;
         let area_name = this.state.area_name || area["name"];
         let telephone1 = this.state.telephone || telephone;
-        let school_name = this.state.school_name;
+        let school_name = this.state.school_name || school["name"];
         let username1 = this.state.username || username;
         let gradeClass1 = this.state.gradeClass || gradeClass;
         // 去除空格
@@ -48,10 +48,8 @@ class CreateUserInfo extends Component{
             console.log("grade",gradeClass1[0],"class",gradeClass1[1]);
             updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],isAdmin:false,openid,school_name,telephone:telephone2,username:username2 }});
 
-            // this.props.history.push("/pay");
-            // 关闭新建地址modal 开启确认购买modal
-            //  this.props.closeModal('modal1');
-            //  this.props.showModal(e,'modal2');
+            this.props.history.push("/pay");
+
         }else if(!username1){
             Toast.info('请输入姓名！');
         }else if(telephone1.length < 11){
@@ -63,7 +61,6 @@ class CreateUserInfo extends Component{
         }else if(!gradeClass){
             Toast.info('请选择班级-年级！');
         }else {
-            // console.log('收货地址还未完善');
             message.warning('收货地址还未完善');
         }
     };
@@ -82,7 +79,12 @@ class CreateUserInfo extends Component{
         let saveButtonDisplay ={'create':'visible','display':'hidden','re-edit':'visible'}[type] ||'hidden';
 
         return(
-            <Mutation mutation={type === 'create' ? CREATE_CUSTOMER:UPDATE_CUSTOMER}>
+            <Mutation mutation={type === 'create' ? CREATE_CUSTOMER:UPDATE_CUSTOMER}
+                      update={(cache, { data:{updateCustomer} }) => {
+                          console.log('updateCustomer update',updateCustomer);
+                          console.log('CREATE_ORDER cache',cache);
+                      }}
+            >
                 {(updateCustomer, { loading, error }) => (
                     <div>
                         <div id="userInput">
