@@ -12,8 +12,8 @@ import 'antd/lib/spin/style/css';
 import Modal from 'antd-mobile/lib/modal/index';
 import 'antd-mobile/lib/modal/style/css';
 
-// import { XMLSign } from '../../../../api/wx.js';
-// let config = require('../../../../api/config.js');
+// import { XMLSign } from '../../../api/wx.js';
+// let config = require('../../../api/config');
 import './userSubPage.css';
 import {GET_ORDER_BY_PROPS,DELETE_ORDER} from '../../graphql/order.js';
 

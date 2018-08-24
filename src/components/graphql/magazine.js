@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const GET_MAGAZINE = gql`
-    query ($openid: String!) {
+    query getMagazine($openid: String!) {
         magazineList:magazine_by_props {
         id
         magazineName:name,

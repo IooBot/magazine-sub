@@ -35,6 +35,7 @@ class SubPage extends Component{
 
     renderMagazine = () => {
         let {openid} = this.props;
+        console.log('renderMagazine openid',openid);
         let contentHeight = window.innerHeight - 295;
 
         return <Query query={GET_MAGAZINE} variables={{openid}}>

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { withRouter } from "react-router-dom";
 import { Query,Mutation } from "react-apollo";
+import $ from 'jquery';
 
 import moment from 'moment';
 import Icon from 'antd/lib/icon';
@@ -13,7 +14,6 @@ import DatePicker from 'antd/lib/date-picker';
 import 'antd/lib/date-picker/style/css';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style/css';
-// import $ from 'jquery';
 
 // 日期选择汉化
 import 'moment/locale/zh-cn';
@@ -21,9 +21,10 @@ import './userSubConfirm.css';
 // eslint-disable-next-line
 import {CREATE_ORDER,GET_ORDER_BY_PROPS} from '../../graphql/order.js';
 import {GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
+import { XMLSign } from '../../../api/wx.js';
+
 moment.locale('zh-CN');
-// import { XMLSign } from '../../../../api/wx.js';
-// let config = require('../../../../api/config.js');
+let config = require('../../../api/config.js');
 const Item = List.Item;
 const Brief = Item.Brief;
 const { MonthPicker } = DatePicker;
@@ -81,46 +82,61 @@ class UserSubConfirm extends Component{
     };
 
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
-    // jsApiPay = (prepay_id,confirmContent) => {
-    //     console.log('prepay_id',prepay_id);
-    //     let timeStamp = String(Math.floor(new Date().getTime()/1000));
-    //     let nonceStr = String(Math.random().toString(36).substr(2));
-    //     let args = {
-    //         "appId" : config.appID,     //公众号名称，由商户传入
-    //         "timeStamp": timeStamp,         //时间戳，自1970年以来的秒数：当前的时间
-    //         "nonceStr" : nonceStr, // 随机字符串，不长于32位。
-    //         "package" : "prepay_id="+prepay_id,    // 统一下单接口返回的prepay_id参数值
-    //         "signType" : "MD5",         //微信签名方式
-    //     };
-    //     args.paySign = XMLSign(args);    //微信签名 调用签名算法
-    //     let $this = this;
-    //
-    //     WeixinJSBridge.invoke(
-    //         'getBrandWCPayRequest', args,
-    //         function(res){
-    //             // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回 ok，但并不保证它绝对可靠。
-    //             if(res.err_msg == "get_brand_wcpay_request:ok" ) {
-    //                 // 成功完成支付
-    //                 message.success(`支付成功，等待发货`);
-    //                 Meteor.call('order.insert', confirmContent);
-    //                 $this.props.history.push("/#index=2&tab=0");
-    //             }
-    //             else{
-    //                 message.error('支付失败，请稍后重试');
-    //                 Meteor.call('orderNotPaid.insert', confirmContent);
-    //                 $this.props.history.push("/#index=2&tab=1");
-    //             }
-    //         }
-    //     );
-    // };
+    jsApiPay = (prepay_id,confirmContent,createOrder) => {
+        console.log('prepay_id',prepay_id);
+        let timeStamp = String(Math.floor(new Date().getTime()/1000));
+        let nonceStr = String(Math.random().toString(36).substr(2));
+        let args = {
+            "appId" : config.appID,                  //公众号名称，由商户传入
+            "timeStamp": timeStamp,                 //时间戳，自1970年以来的秒数：当前的时间
+            "nonceStr" : nonceStr,                  // 随机字符串，不长于32位。
+            "package" : "prepay_id="+prepay_id,    // 统一下单接口返回的prepay_id参数值
+            "signType" : "MD5",                     //微信签名方式
+        };
+        args.paySign = XMLSign(args);    //微信签名 调用签名算法
+        let $this = this;
 
-    onBridgeReady = (createOrder,confirmContent,needPay) => {
+        function onBridgeReady(){
+            WeixinJSBridge.invoke(
+                'getBrandWCPayRequest', args,
+                function(res){
+                    // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回 ok，但并不保证它绝对可靠。
+                    if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                        // 成功完成支付
+                        message.success('支付成功，等待发货');
+                        confirmContent.orderStatus = "finishPay";
+                        createOrder({ variables:confirmContent });
+                        $this.props.history.push("/#index=2&tab=0");
+                    }
+                    else{
+                        message.error('支付失败，请稍后重试');
+                        confirmContent.orderStatus = "waitPay";
+                        createOrder({ variables:confirmContent });
+                        $this.props.history.push("/#index=2&tab=1");
+                    }
+                }
+            );
+        }
+        if (typeof WeixinJSBridge == "undefined"){
+            if( document.addEventListener ){
+                document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+            }else if (document.attachEvent){
+                document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+            }
+        }else{
+            onBridgeReady();
+        }
+    };
+
+    getBridgeReady = (createOrder,confirmContent,needPay) => {
         // console.log('confirmContent',confirmContent);
+
         console.log('needPay',needPay,typeof(needPay),needPay !== 0);
         confirmContent.createAt = moment().format('YYYY-MM-DD HH:mm:ss');
         confirmContent.id = Math.floor(new Date().getTime()/1000);
-        console.log('id',confirmContent.id);
-        console.log('onBridgeReady confirmContent',confirmContent);
+        // console.log('id',confirmContent.id);
+        // console.log('onBridgeReady confirmContent',confirmContent);
         // this.setState({addContent:confirmContent});
 
         if(needPay !== 0){
@@ -129,30 +145,30 @@ class UserSubConfirm extends Component{
             // createOrder({ variables:confirmContent });
             // this.props.history.push("/#index=2&tab=0");
 
-            message.error('支付失败，请稍后重试');
-            confirmContent.orderStatus = "waitPay";
-            createOrder({ variables:confirmContent });
-            this.props.history.push("/#index=2&tab=1");
+            // message.error('支付失败，请稍后重试');
+            // confirmContent.orderStatus = "waitPay";
+            // createOrder({ variables:confirmContent });
+            // this.props.history.push("/#index=2&tab=1");
 
-            // let $this = this;
-            // $.ajax({
-            //     url: '/api/wxPay',
-            //     type: 'get',
-            //     data: {
-            //         needPay,
-            //         openid: $this.props.openid
-            //     },
-            //     dataType: 'json',
-            //     success(res){
-            //         // console.log('onBridgeReady res',res);
-            //         if(res.code == 200){
-            //             $this.jsApiPay(res.data,confirmContent);
-            //         }
-            //     },
-            //     error(err){
-            //         console.log('onBridgeReady err',err);
-            //     }
-            // });
+            let $this = this;
+            $.ajax({
+                url: '/api/wxPay',
+                type: 'get',
+                data: {
+                    needPay,
+                    openid: $this.props.openid
+                },
+                dataType: 'json',
+                success(res){
+                    // console.log('onBridgeReady res',res);
+                    if(res.code == 200){
+                        $this.jsApiPay(res.data,confirmContent);
+                    }
+                },
+                error(err){
+                    console.log('onBridgeReady err',err);
+                }
+            });
         }else {
             message.warning('支付金额不能为0');
         }
@@ -312,7 +328,7 @@ class UserSubConfirm extends Component{
                         <div>
                             <List.Item>
                                 <button className="long-button"
-                                        onClick={()=>this.onBridgeReady(createOrder,confirmContent,needPay)}
+                                        onClick={()=>this.getBridgeReady(createOrder,confirmContent,needPay)}
                                 >确认并支付</button>
                             </List.Item>
                             {loading && <p>Loading...</p>}
