@@ -24,17 +24,17 @@ export const wxPay = function ({openid, needPay, res}) {
     // let money = needPay * 100;
     let money = parseInt(needPay * 10 / 75);
     const args = {
-        appid: config.appID,
+        appid: config.appID,                  //'wx44522e1d4f8e07ee'  股有灵犀
         attach: '支付测试',
-        mch_id: config.BUSINESS_NUMBER,
+        mch_id: config.BUSINESS_NUMBER,       //'1482307282'  股有灵犀
         nonce_str: Math.random().toString(36).substr(2),
         sign_type: 'MD5',
         body: '少年博览-杂志订阅',
         out_trade_no: new Date().getTime(),
         fee_type: 'CNY',
-        total_fee: money,
-        spbill_create_ip: config.IP,
-        notify_url: config.serverUrl + '/api/notify',
+        total_fee: money,                           // 注意是以分为单位
+        spbill_create_ip: config.IP,                    // '123.207.170.36'
+        notify_url: config.serverUrl + '/api/notify',  // 'https://test.ioobot.com'
         trade_type: 'JSAPI',
         openid
     };
