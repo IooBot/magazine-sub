@@ -9,8 +9,8 @@ export const GET_MAGAZINE = gql`
         magazineIntro,
         unitPrice
     }
-        user:customer_by_openid(openid: $openid) {
-        openid
-    }
+#        user:customer_by_openid(openid: $openid) {
+#        openid
+#    }
     }
 `;

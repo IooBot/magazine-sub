@@ -97,7 +97,7 @@ class UserSubConfirm extends Component{
         let $this = this;
 
         function onBridgeReady(){
-            window.WeixinJSBridge.invoke(
+            WeixinJSBridge.invoke(
                 'getBrandWCPayRequest', args,
                 function(res){
                     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回 ok，但并不保证它绝对可靠。
@@ -152,18 +152,18 @@ class UserSubConfirm extends Component{
 
             let $this = this;
             $.ajax({
-                url: '/api/wxPay',
+                url: '/payid',
                 type: 'get',
                 data: {
-                    needPay,
+                    needPay:parseInt(needPay),
                     openid: $this.props.openid
                 },
                 dataType: 'json',
                 success(res){
-                    // console.log('onBridgeReady res',res);
-                    if(res.code === 200){
-                        $this.jsApiPay(res.data,confirmContent);
-                    }
+                    console.log('onBridgeReady res',res);
+                    // if(res.code === 200){
+                        $this.jsApiPay(res,confirmContent);
+                    // }
                 },
                 error(err){
                     console.log('onBridgeReady err',err);

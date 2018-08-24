@@ -38,7 +38,9 @@ class SubPage extends Component{
         console.log('renderMagazine openid',openid);
         let contentHeight = window.innerHeight - 295;
 
-        return <Query query={GET_MAGAZINE} variables={{openid}}>
+        return <Query query={GET_MAGAZINE}
+                      // variables={{openid}}
+        >
             {({ loading, error, data }) => {
                 console.log('data',data);
                 if (loading)
@@ -52,7 +54,8 @@ class SubPage extends Component{
                     </div>;
                 if (error) return <p>Error :(</p>;
 
-                let userExists = data.user ? true : false;
+                // let userExists = data.user ? true : false;
+                let userExists = true ;
                 return data.magazineList.map((magazine, idx) => {
                     let {id,magazineName,picture,magazineIntro,unitPrice} = magazine;
                     return <Card full key={idx}>
