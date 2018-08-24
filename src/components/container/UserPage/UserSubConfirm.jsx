@@ -37,7 +37,7 @@ class UserSubConfirm extends Component{
             startDate:'',
             endDate:'',
             addContent:{}
-        }
+        };
     }
 
     componentWillMount(){
@@ -97,11 +97,11 @@ class UserSubConfirm extends Component{
         let $this = this;
 
         function onBridgeReady(){
-            WeixinJSBridge.invoke(
+            window.WeixinJSBridge.invoke(
                 'getBrandWCPayRequest', args,
                 function(res){
                     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回 ok，但并不保证它绝对可靠。
-                    if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                    if(res.err_msg === "get_brand_wcpay_request:ok" ) {
                         // 成功完成支付
                         message.success('支付成功，等待发货');
                         confirmContent.orderStatus = "finishPay";
@@ -117,7 +117,7 @@ class UserSubConfirm extends Component{
                 }
             );
         }
-        if (typeof WeixinJSBridge == "undefined"){
+        if (typeof window.WeixinJSBridge === "undefined"){
             if( document.addEventListener ){
                 document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
             }else if (document.attachEvent){
@@ -161,7 +161,7 @@ class UserSubConfirm extends Component{
                 dataType: 'json',
                 success(res){
                     // console.log('onBridgeReady res',res);
-                    if(res.code == 200){
+                    if(res.code === 200){
                         $this.jsApiPay(res.data,confirmContent);
                     }
                 },
