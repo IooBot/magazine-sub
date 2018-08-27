@@ -27,7 +27,7 @@ export default class UserPayPage extends Component{
 
     render(){
         let openid =  getCookie("wechat_openid");
-        console.log('openid',openid);
+        console.log('UserPayPage openid',openid);
 
         let magazineId = sessionStorage.getItem("magazineId");
         let subMagazine = sessionStorage.getItem("subMagazine");

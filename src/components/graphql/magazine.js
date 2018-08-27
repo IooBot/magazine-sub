@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const GET_MAGAZINE = gql`
-    query getMagazine($openid: String!) {
+    query getMagazine($openid: String) {
         magazineList:magazine_by_props {
         id
         magazineName:name,
@@ -9,8 +9,9 @@ export const GET_MAGAZINE = gql`
         magazineIntro,
         unitPrice
     }
-#        user:customer_by_openid(openid: $openid) {
-#        openid
-#    }
+        user:customer_by_openid(openid: $openid) {
+            openid
+            username
+    }
     }
 `;

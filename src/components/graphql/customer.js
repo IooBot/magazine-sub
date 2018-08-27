@@ -1,17 +1,7 @@
 import gql from "graphql-tag";
 
-export const CREATE_CUSTOMER = gql`
-    mutation createCustomer($area_name: String!,$class: Int!,$grade: Int!,$isAdmin: Boolean,$openid: String!,$school_name: String!,
-    $telephone: String,$username: String) {
-        customer:create_customer(area_name:$area_name,class:$class,grade:$grade,isAdmin: $isAdmin,openid: $openid,school_name: $school_name,
-            telephone: $telephone,username:$username) {
-            openid,
-        }
-    }
-`;
-
 export const GET_CUSTOMER_BY_OPENID = gql`
-    query getCustomer($openid: String!) {
+    query getCustomer($openid: String) {
         customer:customer_by_openid(openid: $openid) {
             openid,
             username
@@ -32,10 +22,12 @@ export const GET_CUSTOMER_BY_OPENID = gql`
     }
 `;
 
-export const GET_USERNAME_BY_OPENID = gql`
-    query getUsername($openid: String!) {
-        username:customer_by_openid(openid: $openid) {
-            username
+export const CREATE_CUSTOMER = gql`
+    mutation createCustomer($area_name: String!,$class: Int!,$grade: Int!,$isAdmin: Boolean,$openid: String!,$school_name: String!,
+    $telephone: String,$username: String) {
+        customer:create_customer(area_name:$area_name,class:$class,grade:$grade,isAdmin: $isAdmin,openid: $openid,school_name: $school_name,
+            telephone: $telephone,username:$username) {
+            openid,
         }
     }
 `;

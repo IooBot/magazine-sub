@@ -39,7 +39,7 @@ class SubPage extends Component{
         let contentHeight = window.innerHeight - 295;
 
         return <Query query={GET_MAGAZINE}
-                      // variables={{openid}}
+                       variables={{openid}}
         >
             {({ loading, error, data }) => {
                 console.log('data',data);
