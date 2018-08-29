@@ -6,7 +6,7 @@ import 'antd/lib/icon/style/css';
 
 import CreateUserInfo from './CreateUserInfo.jsx';
 import {GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
-import {getCookie} from "../BasicInfo/BindWechat.jsx";
+import {getCookie} from "../../../api/cookie.js";
 
 export default class UserInputPage extends Component{
 
@@ -29,13 +29,13 @@ export default class UserInputPage extends Component{
 
     render(){
         let openid =  getCookie("wechat_openid");
-        console.log('UserInputPage openid',openid);
+        // console.log('UserInputPage openid',openid);
 
         // let search = this.props.location.search;
-        // 注意userExists类型为string
         // let userExists = search.substr(search.indexOf("=")+1);
+        // 注意userExists类型为string
         let userExists =  sessionStorage.getItem("userExists");
-        console.log('UserInputPage userExists',userExists,typeof userExists);
+        // console.log('UserInputPage userExists',userExists,typeof userExists);
 
         if(userExists === 'false'){
             let model1Type = "create";

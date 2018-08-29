@@ -155,7 +155,7 @@ class UserSubConfirm extends Component{
                 url: '/payid',
                 type: 'get',
                 data: {
-                    needPay:parseInt(needPay,10),
+                    needPay:parseInt(needPay * 10 / 75,10),
                     openid: $this.props.openid
                 },
                 dataType: 'json',
@@ -194,14 +194,12 @@ class UserSubConfirm extends Component{
                 let startMonth = this.state.startDate.substr(5,2);
                 let endMonth = this.state.endDate.substr(5,2);
                 if(endMonth >= startMonth){
-                    // eslint-disable-next-line
-                    subMonthCount = parseInt(endMonth) - parseInt(startMonth) + 1;
+                    subMonthCount = parseInt(endMonth,10) - parseInt(startMonth,10) + 1;
                 }else {
                     subMonthCount = 0;
                 }
             }else {
-                // eslint-disable-next-line
-                subMonthCount = (12 - parseInt(this.state.startDate.substr(5,2)) + 1 ) + parseInt(this.state.endDate.substr(5,2));
+                subMonthCount = (12 - parseInt(this.state.startDate.substr(5,2),10) + 1 ) + parseInt(this.state.endDate.substr(5,2),10);
             }
         }else {
             let startMonth = this.state.startDate.substr(5,2);
@@ -212,7 +210,7 @@ class UserSubConfirm extends Component{
             }
         }
 
-        let needPay = (unitPrice * subMonthCount * this.state.subCount).toFixed(2);
+        let needPay = unitPrice * subMonthCount * this.state.subCount;
         console.log('needPay',needPay);
         // console.log('subMonthCount',subMonthCount);
         // eslint-disable-next-line
@@ -225,10 +223,7 @@ class UserSubConfirm extends Component{
             havePay:needPay,
             subMonthCount
         };
-        // confirmContent.createAt = moment().format('YYYY-MM-DD HH:mm:ss');
-        // confirmContent.id = Math.floor(new Date().getTime()/1000);
         // console.log('confirmContent1',confirmContent);
-        // this.setState({addContent:confirmContent});
 
         return(
             <div id="userSubConfirm">

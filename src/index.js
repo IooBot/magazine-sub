@@ -9,11 +9,8 @@ import BindWechat from './components/container/BasicInfo/BindWechat.jsx';
 import UserInputPage from "./components/container/UserPage/UserInputPage.jsx";
 import UserPayPage from "./components/container/UserPage/UserPayPage.jsx";
 import './main.css';
-import UserSubPage from "./components/container/UserPage/UserSubPage.jsx";
 
-import { getCookie } from './components/container/BasicInfo/BindWechat.jsx';
-import {appID} from './api/config.js';
-// const config = require('./config.js');
+import { getCookie } from './api/cookie.js';
 
 // eslint-disable-next-line
 const uriArray = [`http://1b56aa4e99084a7693733dc0e26ff49c-cn-shanghai.alicloudapi.com/graphql`,
@@ -68,42 +65,10 @@ class MainApp extends Component{
 
     wechatOauthLogin = () => {
         let openid =  getCookie("wechat_openid");
-        // console.log('wechatOauthLogin',openid);
+        console.log('wechatOauthLogin',openid);
         // console.log('wechatOauthLogin',document.cookie);
         if (!openid) {
-            const uri = document.location.href;
-            const query = uri.query(true);
-            const {code} = query;
-
-            if(code) {
-
-            } else {
-                function generateGetCodeUrl(redirectURL) {
-                    const state = '/';
-                    // const redirectPath = '/bindWechat';
-                    // let redirect_uri = encodeURIComponent(`${serverUrl}${redirectPath}`);
-                    let redirect_uri = encodeURIComponent(redirectURL);
-                    let state1 = encodeURIComponent(state);
-                    // 公众号登录授权
-                    const routing = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appID}`
-                        + `&redirect_uri=${redirect_uri}&response_type=code&scope=snsapi_userinfo&state=${state1}#wechat_redirect`;
-                    return routing;
-                }
-
-                document.location = generateGetCodeUrl(document.location.href);
-            }
-
-            // const state = '/';
-            // const redirectPath = '/bindWechat';
-            //
-            // Meteor.call('Wechat.getCode', redirectPath, state, function(err, res) {
-            //     if (!err) {
-            //         // console.log('res',res);
-            //         window.location.href = res;
-            //     } else {
-            //         message.error(err);
-            //     }
-            // });
+            window.location.href = "http://test.ioobot.com/subscribe";
         }
     };
 
@@ -113,13 +78,12 @@ class MainApp extends Component{
                 <Router>
                     <Switch>
                         <Route exact path="/" render={() => {
-                            // this.wechatOauthLogin();
+                            this.wechatOauthLogin();
                             return <HomePage />;
                         } } />
                         <Route path = '/bindWechat'  component = { BindWechat }/>
                         <Route path = '/address'  component = { UserInputPage }/>
                         <Route path = '/pay'  component = { UserPayPage }/>
-                        <Route path = '/test'  component = { UserSubPage }/>
                     </Switch>
                 </Router>
             </ApolloProvider>

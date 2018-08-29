@@ -8,7 +8,7 @@ import 'antd/lib/icon/style/css';
 
 import SubPage from '../SubPage/SubPage.jsx';
 import UserPage from '../UserPage/UserPage.jsx';
-import {setCookie} from "../BasicInfo/BindWechat.jsx";
+import {getCookie} from "../../../api/cookie.js";
 
 export default class HomePage extends Component{
     constructor(props){
@@ -71,10 +71,10 @@ export default class HomePage extends Component{
 
     render(){
         let {index,tab}  = this.getHash();
-        // let openid =  getCookie("wechat_openid");
+        let openid =  getCookie("wechat_openid");
         // let openid =  '12345';
-        let openid =  'o2fcFv8x3wy5WtcP116S5GzzkgDQ';
-        setCookie("wechat_openid",openid);
+        // let openid =  'o2fcFv8x3wy5WtcP116S5GzzkgDQ';
+        // setCookie("wechat_openid",openid);
 
         return(
             <div id="homePage">

@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 
-import { getCookie } from "../BasicInfo/BindWechat.jsx";
+import { getCookie } from "../../../api/cookie.js";
 import UserSubConfirm from './UserSubConfirm.jsx';
 
 export default class UserPayPage extends Component{
@@ -27,7 +27,7 @@ export default class UserPayPage extends Component{
 
     render(){
         let openid =  getCookie("wechat_openid");
-        console.log('UserPayPage openid',openid);
+        // console.log('UserPayPage openid',openid);
 
         let magazineId = sessionStorage.getItem("magazineId");
         let subMagazine = sessionStorage.getItem("subMagazine");

@@ -54,8 +54,8 @@ class SubPage extends Component{
                     </div>;
                 if (error) return <p>Error :(</p>;
 
-                // let userExists = data.user ? true : false;
-                let userExists = true ;
+                let userExists = data.user ? true : false;
+
                 return data.magazineList.map((magazine, idx) => {
                     let {id,magazineName,picture,magazineIntro,unitPrice} = magazine;
                     return <Card full key={idx}>
