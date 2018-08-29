@@ -17,9 +17,9 @@ class BindWechat extends Component {
         // let codeContent =  location.search.split("&")[0];
         // let code = codeContent.substr(codeContent.indexOf("=")+1);
         // let $this = this;
-        setCookie("wechat_openid","12345",30);
+        setCookie("openid","12345",30);
         // console.log('code',code);
-        console.log('BindWechat openid',getCookie("wechat_openid"));
+        console.log('BindWechat openid',getCookie("openid"));
 
         // 扫码进入注册或登陆
         // if (code) {
@@ -27,9 +27,9 @@ class BindWechat extends Component {
         //         if (err) {
         //             message.error(err);
         //         } else {
-        //             // console.log('wechat_openid', result);
+        //             // console.log('openid', result);
         //             if(result){
-        //                 setCookie("wechat_openid",result,30);
+        //                 setCookie("openid",result,30);
         //                 $this.props.history.push("/");
         //             }else {
         //                 message.error('授权登陆失败，请重新进入');

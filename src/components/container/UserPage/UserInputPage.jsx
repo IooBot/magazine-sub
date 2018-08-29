@@ -28,7 +28,7 @@ export default class UserInputPage extends Component{
     };
 
     render(){
-        let openid =  getCookie("wechat_openid");
+        let openid =  getCookie("openid");
         // console.log('UserInputPage openid',openid);
 
         // let search = this.props.location.search;

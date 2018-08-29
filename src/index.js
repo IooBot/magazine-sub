@@ -64,9 +64,9 @@ const client = new ApolloClient({
 class MainApp extends Component{
 
     wechatOauthLogin = () => {
-        let openid =  getCookie("wechat_openid");
-        console.log('wechatOauthLogin',openid);
-        // console.log('wechatOauthLogin',document.cookie);
+        let openid =  getCookie("openid");
+        console.log('wechatOauthLogin openid',openid);
+        console.log('wechatOauthLogin openid',document.cookie);
         if (!openid) {
             window.location.href = "http://test.ioobot.com/subscribe";
         }
