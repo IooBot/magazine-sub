@@ -84,6 +84,7 @@ class UserSubConfirm extends Component{
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
     jsApiPay = (prepay_id,confirmContent,createOrder) => {
         console.log('prepay_id',prepay_id);
+        console.log('confirmContent',confirmContent);
         let timeStamp = String(Math.floor(new Date().getTime()/1000));
         let nonceStr = String(Math.random().toString(36).substr(2));
         let args = {
@@ -100,6 +101,8 @@ class UserSubConfirm extends Component{
             WeixinJSBridge.invoke(
                 'getBrandWCPayRequest', args,
                 function(res){
+                    console.log('jsApiPay res',res);
+                    console.log('jsApiPay confirmContent',confirmContent);
                     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回 ok，但并不保证它绝对可靠。
                     if(res.err_msg === "get_brand_wcpay_request:ok" ) {
                         // 成功完成支付
@@ -137,7 +140,6 @@ class UserSubConfirm extends Component{
         confirmContent.id = Math.floor(new Date().getTime()/1000);
         // console.log('id',confirmContent.id);
         // console.log('onBridgeReady confirmContent',confirmContent);
-        // this.setState({addContent:confirmContent});
 
         if(needPay !== 0){
             // message.success('支付成功，等待发货');
@@ -162,7 +164,7 @@ class UserSubConfirm extends Component{
                 success(res){
                     console.log('onBridgeReady res',res);
                     // if(res.code === 200){
-                        $this.jsApiPay(res,confirmContent);
+                        $this.jsApiPay(res,confirmContent,createOrder);
                     // }
                 },
                 error(err){

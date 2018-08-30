@@ -164,6 +164,7 @@ class UserNotPaid extends Component{
         return(
             <Query query={GET_ORDER_BY_PROPS} variables={{openid,"orderStatus":"waitPay"}}>
                 {({ loading, error, data, refetch }) => {
+                    console.log("notPaid order data",data);
                     if (loading)
                         return <div style={{width:'100%',height:contentHeight}}>
                             <Spin style={{

@@ -68,6 +68,7 @@ export default class UserSubPage extends Component{
         return(
             <Query query={GET_ORDER_BY_PROPS} variables={{openid,"orderStatus":"finishPay"}}>
                 {({ loading, error, data, refetch }) => {
+                    console.log("subRecord order data",data);
                     if (loading)
                         return <div style={{width:'100%',height:contentHeight}}>
                             <Spin style={{
