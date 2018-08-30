@@ -8,10 +8,10 @@ import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 import List from 'antd-mobile/lib/list/index';
 import 'antd-mobile/lib/list/style/css';
-import Picker from 'antd-mobile/lib/picker/index';
-import 'antd-mobile/lib/picker/style/css';
 import Stepper from 'antd-mobile/lib/stepper/index';
 import 'antd-mobile/lib/stepper/style/css';
+import DatePicker from 'antd/lib/date-picker';
+import 'antd/lib/date-picker/style/css';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style/css';
 
@@ -27,72 +27,58 @@ moment.locale('zh-CN');
 let config = require('../../../api/config.js');
 const Item = List.Item;
 const Brief = Item.Brief;
+const { MonthPicker } = DatePicker;
 
-function changeSubTimeList(subTime) {
-    // eslint-disable-next-line
-    let nowTime = `${new Date().getFullYear()}` + `${new Date().getMonth()+1}`;
-    let res = [],res1 = [];
-    let timeType1 = {label:"全年",value:"1"};   // value为数组[1,2,3,4,5,6,7,8,9,10,11,12],label匹配时无法显示
-    let timeType2 = {label:"上半年",value:"2"};
-    let timeType3 = {label:"下半年",value:"3"};
-
-    subTime.forEach(function(item) {
-        let time1 = `${item}1`;        // 20191
-        let time2 = `${item}7`;        // 20197
-        // 当前时间小于对应杂志订阅时间1月：可订阅时间的全年杂志
-        if(nowTime < time1){
-            res = [timeType1,timeType2,timeType3];
-
-            // 当前时间大于对应杂志订阅时间的1月份并且小于7月份：可订阅时间的下半年
-        }else if(nowTime > time1 && nowTime < time2){
-            res = [timeType3];
-        }
-        if(res.length){
-            res1.push({
-                value: item,
-                label: item,
-                children:res
-            });
-        }
-    });
-    console.log("changeSubTimeList subTimeList",res1);
-    return res1;
-}
-
-class UserSubConfirm extends Component{
+class UserSubConfirmPre extends Component{
     constructor(props){
         super(props);
         this.state = {
             subCount:1,
-            subYear:"",
-            subMonth:"",
-            subTime:"",
-            year_type:[],
+            startDate:'',
+            endDate:'',
             addContent:{}
         };
     }
 
     componentWillMount(){
         // document.title = '个人中心';
-        let subTime = [2017,2018,2019,2020];
-        let year_type = changeSubTimeList(subTime);
-        console.log('year_type',year_type);
+        let startDate = moment().add(1,'month').format('YYYY-MM');
+        let endDate = moment().add(1,'years').format('YYYY-MM');
+        // console.log('startDate',startDate,'endDate',endDate);
 
-        let defaultSubTime = [year_type[0].value,year_type[0].children[0].value];
-        console.log('defaultSubTime',defaultSubTime);
-        let timeValue = this.getTimeValueArray(defaultSubTime[1]);
-        console.log('timeValue',timeValue);
         this.setState({
-            year_type:year_type,
-            subTime:defaultSubTime,
-            subYear:defaultSubTime[0],
-            subMonth:timeValue
+            startDate:startDate,
+            endDate:endDate
         });
     }
 
-    getTimeValueArray = (value) => {
-        let result = {"1":[1,2,3,4,5,6,7,8,9,10,11,12], "2":[1,2,3,4,5,6], "3":[7,8,9,10,11,12]}[value];
-        return result;
+    onChange = (date, dateString,type) => {
+        // console.log(date, dateString);
+
+        if(type === 'start'){
+            this.setState({startDate:dateString});
+        }else {
+            this.setState({endDate:dateString});
+        }
+    };
+
+    disabledDate = (current,type) => {
+        // console.log('current1',current.valueOf());
+        // console.log('current1',new Date(current.valueOf()));
+        // console.log('today end,moment().endOf('day').format());
+
+        // 不同月份 noMonth:Number
+        let noMonth = new Date(current.valueOf()).getMonth()+1;
+
+        if(type === 'start'){
+            // Can not select days before today and today  true:隐藏不可选
+            // console.log('start', current && moment().endOf('day') >= current  || noMonth == 2 || noMonth == 8);
+            // eslint-disable-next-line
+            return current && moment().endOf('day') >= current || noMonth === 2 || noMonth === 8;
+        }else {
+            // eslint-disable-next-line
+            return current && moment().endOf('day') >= current || noMonth === 7 || noMonth === 1;
+        }
     };
 
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
@@ -146,73 +132,101 @@ class UserSubConfirm extends Component{
         }
     };
 
-    // ajax请求后端请求获得prepay_id
-    getBridgeReady = (createOrder,needPay) => {
-        let { openid,magazineId} = this.props;
+    getBridgeReady = (createOrder,confirmContent,needPay) => {
+        // console.log('confirmContent',confirmContent);
 
         console.log('needPay',needPay,typeof(needPay),needPay !== 0);
-
-        let createAt = moment().format('YYYY-MM-DD HH:mm:ss');
-        let id = openid + createAt.replace(/[^0-9]/ig,"");
-        console.log('id',id);
-        const confirmContent = {
-            openid,
-            magazine_id:magazineId,
-            subCount:this.state.subCount,
-            subYear:this.state.subYear,
-            subMonth:this.state.subMonth,
-            subMonthCount:this.state.subMonth.length,
-            havePay:needPay,
-            createAt,
-            id
-        };
-        // Math.floor(new Date().getTime()/1000)
+        confirmContent.createAt = moment().format('YYYY-MM-DD HH:mm:ss');
+        confirmContent.id = Math.floor(new Date().getTime()/1000);
+        // console.log('id',confirmContent.id);
         // console.log('onBridgeReady confirmContent',confirmContent);
 
         if(needPay !== 0){
-            message.success('支付成功，等待发货');
-            confirmContent.orderStatus = "finishPay";
+            // message.success('支付成功，等待发货');
+            // confirmContent.orderStatus = "finishPay";
             // createOrder({ variables:confirmContent });
             // this.props.history.push("/#index=2&tab=0");
-            console.log('onBridgeReady confirmContent',confirmContent);
+
             // message.error('支付失败，请稍后重试');
             // confirmContent.orderStatus = "waitPay";
             // createOrder({ variables:confirmContent });
             // this.props.history.push("/#index=2&tab=1");
 
-            // let $this = this;
-            // $.ajax({
-            //     url: '/payid',
-            //     type: 'get',
-            //     data: {
-            //         needPay:parseInt(needPay * 10 / 75,10),
-            //         openid: $this.props.openid
-            //     },
-            //     dataType: 'json',
-            //     success(res){
-            //         console.log('onBridgeReady res',res);
-            //         // if(res.code === 200){
-            //             $this.jsApiPay(res,confirmContent,createOrder);
-            //         // }
-            //     },
-            //     error(err){
-            //         console.log('onBridgeReady err',err);
-            //     }
-            // });
+            let $this = this;
+            $.ajax({
+                url: '/payid',
+                type: 'get',
+                data: {
+                    needPay:parseInt(needPay * 10 / 75,10),
+                    openid: $this.props.openid
+                },
+                dataType: 'json',
+                success(res){
+                    console.log('onBridgeReady res',res);
+                    // if(res.code === 200){
+                    $this.jsApiPay(res,confirmContent,createOrder);
+                    // }
+                },
+                error(err){
+                    console.log('onBridgeReady err',err);
+                }
+            });
         }else {
             message.warning('支付金额不能为0');
         }
     };
 
     render(){
-        // console.log('year_type',this.state.year_type);
-        // console.log('subYear',this.state.subYear,'subMonth',this.state.subMonth);
-        // console.log('subTime',this.state.subTime);
-        let { openid,subMagazine,unitPrice} = this.props;
-        // console.log('userInfo',openid,subMagazine,unitPrice);
+        // eslint-disable-next-line
+        let { openid,magazineId,subMagazine,unitPrice,username,gradeClass,school,schoolArea} = this.props;
+        // console.log('userInfo',username,gradeClass,school,schoolArea);
+        console.log('userInfo openid',openid,magazineId);
+        let startDate = moment().add(1,'month').format('YYYY-MM');
+        let endDate = moment().add(1,'years').format('YYYY-MM');
+        // console.log('startDate',startDate,'endDate',endDate);
+        // console.log('startDate1',this.state.startDate,'endDate1',this.state.endDate);
 
-        let subMonthCount = this.state.subMonth.length;
+        let subMonthCount;
+
+        if(this.state.endDate){
+            let startYear = this.state.startDate.substr(0,4);
+            let endYear = this.state.endDate.substr(0,4);
+            // console.log('startYear',startYear,'endYear',endYear);
+            if(startYear === endYear){
+                let startMonth = this.state.startDate.substr(5,2);
+                let endMonth = this.state.endDate.substr(5,2);
+                if(endMonth >= startMonth){
+                    subMonthCount = parseInt(endMonth,10) - parseInt(startMonth,10) + 1;
+                }else {
+                    subMonthCount = 0;
+                }
+            }else {
+                subMonthCount = (12 - parseInt(this.state.startDate.substr(5,2),10) + 1 ) + parseInt(this.state.endDate.substr(5,2),10);
+            }
+        }else {
+            let startMonth = this.state.startDate.substr(5,2);
+            if(startMonth === '01' || startMonth === '02'|| startMonth === '07' || startMonth === '08'){
+                subMonthCount = 2;
+            }else {
+                subMonthCount = 1;
+            }
+        }
+
         let needPay = unitPrice * subMonthCount * this.state.subCount;
+        console.log('needPay',needPay);
+        // console.log('subMonthCount',subMonthCount);
+        // eslint-disable-next-line
+        const confirmContent = {
+            openid,
+            magazine_id:magazineId,
+            subCount:this.state.subCount,
+            startDate:this.state.startDate,
+            endDate:this.state.endDate,
+            havePay:needPay,
+            subMonthCount
+        };
+        // console.log('confirmContent1',confirmContent);
+
         return(
             <div id="userSubConfirm">
                 <List renderHeader={() => '订阅'}>
@@ -221,32 +235,33 @@ class UserSubConfirm extends Component{
                         <span>¥{unitPrice}/月</span>
                     </div>
                     <div className="list" style={{border:'none'}}>
-                        <span>选择订阅期限</span>
+                        <span>选择开始-结束期号</span>
                     </div>
-                    <div id="selectSubTime">
-                        <Picker
-                            cols={2}
-                            extra="请选择"
-                            data={this.state.year_type}
-                            title="选择订阅期限"
-                            value={this.state.subTime}
-                            onOk={value => {
-                                console.log('onOk subTime',value);
-                                this.setState({ subTime: value });
-                                let timeValue = this.getTimeValueArray(value[1]);
-                                console.log('onOk timeValue',timeValue);
-                                this.setState({
-                                    subYear:value[0],
-                                    subMonth:timeValue
-                                });
-                            }}
-                        >
-                            <List.Item arrow="horizontal" thumb={<Icon type="book" style={{color:'#108ee9',fontSize:20}}/>}>订阅期限</List.Item>
-                        </Picker>
+                    <div className="list" style={{border:'none'}}>
+                        <span>
+                            <MonthPicker
+                                size="small"
+                                allowClear={false}
+                                defaultValue={moment(startDate, 'YYYY-MM')}
+                                disabledDate={current =>this.disabledDate(current,'start')}
+                                placeholder="开始日期"
+                                onChange={(date, dateString)=>this.onChange(date, dateString,'start')}
+                            />
+                        </span>
+                        <span>&nbsp;—&nbsp;</span>
+                        <span>
+                            <MonthPicker
+                                size="small"
+                                defaultValue={moment(endDate, 'YYYY-MM')}
+                                disabledDate={current=>this.disabledDate(current,'end')}
+                                placeholder="结束日期"
+                                onChange={(date, dateString)=>this.onChange(date, dateString,'end')}
+                            />
+                        </span>
                     </div>
                     <div className="list">
-                        <span style={{color:"#888"}}>1-2月,7-8月为合刊</span>
-                        <span>共<span style={{color:"#108ee9"}}>{this.state.subMonth.length}</span>个月</span>
+                        <span>1-2月,7-8月为合刊</span>
+                        <span>共{subMonthCount}个月</span>
                     </div>
                     <div className="list" >
                         <span style={{alignItems: 'center', display: 'flex',fontSize:'17px'}}>订购数量</span>
@@ -310,7 +325,7 @@ class UserSubConfirm extends Component{
                         <div>
                             <List.Item>
                                 <button className="long-button"
-                                        onClick={()=>this.getBridgeReady(createOrder,needPay)}
+                                        onClick={()=>this.getBridgeReady(createOrder,confirmContent,needPay)}
                                 >确认并支付</button>
                             </List.Item>
                             {loading && <p>Loading...</p>}
@@ -323,10 +338,12 @@ class UserSubConfirm extends Component{
     }
 }
 
-UserSubConfirm.defaultProps = {
+UserSubConfirmPre.defaultProps = {
     username:'',
+    gradeClass:['',''],
     school:[''],
+    schoolArea:['','',''],
     telephone:''
 };
 
-export default withRouter(UserSubConfirm);
+export default withRouter(UserSubConfirmPre);
