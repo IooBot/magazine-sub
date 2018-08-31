@@ -55,7 +55,7 @@ function changeSubTimeList(subTime) {
             });
         }
     });
-    console.log("changeSubTimeList subTimeList",res1);
+    // console.log("changeSubTimeList subTimeList",res1);
     return res1;
 }
 
@@ -72,16 +72,22 @@ class UserSubConfirm extends Component{
         };
     }
 
+    shouldComponentUpdate(nextProps,nextState){
+        console.log('UserSubConfirm shouldComponentUpdate this.props',this.props,nextProps);
+        console.log('UserSubConfirm shouldComponentUpdate this.state',this.state,nextState);
+        return true;
+    }
+
     componentWillMount(){
         // document.title = '个人中心';
         let subTime = [2017,2018,2019,2020];
         let year_type = changeSubTimeList(subTime);
-        console.log('year_type',year_type);
+        // console.log('year_type',year_type);
 
         let defaultSubTime = [year_type[0].value,year_type[0].children[0].value];
-        console.log('defaultSubTime',defaultSubTime);
+        // console.log('defaultSubTime',defaultSubTime);
         let timeValue = this.getTimeValueArray(defaultSubTime[1]);
-        console.log('timeValue',timeValue);
+        // console.log('timeValue',timeValue);
         this.setState({
             year_type:year_type,
             subTime:defaultSubTime,

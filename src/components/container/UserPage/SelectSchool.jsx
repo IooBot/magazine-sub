@@ -91,11 +91,9 @@ class SelectSchool extends Component{
                 {({ loading, error, data }) => {
                     if (loading) return null;
                     if (error) return `Error!: ${error}`;
-                    console.log('SelectSchool data: get schoolList',data);
+                    // console.log('SelectSchool data: get schoolList',data);
                     let schoolList = this.changeSchoolList(data.school);
-                    console.log('schoolList',schoolList);
-
-                    console.log('this.state.school',this.state.school);
+                    // console.log('schoolList',schoolList);
 
                     let school1 = this.state.school || school;
                     console.log('SelectSchool school1',school1,school1[0]);

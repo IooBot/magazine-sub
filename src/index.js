@@ -69,7 +69,7 @@ class MainApp extends Component{
     wechatOauthLogin = () => {
         let openid =  getCookie("openid");
         console.log('wechatOauthLogin openid',openid);
-        console.log('wechatOauthLogin openid',document.cookie);
+        // console.log('wechatOauthLogin openid',document.cookie);
         if (!openid) {
             window.location.href = "http://test.ioobot.com/subscribe";
         }

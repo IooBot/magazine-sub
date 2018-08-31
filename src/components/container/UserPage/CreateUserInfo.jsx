@@ -13,7 +13,7 @@ import 'antd-mobile/lib/list/style/css';
 import 'antd-mobile/lib/input-item/style/css';
 
 import './userInput.css';
-import {CREATE_CUSTOMER,UPDATE_CUSTOMER} from '../../graphql/customer.js';
+import {CREATE_CUSTOMER,UPDATE_CUSTOMER,GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
 import SelectDistrict from './SelectDistrict.jsx';
 import InputUserName from './InputUserName.jsx';
 import InputTelephone from './InputTelephone.jsx';
@@ -48,6 +48,14 @@ class CreateUserInfo extends Component{
             console.log("grade",gradeClass1[0],"class",gradeClass1[1]);
             updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,school_name,telephone:telephone2,username:username2 }});
 
+            // mutate({
+            //     //... insert comment mutation
+            //     refetchQueries: [{
+            //         query: GET_CUSTOMER_BY_OPENID,
+            //         variables:{openid:openid}
+            //     }],
+            // });
+
             this.props.history.push("/pay");
 
         }else if(!username1){
@@ -80,9 +88,10 @@ class CreateUserInfo extends Component{
 
         return(
             <Mutation mutation={type === 'create' ? CREATE_CUSTOMER:UPDATE_CUSTOMER}
-                      update={(cache, { data:{updateCustomer} }) => {
-                          console.log('updateCustomer update',updateCustomer);
+                      update={(cache, { data:{customer} }) => {
+                          console.log('updateCustomer data',customer);
                           console.log('CREATE_ORDER cache',cache);
+
                       }}
             >
                 {(updateCustomer, { loading, error }) => (

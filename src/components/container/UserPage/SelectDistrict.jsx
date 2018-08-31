@@ -75,9 +75,9 @@ class SelectDistrict extends Component{
                 {({ loading, error, data }) => {
                     if (loading) return null;
                     if (error) return `Error!: ${error}`;
-                    console.log('SelectDistrict data: get areaList',data);
+                    // console.log('SelectDistrict data: get areaList',data);
                     let districtData = this.changeAreaList(data.area);
-                    console.log('districtData',districtData);
+                    // console.log('districtData',districtData);
 
                     let userSchoolArea = [area["province"] || "",area["city"] || "",area["name"] || ""];
                     let userSchoolArea1 = this.state.userSchoolArea || userSchoolArea;
