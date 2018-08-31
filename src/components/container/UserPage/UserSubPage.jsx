@@ -22,21 +22,40 @@ export default class UserSubPage extends Component{
     //     console.log('nextProps',nextProps);
     // }
 
+    getSubTime = (subMonthCount,subMonth) => {
+        // console.log('subMonthCount',subMonthCount);
+        // console.log('subMonth',subMonth);
+        let subTime;
+        if(subMonthCount === 12){
+            subTime = "全年";
+        }else if(subMonthCount === 6){
+            if(subMonth[0] === 1){
+                subTime = "上半年";
+            }else {
+                subTime = "下半年";
+            }
+        }
+        // console.log('subTime',subTime);
+        return subTime;
+    };
+
     renderUserOrder = (subRecord) => {
         // console.log('subRecord',subRecord);
 
         return subRecord.map((oder,idx)=>{
-            let {createAt,subCount,havePay,subMonthCount,startDate,endDate,orderStatus} = oder;
+            let {id,createAt,subCount,havePay,subMonthCount,subYear,subMonth,orderStatus} = oder;
+            let subTime = this.getSubTime(subMonthCount,subMonth);
+
             let {magazineName,unitPrice} = oder.magazine;
             // console.log('oder.magazine',oder.magazine);
-            // let {id} = oder;
 
             return <div key={'order'+idx}>
-                {/*{id}*/}
                 <div className="sub-content">
                     <div className="sub-title">
-                        <span>创建时间: {createAt}</span>
-                        <span> </span>
+                        <div>
+                            <span style={{color:'#3e3d3d'}}>订单编号: {id}</span>
+                            <span> </span>
+                        </div>
                     </div>
                     <div className="sub-record">
                         <div>
@@ -44,17 +63,22 @@ export default class UserSubPage extends Component{
                             <span>¥{unitPrice}/月</span>
                         </div>
                         <div style={{color:'#888'}}>
-                            <span>{startDate}至{endDate ? endDate : startDate}</span>
+                            <span style={{color:'#108ee9'}}>{subYear} {subTime}</span>
+                            {/*<span>{startDate}至{endDate ? endDate : startDate}</span>*/}
                             <span>x{subCount}</span>
                         </div>
                         <div>
-                            <span style={{color:'#888'}}>共{subMonthCount}个月</span>
-                            <span>合计:&nbsp;&nbsp;<span style={{color:"#108ee9"}}>¥{havePay}</span></span>
+                            <span> </span>
+                            <span>合计:&nbsp;&nbsp;<span style={{color:"#ff5f16"}}>¥{havePay}</span></span>
                         </div>
                         <div>
+                            <span style={{color:'#888'}}>创建时间: {createAt}</span>
                             <span> </span>
-                            <span style={{color:"#ff5f16"}}>{orderStatus}</span>
                         </div>
+                        {/*<div>*/}
+                            {/*<span> </span>*/}
+                            {/*<span style={{color:"#ff5f16"}}>{orderStatus}</span>*/}
+                        {/*</div>*/}
                     </div>
                 </div>
             </div>

@@ -12,8 +12,8 @@ export const GET_ORDER_BY_PROPS = gql`
             }
             subCount
             subMonthCount
-            startDate
-            endDate
+            subYear
+            subMonth
             havePay
             orderStatus
         }
@@ -21,8 +21,8 @@ export const GET_ORDER_BY_PROPS = gql`
 `;
 
 export const CREATE_ORDER = gql`
-    mutation createOrder($id:Int!,$magazine_id:String,$openid:String,$subCount:Int,$subMonthCount:Int,
-    $havePay:Float,$startDate:String,$endDate:String,$createAt:String,$orderStatus:String){
+    mutation createOrder($id:String!,$magazine_id:String,$openid:String,$subCount:Int,$subMonthCount:Int,
+    $havePay:Float,$subYear:String,$subMonth:[Int],$createAt:String,$orderStatus:String){
         createOrder:create_order (
             id:$id
             magazine_id : $magazine_id
@@ -30,8 +30,8 @@ export const CREATE_ORDER = gql`
             subCount : $subCount
             subMonthCount : $subMonthCount
             havePay: $havePay
-            startDate : $startDate
-            endDate: $endDate
+            subYear : $subYear
+            subMonth: $subMonth
             createAt: $createAt
             orderStatus: $orderStatus){
             id
@@ -42,8 +42,8 @@ export const CREATE_ORDER = gql`
             }
             subCount
             subMonthCount
-            startDate
-            endDate
+            subYear
+            subMonth
             havePay
             orderStatus
         }

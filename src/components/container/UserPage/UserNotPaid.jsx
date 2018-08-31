@@ -104,24 +104,43 @@ class UserNotPaid extends Component{
         ]);
     };
 
+    getSubTime = (subMonthCount,subMonth) => {
+        // console.log('subMonthCount',subMonthCount);
+        // console.log('subMonth',subMonth);
+        let subTime;
+        if(subMonthCount === 12){
+            subTime = "全年";
+        }else if(subMonthCount === 6){
+            if(subMonth[0] === 1){
+                subTime = "上半年";
+            }else {
+                subTime = "下半年";
+            }
+        }
+        // console.log('subTime',subTime);
+        return subTime;
+    };
+
     renderUserOrder = (notPaid,refetch) => {
         console.log('renderUserOrder notPaid',notPaid);
 
         let {openid} = this.props;
         return notPaid.map((oder,idx)=>{
-            let {createAt,id:orderId,subCount,havePay,subMonthCount,startDate,endDate} = oder;
-            let {magazineName,unitPrice} = oder.magazine;
-            console.log('idx',idx,"orderId",orderId);
+            let {createAt,id,subCount,havePay,subMonthCount,subYear,subMonth} = oder;
+            let subTime = this.getSubTime(subMonthCount,subMonth);
 
-            // const confirmContent = {openid,orderId,subMagazine:magazineName,subCount,startDate,endDate,unitPrice,havePay:needPay,subMonthCount};
+            let {magazineName,unitPrice} = oder.magazine;
+            console.log('idx',idx,"orderId",id);
+
+            // const confirmContent = {openid,orderId,subMagazine:magazineName,subCount,subYear,subMonth,unitPrice,havePay:needPay,subMonthCount};
             return <div key={'order'+idx}>
                 <Mutation mutation={DELETE_ORDER}>
                     {(deleteOrder, { loading, error }) => (
                         <div>
                             <div className="sub-content">
                                 <div className="sub-title">
-                                    <span>创建时间: {createAt}</span>
-                                    <span onClick={(e)=>this.deleteNotPaidOrder(e,deleteOrder,refetch,openid,orderId)}>
+                                    <span style={{color:'#3e3d3d'}}>订单编号: {id}</span>
+                                    <span onClick={(e)=>this.deleteNotPaidOrder(e,deleteOrder,refetch,openid,id)}>
                                             <Icon type="delete" />
                                         </span>
                                 </div>
@@ -131,15 +150,15 @@ class UserNotPaid extends Component{
                                         <span>¥{unitPrice}/月</span>
                                     </div>
                                     <div style={{color:'#888'}}>
-                                        <span>{startDate}至{endDate ? endDate : startDate}</span>
+                                        <span style={{color:'#108ee9'}}>{subYear} {subTime}</span>
                                         <span>x{subCount}</span>
                                     </div>
                                     <div>
-                                        <span style={{color:'#888'}}>共{subMonthCount}个月</span>
-                                        <span>合计:&nbsp;&nbsp;<span style={{color:"#108ee9"}}>¥{havePay}</span></span>
+                                        <span> </span>
+                                        <span>合计:&nbsp;&nbsp;<span style={{color:"#ff5f16"}}>¥{havePay}</span></span>
                                     </div>
                                     <div>
-                                        <span style={{color:"#ff5f16"}}> </span>
+                                        <span style={{color:'#888'}}>创建时间: {createAt}</span>
                                         <span >
                                                 <button className="color-button" style={{width:'90px',height:'30px'}}
                                                     // onClick={()=>this.onBridgeReady(confirmContent,needPay)}

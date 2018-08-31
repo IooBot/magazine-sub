@@ -95,6 +95,15 @@ class UserSubConfirm extends Component{
         return result;
     };
 
+    getRandomNum = ()=> {
+        // 生成3位随机数
+        let char = '0123456789', num = '';
+        for(let i = 0; i < 3; i++){
+            num += char[Math.floor(char.length*Math.random())]
+        }
+        return num;
+    };
+
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
     jsApiPay = (prepay_id,confirmContent,createOrder) => {
         console.log('prepay_id',prepay_id);
@@ -153,7 +162,7 @@ class UserSubConfirm extends Component{
         console.log('needPay',needPay,typeof(needPay),needPay !== 0);
 
         let createAt = moment().format('YYYY-MM-DD HH:mm:ss');
-        let id = openid + createAt.replace(/[^0-9]/ig,"");
+        let id = createAt.replace(/[^0-9]/ig,"").substr(2)+this.getRandomNum();
         console.log('id',id);
         const confirmContent = {
             openid,
@@ -170,15 +179,16 @@ class UserSubConfirm extends Component{
         // console.log('onBridgeReady confirmContent',confirmContent);
 
         if(needPay !== 0){
-            message.success('支付成功，等待发货');
-            confirmContent.orderStatus = "finishPay";
+            // message.success('支付成功，等待发货');
+            // confirmContent.orderStatus = "finishPay";
             // createOrder({ variables:confirmContent });
             // this.props.history.push("/#index=2&tab=0");
             console.log('onBridgeReady confirmContent',confirmContent);
-            // message.error('支付失败，请稍后重试');
-            // confirmContent.orderStatus = "waitPay";
-            // createOrder({ variables:confirmContent });
-            // this.props.history.push("/#index=2&tab=1");
+
+            message.error('支付失败，请稍后重试');
+            confirmContent.orderStatus = "waitPay";
+            createOrder({ variables:confirmContent });
+            this.props.history.push("/#index=2&tab=1");
 
             // let $this = this;
             // $.ajax({
