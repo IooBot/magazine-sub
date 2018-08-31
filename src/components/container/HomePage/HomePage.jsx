@@ -54,7 +54,6 @@ export default class HomePage extends Component{
     renderTitle = () => {
         let {index} = this.getHash();
         let title = index === '1' ? '订阅':'我的';
-        let isAdmin = this.props.isAdminInfo.isAdmin;
 
         return(
             <div className="tabBar-top">
@@ -62,11 +61,6 @@ export default class HomePage extends Component{
                 </span>
                 <span className="title">{title}</span>
                 <span>
-                    {index === '1' && isAdmin ?
-                        <Link to={{pathname: '/admin' ,state: { isAdmin: isAdmin }}}>
-                            订单统计
-                            <Icon type="right" /></Link>:''
-                    }
                 </span>
             </div>
         )
@@ -107,8 +101,4 @@ export default class HomePage extends Component{
         )
     }
 }
-
-HomePage.defaultProps = {
-    isAdminInfo:{isAdmin:false}
-};
 

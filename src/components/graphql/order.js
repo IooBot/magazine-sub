@@ -50,8 +50,30 @@ export const CREATE_ORDER = gql`
     }
 `;
 
+export const UPDATE_ORDER = gql`
+    mutation updateOrder($id:String!,$openid:String,$orderStatus:String){
+        updateOrder:update_order (
+            id:$id
+            openid :$openid
+            orderStatus: $orderStatus){
+            id
+            createAt
+            magazine {
+                magazineName:name
+                unitPrice
+            }
+            subCount
+            subMonthCount
+            subYear
+            subMonth
+            havePay
+            orderStatus
+        }
+    }
+`;
+
 export const DELETE_ORDER = gql`
-    mutation deleteOrder($id: Int!) {
+    mutation deleteOrder($id: String) {
         delete_order(id: $id)
     }
 `;

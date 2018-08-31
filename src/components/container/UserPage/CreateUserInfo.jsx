@@ -46,7 +46,7 @@ class CreateUserInfo extends Component{
 
         if(username1 && telephone2.length === 11 && school_name && area_name && gradeClass1){
             console.log("grade",gradeClass1[0],"class",gradeClass1[1]);
-            updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],isAdmin:false,openid,school_name,telephone:telephone2,username:username2 }});
+            updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,school_name,telephone:telephone2,username:username2 }});
 
             this.props.history.push("/pay");
 

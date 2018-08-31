@@ -156,13 +156,14 @@ class UserSubConfirm extends Component{
     };
 
     // ajax请求后端请求获得prepay_id
-    getBridgeReady = (createOrder,needPay) => {
+    getBridgeReady = (createOrder,needPay,telephone) => {
         let { openid,magazineId} = this.props;
 
         console.log('needPay',needPay,typeof(needPay),needPay !== 0);
 
         let createAt = moment().format('YYYY-MM-DD HH:mm:ss');
-        let id = createAt.replace(/[^0-9]/ig,"").substr(2)+this.getRandomNum();
+        let tag = telephone.replace(/[^0-9]/ig,"").slice(-4);
+        let id = createAt.replace(/[^0-9]/ig,"").substr(2)+tag;
         console.log('id',id);
         const confirmContent = {
             openid,
@@ -224,63 +225,63 @@ class UserSubConfirm extends Component{
         let subMonthCount = this.state.subMonth.length;
         let needPay = unitPrice * subMonthCount * this.state.subCount;
         return(
-            <div id="userSubConfirm">
-                <List renderHeader={() => '订阅'}>
-                    <div className="list">
-                        <span style={{fontSize:'17px'}}>{subMagazine}</span>
-                        <span>¥{unitPrice}/月</span>
-                    </div>
-                    <div className="list" style={{border:'none'}}>
-                        <span>选择订阅期限</span>
-                    </div>
-                    <div id="selectSubTime">
-                        <Picker
-                            cols={2}
-                            extra="请选择"
-                            data={this.state.year_type}
-                            title="选择订阅期限"
-                            value={this.state.subTime}
-                            onOk={value => {
-                                console.log('onOk subTime',value);
-                                this.setState({ subTime: value });
-                                let timeValue = this.getTimeValueArray(value[1]);
-                                console.log('onOk timeValue',timeValue);
-                                this.setState({
-                                    subYear:value[0],
-                                    subMonth:timeValue
-                                });
-                            }}
-                        >
-                            <List.Item arrow="horizontal" thumb={<Icon type="book" style={{color:'#108ee9',fontSize:20}}/>}>订阅期限</List.Item>
-                        </Picker>
-                    </div>
-                    <div className="list">
-                        <span style={{color:"#888"}}>1-2月,7-8月为合刊</span>
-                        <span>共<span style={{color:"#108ee9"}}>{this.state.subMonth.length}</span>个月</span>
-                    </div>
-                    <div className="list" >
-                        <span style={{alignItems: 'center', display: 'flex',fontSize:'17px'}}>订购数量</span>
-                        <span><Stepper
-                            style={{ width: '100%', minWidth: '100px' }}
-                            showNumber
-                            min={1}
-                            value={this.state.subCount}
-                            onChange={(value)=>this.setState({ subCount:value })}
-                        /></span>
-                    </div>
-                    <Query
-                        query={GET_CUSTOMER_BY_OPENID}
-                        variables={{openid}}
-                    >
-                        {({ loading,error, data }) => {
-                            if (loading) return null;
-                            if (error) return `Error!: ${error}`;
-                            // console.log('UserSubConfirm data',data);
+            <Query
+                query={GET_CUSTOMER_BY_OPENID}
+                variables={{openid}}
+            >
+                {({ loading,error, data }) => {
+                    if (loading) return null;
+                    if (error) return `Error!: ${error}`;
+                    // console.log('UserSubConfirm data',data);
 
-                            let {username,telephone,area,school,grade} = data.customer;
-                            let gClass = data.customer.class;
+                    let {username,telephone,area,school,grade} = data.customer;
+                    let gClass = data.customer.class;
 
-                            return (
+                    return (
+                        <div id="userSubConfirm">
+                            <List renderHeader={() => '订阅'}>
+                                <div className="list">
+                                    <span style={{fontSize:'17px'}}>{subMagazine}</span>
+                                    <span>¥{unitPrice}/月</span>
+                                </div>
+                                <div className="list" style={{border:'none'}}>
+                                    <span>选择订阅期限</span>
+                                </div>
+                                <div id="selectSubTime">
+                                    <Picker
+                                        cols={2}
+                                        extra="请选择"
+                                        data={this.state.year_type}
+                                        title="选择订阅期限"
+                                        value={this.state.subTime}
+                                        onOk={value => {
+                                            console.log('onOk subTime',value);
+                                            this.setState({ subTime: value });
+                                            let timeValue = this.getTimeValueArray(value[1]);
+                                            console.log('onOk timeValue',timeValue);
+                                            this.setState({
+                                                subYear:value[0],
+                                                subMonth:timeValue
+                                            });
+                                        }}
+                                    >
+                                        <List.Item arrow="horizontal" thumb={<Icon type="book" style={{color:'#108ee9',fontSize:20}}/>}>订阅期限</List.Item>
+                                    </Picker>
+                                </div>
+                                <div className="list">
+                                    <span style={{color:"#888"}}>1-2月,7-8月为合刊</span>
+                                    <span>共<span style={{color:"#108ee9"}}>{this.state.subMonth.length}</span>个月</span>
+                                </div>
+                                <div className="list" >
+                                    <span style={{alignItems: 'center', display: 'flex',fontSize:'17px'}}>订购数量</span>
+                                    <span><Stepper
+                                        style={{ width: '100%', minWidth: '100px' }}
+                                        showNumber
+                                        min={1}
+                                        value={this.state.subCount}
+                                        onChange={(value)=>this.setState({ subCount:value })}
+                                    /></span>
+                                </div>
                                 <Item
                                     thumb={<Icon type="environment-o"  style={{fontSize: 20, color: '#108ee9'}}/>}
                                     multipleLine
@@ -292,43 +293,43 @@ class UserSubConfirm extends Component{
                                     <Brief>收货地址:&nbsp;&nbsp;{area["province"]} {area["city"]} {area["district"]}<br />
                                         {school["name"]}  {grade}年级  {gClass}班</Brief>
                                 </Item>
-                            );
-                        }}
-                    </Query>
-                    <div className="list" style={{justifyContent: 'flex-end'}}>
-                        <span>合计:&nbsp;&nbsp;</span>
-                        <span style={{color:"#ff5f16"}}>¥{needPay}</span>
-                    </div>
-                </List>
-                <Mutation mutation={CREATE_ORDER}
-                          update={(cache, { data:{createOrder} }) => {
-                              console.log('createOrder',createOrder);
-                              let {orderStatus} = createOrder;
-                              console.log('orderStatus',orderStatus);
-                              // Read the data from the cache for this query.
-                              const getQuery = { query: GET_ORDER_BY_PROPS,variables: {openid,orderStatus}};
-                              const data = cache.readQuery(getQuery);
-                              console.log('data',data);
-                              // Add our channel from the mutation to the end.
-                              data.orderList.push(createOrder);
-                              // Write the data back to the cache.
-                              cache.writeQuery({ ...getQuery, data });
-                              console.log('CREATE_ORDER cache',cache);
-                          }}
-                >
-                    {(createOrder,{ loading, error }) => (
-                        <div>
-                            <List.Item>
-                                <button className="long-button"
-                                        onClick={()=>this.getBridgeReady(createOrder,needPay)}
-                                >确认并支付</button>
-                            </List.Item>
-                            {loading && <p>Loading...</p>}
-                            {error && <p>Error :( Please try again</p>}
+                                <div className="list" style={{justifyContent: 'flex-end'}}>
+                                    <span>合计:&nbsp;&nbsp;</span>
+                                    <span style={{color:"#ff5f16"}}>¥{needPay}</span>
+                                </div>
+                            </List>
+                            <Mutation mutation={CREATE_ORDER}
+                                      update={(cache, { data:{createOrder} }) => {
+                                          console.log('createOrder',createOrder);
+                                          let {orderStatus} = createOrder;
+                                          console.log('orderStatus',orderStatus);
+                                          // Read the data from the cache for this query.
+                                          const getQuery = { query: GET_ORDER_BY_PROPS,variables: {openid,orderStatus}};
+                                          const data = cache.readQuery(getQuery);
+                                          console.log('data',data);
+                                          // Add our channel from the mutation to the end.
+                                          data.orderList.push(createOrder);
+                                          // Write the data back to the cache.
+                                          cache.writeQuery({ ...getQuery, data });
+                                          console.log('CREATE_ORDER cache',cache);
+                                      }}
+                            >
+                                {(createOrder,{ loading, error }) => (
+                                    <div>
+                                        <List.Item>
+                                            <button className="long-button"
+                                                    onClick={()=>this.getBridgeReady(createOrder,needPay,telephone)}
+                                            >确认并支付</button>
+                                        </List.Item>
+                                        {loading && <p>Loading...</p>}
+                                        {error && <p>Error :( Please try again</p>}
+                                    </div>
+                                )}
+                            </Mutation>
                         </div>
-                    )}
-                </Mutation>
-            </div>
+                    );
+                }}
+            </Query>
         )
     }
 }
