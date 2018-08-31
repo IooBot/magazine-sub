@@ -17,7 +17,7 @@ class SubPage extends Component{
     constructor(props){
         super(props);
         this.state = {
-            data: ['20188916730804', '20188916745673', '20188916738720'],
+            data: this.props.slideshow,
             imgHeight: 176,
             subMagazine:'',
             unitPrice:''
@@ -26,11 +26,12 @@ class SubPage extends Component{
 
     componentDidMount() {
         // simulate img loading
+        // console.log('slideshow',this.props.slideshow);
         setTimeout(() => {
             this.setState({
-                data: ['20188916730804', '20188916745673', '20188916738720'],
+                data: this.props.slideshow,
             });
-        }, 200);
+        }, 1000);
     }
 
     renderMagazine = () => {
@@ -110,12 +111,12 @@ class SubPage extends Component{
                     >
                         {this.state.data.map(val => (
                             <a
-                                key={val}
+                                key={"slideshow"+val.id}
                                 // href="#"
                                 style={{ display: 'inline-block', width: '100%', height: this.state.imgHeight }}
                             >
                                 <img
-                                    src={`http://www.snbl.com.cn/administer/eWebEditor/UploadFile/${val}.jpg`}
+                                    src={val.picture}
                                     alt=""
                                     style={{ width: '100%', verticalAlign: 'top',maxHeight: '300px' }}
                                     onLoad={() => {

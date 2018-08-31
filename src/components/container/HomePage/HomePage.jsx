@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
+import { Query  } from "react-apollo";
 
 import TabBar from 'antd-mobile/lib/tab-bar/index';
 import 'antd-mobile/lib/tab-bar/style/css';
@@ -9,6 +10,8 @@ import 'antd/lib/icon/style/css';
 import SubPage from '../SubPage/SubPage.jsx';
 import UserPage from '../UserPage/UserPage.jsx';
 import {getCookie} from "../../../api/cookie.js";
+
+import {GET_SLIDER_SHOW} from '../../graphql/slideshow.js';
 
 export default class HomePage extends Component{
     constructor(props){
@@ -84,7 +87,14 @@ export default class HomePage extends Component{
                                  onPress={() => {this.changeTab("订阅");window.location.hash = 'index=1'}}
                                  icon={<Icon type="home" />} selectedIcon={<Icon type="home" style={{color: '#ff5f16'}}/>}
                                  selected={index === "1"}>
-                        <SubPage openid={openid} />
+                        <Query query={GET_SLIDER_SHOW}>
+                            {({ loading, error, data }) => {
+                                console.log('data',data);
+                                if (loading) return null;
+                                if (error) return <p>Error :(</p>;
+                                return  <SubPage openid={openid} slideshow={data.slideshow}/>
+                            }}
+                        </Query>
                     </TabBar.Item>
                     <TabBar.Item title="我的" key="person"
                                  onPress={() => {this.changeTab("我的");window.location.hash = `index=2&tab=${tab}`}}
