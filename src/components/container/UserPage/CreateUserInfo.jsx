@@ -91,8 +91,8 @@ class CreateUserInfo extends Component{
                       update={(cache, { data:{customer} }) => {
                           console.log('updateCustomer data',customer);
                           console.log('CREATE_ORDER cache',cache);
-
                       }}
+                      refetchQueries={[{query:GET_CUSTOMER_BY_OPENID, variables:{openid}}]}
             >
                 {(updateCustomer, { loading, error }) => (
                     <div>

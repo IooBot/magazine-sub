@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import  ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
+import { InMemoryCache } from 'apollo-cache-inmemory';
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 
 import HomePage from './components/container/HomePage/HomePage.jsx';
@@ -34,7 +35,7 @@ function getUri(arr) {
     // console.log('uriArray',arr);
     return arr;
 }
-
+const cache = new InMemoryCache();
 // let uri = getUri(uriArray);
 // console.log('uri:',uri[0]);
 const client = new ApolloClient({
@@ -54,7 +55,8 @@ const client = new ApolloClient({
     // uri: "https://9a6ce86a69f849ab99fe5e803339d904.apigw.cn-south-1.huaweicloud.com/graphql",    // 华为云广州
 
     // uri: "http://305d7978.ngrok.io/graphql"
-    uri: "http://localhost:8888/graphql"
+    uri: "http://localhost:8888/graphql",
+    // cache
 });
 
 // eslint-disable-next-line
@@ -81,7 +83,7 @@ class MainApp extends Component{
                 <Router>
                     <Switch>
                         <Route exact path="/" render={() => {
-                            this.wechatOauthLogin();
+                            //this.wechatOauthLogin();
                             return <HomePage />;
                         } } />
                         <Route path = '/bindWechat'  component = { BindWechat }/>
