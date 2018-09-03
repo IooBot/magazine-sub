@@ -59,19 +59,18 @@ class UserNotPaid extends Component{
         );
     };
 
-    onBridgeReady = (updateOrder,refetch,id,needPay) => {
+    onBridgeReady = (updateOrder,id,needPay) => {
         let {openid} = this.props;
 
         const confirmContent = {
             openid,
-            id:id
+            id
         };
 
         message.success('支付成功，等待发货');
         confirmContent.orderStatus = "finishPay";
         console.log('onBridgeReady confirmContent',confirmContent);
         updateOrder({ variables:confirmContent });
-        refetch();
         this.props.history.push("/#index=2&tab=0");
 
         // let $this = this;
@@ -124,6 +123,13 @@ class UserNotPaid extends Component{
     };
 
     renderUserOrder = (notPaid,refetch) => {
+        console.log('notPaid1',notPaid);
+
+        notPaid.sort((a,b)=>{
+            console.log('a',a.createAt,a);
+            console.log('b',b.createAt,b);
+            console.log('b.id - a.id',b.createAt - a.createAt);
+            return b.createAt - a.createAt});
         console.log('renderUserOrder notPaid',notPaid);
 
         let {openid} = this.props;
@@ -167,24 +173,27 @@ class UserNotPaid extends Component{
                                         <span>合计:&nbsp;&nbsp;<span style={{color:"#ff5f16"}}>¥{havePay}</span></span>
                                     </div>
                                     <Mutation mutation={UPDATE_ORDER}
-
+                                              // onCompleted={()=>{
+                                              //     this.props.history.push("/#index=2&tab=0");
+                                              // }}
+                                              refetchQueries={[{query:GET_ORDER_BY_PROPS,variables: {openid,orderStatus:'finishPay'}},
+                                                  {query:GET_ORDER_BY_PROPS,variables: {openid,orderStatus:'waitPay'}}
+                                              ]}
                                     >
                                         {(updateOrder,{ loading, error }) => (
                                             <div>
                                                 <span style={{color:'#888'}}>创建时间: {createAt}</span>
                                                 <span >
-                                                    <button className="color-button" style={{width:'90px',height:'30px'}}
-                                                        onClick={()=>this.onBridgeReady(updateOrder,refetch,id,havePay)}>确认支付</button>
+                                                    <button className="color-button" style={{width:'90px',height:'30px',lineHeight:'20px'}}
+                                                        onClick={()=>this.onBridgeReady(updateOrder,id,havePay)}>确认支付</button>
                                                 </span>
-                                                {loading && <p>Loading...</p>}
-                                                {error && <p>Error :( Please try again</p>}
                                             </div>
                                         )}
                                     </Mutation>
                                 </div>
                             </div>
-                            {loading && <p>Loading...</p>}
-                            {error && <p>Error :( Please try again</p>}
+                            {/*{loading && <p>Loading...</p>}*/}
+                            {/*{error && <p>Error :( Please try again</p>}*/}
                         </div>
                     )}
                 </Mutation>
@@ -197,7 +206,7 @@ class UserNotPaid extends Component{
         let {openid} = this.props;
 
         return(
-            <Query query={GET_ORDER_BY_PROPS} variables={{openid,"orderStatus":"waitPay"}}>
+            <Query query={GET_ORDER_BY_PROPS} variables={{openid,orderStatus:"waitPay"}}>
                 {({ loading, error, data, refetch }) => {
                     console.log("notPaid order data",data);
                     if (loading)
