@@ -95,13 +95,12 @@ class UserNotPaid extends Component{
         // });
     };
 
-    deleteNotPaidOrder = (e,deleteOrder,refetch,openid,orderId) =>{
+    deleteNotPaidOrder = (e,deleteOrder,openid,orderId) =>{
         e.stopPropagation();
         alert("删除订单",<div>确定删除此订单吗？</div>,[
             {text: '取消'},
             {text: '确定', onPress: () => {
                 deleteOrder({ variables:{id:orderId}});
-                refetch();
                 }
             }
         ]);
@@ -137,13 +136,20 @@ class UserNotPaid extends Component{
 
             // const confirmContent = {openid,orderId,subMagazine:magazineName,subCount,subYear,subMonth,unitPrice,havePay:needPay,subMonthCount};
             return <div key={'order'+idx}>
-                <Mutation mutation={DELETE_ORDER}>
+                <Mutation mutation={DELETE_ORDER}
+                          update={(cache, { data }) => {
+                              console.log('UserNotPaid data',data);
+                              console.log('DELETE_ORDER cache',cache);
+                          }}
+                          onCompleted={()=>{refetch();}
+                          }
+                >
                     {(deleteOrder, { loading, error }) => (
                         <div>
                             <div className="sub-content">
                                 <div className="sub-title">
                                     <span style={{color:'#3e3d3d'}}>订单编号: {id}</span>
-                                    <span onClick={(e)=>this.deleteNotPaidOrder(e,deleteOrder,refetch,openid,id)}>
+                                    <span onClick={(e)=>this.deleteNotPaidOrder(e,deleteOrder,openid,id)}>
                                             <Icon type="delete" />
                                         </span>
                                 </div>
