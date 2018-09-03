@@ -58,7 +58,7 @@ class SubPage extends Component{
                 let userExists = data.user ? true : false;
 
                 return data.magazineList.map((magazine, idx) => {
-                    let {id,magazineName,picture,magazineIntro,unitPrice} = magazine;
+                    let {id,magazineName,picture,magazineIntro,unitPrice,enableSub} = magazine;
                     return <Card full key={idx}>
                         <Card.Header
                             thumb={picture}
@@ -81,6 +81,7 @@ class SubPage extends Component{
                                                 sessionStorage.setItem("subMagazine",magazineName);
                                                 sessionStorage.setItem("unitPrice",unitPrice);
                                                 sessionStorage.setItem("userExists",userExists);
+                                                sessionStorage.setItem("magazineEnableSubTime",JSON.stringify(enableSub));
                                                 if(userExists){
                                                     this.props.history.push(`/pay`);
                                                 }else {
