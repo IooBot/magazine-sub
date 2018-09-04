@@ -137,13 +137,16 @@ class UserNotPaid extends Component{
     };
 
     renderUserOrder = (notPaid,refetch) => {
-        // console.log('notPaid',notPaid);
-
-        // notPaid.sort((a,b)=>{return b.id - a.id});
-        // console.log('renderUserOrder notPaid',notPaid);
+        // console.log('notPaid',notPaid,JSON.stringify(notPaid));
+        let sub = JSON.stringify(notPaid);
+        // console.log('sub', sub);
+        let notPaid1 = JSON.parse(sub);
+        // console.log('notPaid1', notPaid1);
+        notPaid1.sort((a,b)=>{return b.id - a.id});
+        // console.log('renderUserOrder notPaid1',notPaid1);
 
         let {openid} = this.props;
-        return notPaid.map((oder,idx)=>{
+        return notPaid1.map((oder,idx)=>{
             let {createAt,id,subCount,havePay,subMonthCount,subYear,subMonth} = oder;
             let subTime = this.getSubTime(subMonthCount,subMonth);
 
@@ -241,7 +244,7 @@ class UserNotPaid extends Component{
                                         <button style={{width:'90px',height:'30px'}}
                                                 onClick={()=>{this.props.changeTab("订阅");
                                                 window.location.hash = 'index=1'}}>
-                                            去逛逛
+                                            去订阅
                                         </button>
                                     </div>
                                 </div>:

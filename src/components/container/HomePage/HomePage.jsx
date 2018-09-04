@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
 import { Query  } from "react-apollo";
 
+import Spin from 'antd/lib/spin';
+import 'antd/lib/spin/style/css';
 import TabBar from 'antd-mobile/lib/tab-bar/index';
 import 'antd-mobile/lib/tab-bar/style/css';
 import Icon from 'antd/lib/icon';
@@ -72,7 +74,7 @@ export default class HomePage extends Component{
         // let openid =  '12345';
         // let openid =  'o2fcFv8x3wy5WtcP116S5GzzkgDQ';
         // setCookie("openid",openid);
-
+        let contentHeight = window.innerHeight - 95;
         return(
             <div id="homePage">
                 {this.renderTitle()}
@@ -84,8 +86,15 @@ export default class HomePage extends Component{
                         <Query query={GET_SLIDER_SHOW}>
                             {({ loading, error, data }) => {
                                 console.log('data',data);
-                                if (loading) return null;
-                                if (error) return <p>Error :(</p>;
+                                if (loading) return <div style={{width:'100%',height:contentHeight}}>
+                                    <Spin style={{
+                                        position: 'relative',
+                                        top: '50%',
+                                        left: '50%',
+                                        transform: 'translate(-50%,-50%)'
+                                    }}/>
+                                </div>;
+                                // if (error) return <p>Error :(</p>;
                                 return  <SubPage openid={openid} slideshow={data.slideshow}/>
                             }}
                         </Query>

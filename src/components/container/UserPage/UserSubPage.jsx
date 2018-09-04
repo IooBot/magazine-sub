@@ -40,11 +40,19 @@ export default class UserSubPage extends Component{
     };
 
     renderUserOrder = (subRecord) => {
-        // console.log('subRecord',subRecord);
-        // subRecord.sort((a,b)=>{return b.id - a.id});
-        // console.log('renderUserOrder subRecord',subRecord);
+        // console.log('subRecord',subRecord, "isArray",subRecord instanceof Array,"isSymbol",typeof subRecord[0].magazine);
+        // console.log(' Object.keys( subRecord[0])',  Object.keys(subRecord[0]));
+        // Object.keys( subRecord[0]).forEach((item)=>{
+        //     console.log(`${item}`,typeof subRecord[0][item])
+        // });
+        let sub = JSON.stringify(subRecord);
+        // console.log('sub', sub);
+        let subRecord1 = JSON.parse(sub);
+        // console.log('subRecord1', subRecord1);
+        subRecord1.sort((a,b)=>{return b.id - a.id});
+        // console.log('renderUserOrder subRecord1',subRecord1);
 
-        return subRecord.map((oder,idx)=>{
+        return subRecord1.map((oder,idx)=>{
             let {id,createAt,subCount,havePay,subMonthCount,subYear,subMonth,orderStatus} = oder;
             let subTime = this.getSubTime(subMonthCount,subMonth);
 
@@ -117,7 +125,7 @@ export default class UserSubPage extends Component{
                                         <button style={{width:'80px',height:'30px'}}
                                                 onClick={()=>{this.props.changeTab("订阅");
                                                 window.location.hash = 'index=1'}}>
-                                            去逛逛
+                                            去订阅
                                         </button>
                                     </div>
                                 </div>:

@@ -51,7 +51,9 @@ class UserInput extends Component{
                     let gradeClass = [grade,data.customer.class];
 
                     return (
-                        <Mutation mutation={UPDATE_CUSTOMER}>
+                        <Mutation mutation={UPDATE_CUSTOMER}
+                                  refetchQueries={[{query:GET_CUSTOMER_BY_OPENID,variables: {openid}}]}
+                        >
                             {(updateCustomer, { loading, error }) => (
                                 <div>
                                     <div id="userInput">
@@ -73,8 +75,8 @@ class UserInput extends Component{
                                             </List.Item>
                                         </div>
                                     </div>
-                                    {loading && <p>Loading...</p>}
-                                    {error && <p>Error :( Please try again</p>}
+                                    {/*{loading && <p>Loading...</p>}*/}
+                                    {/*{error && <p>Error :( Please try again</p>}*/}
                                 </div>
                             )}
                         </Mutation>

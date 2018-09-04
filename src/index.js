@@ -46,7 +46,7 @@ const client = new ApolloClient({
     // uri:`http://76cb2dce45334f819c1889bbdb837f60-cn-shenzhen.alicloudapi.com/graphql`,                // 阿里云mongodb深圳
 
     // uri:`http://service-g5r3bclr-1254337200.ap-beijing.apigateway.myqcloud.com/prepub/graphql`        // 腾讯云北京
-    // uri:`http://service-78nzzy9x-1254337200.ap-beijing.apigateway.myqcloud.com/prepub/graphql`        // 腾讯云北京
+    uri:`http://service-78nzzy9x-1254337200.ap-beijing.apigateway.myqcloud.com/prepub/graphql`        // 腾讯云北京
     // uri:`http://service-jk9ropgr-1254337200.ap-beijing.apigateway.myqcloud.com/prepub/graphql`        // 腾讯云北京
     // uri:`http://service-4v33t8cn-1254337200.ap-shanghai.apigateway.myqcloud.com/prepub/graphql`        // 腾讯云上海
     // uri:`http://service-ci2tk8iu-1254337200.ap-guangzhou.apigateway.myqcloud.com/prepub/graphql`       // 腾讯云广州
@@ -54,8 +54,8 @@ const client = new ApolloClient({
     // uri: "https://7e8ea2a8f79e48ccb2e14be502d8d37e.apigw.cn-north-1.huaweicloud.com/gql",     // 华为云北京 1 min
     // uri: "https://9a6ce86a69f849ab99fe5e803339d904.apigw.cn-south-1.huaweicloud.com/graphql",    // 华为云广州
 
-    // uri: "http://305d7978.ngrok.io/graphql"
-    uri: "http://2026f31d.ngrok.io/graphql",
+    // uri: "http://localhost:8888/graphql"
+    // uri: "http://2026f31d.ngrok.io/graphql",
     // cache
 });
 
