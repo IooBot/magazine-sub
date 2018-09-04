@@ -185,32 +185,32 @@ class UserSubConfirm extends Component{
             // confirmContent.orderStatus = "finishPay";
             // createOrder({ variables:confirmContent });
             // this.props.history.push("/#index=2&tab=0");
-            console.log('onBridgeReady confirmContent',confirmContent);
+            // console.log('onBridgeReady confirmContent',confirmContent);
 
-            message.error('支付失败，请稍后重试');
-            confirmContent.orderStatus = "waitPay";
-            createOrder({ variables:confirmContent });
-            this.props.history.push("/#index=2&tab=1");
+            // message.error('支付失败，请稍后重试');
+            // confirmContent.orderStatus = "waitPay";
+            // createOrder({ variables:confirmContent });
+            // this.props.history.push("/#index=2&tab=1");
 
-            // let $this = this;
-            // $.ajax({
-            //     url: '/payid',
-            //     type: 'get',
-            //     data: {
-            //         needPay:parseInt(needPay * 10 / 75,10),
-            //         openid: $this.props.openid
-            //     },
-            //     dataType: 'json',
-            //     success(res){
-            //         console.log('onBridgeReady res',res);
-            //         // if(res.code === 200){
-            //             $this.jsApiPay(res,confirmContent,createOrder);
-            //         // }
-            //     },
-            //     error(err){
-            //         console.log('onBridgeReady err',err);
-            //     }
-            // });
+            let $this = this;
+            $.ajax({
+                url: '/payid',
+                type: 'get',
+                data: {
+                    needPay:parseInt(needPay * 10 / 75,10),
+                    openid: $this.props.openid
+                },
+                dataType: 'json',
+                success(res){
+                    console.log('onBridgeReady res',res);
+                    // if(res.code === 200){
+                        $this.jsApiPay(res,confirmContent,createOrder);
+                    // }
+                },
+                error(err){
+                    console.log('onBridgeReady err',err);
+                }
+            });
         }else {
             message.warning('支付金额不能为0');
         }

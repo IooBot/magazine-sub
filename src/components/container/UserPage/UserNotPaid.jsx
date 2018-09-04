@@ -28,7 +28,7 @@ class UserNotPaid extends Component{
     // }
 
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
-    jsApiPay = (prepay_id,confirmContent) => {
+    jsApiPay = (prepay_id,confirmContent,updateOrder) => {
         console.log('prepay_id',prepay_id);
         let timeStamp = String(Math.floor(new Date().getTime()/1000));
         let nonceStr = String(Math.random().toString(36).substr(2));
@@ -48,9 +48,10 @@ class UserNotPaid extends Component{
                 // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回 ok，但并不保证它绝对可靠。
                 if(res.err_msg === "get_brand_wcpay_request:ok" ) {
                     // 成功完成支付
-                    message.success(`支付成功，等待发货`);
+                    message.success('支付成功，等待发货');
                     confirmContent.orderStatus = "finishPay";
-                    // $this.props.history.push("/#index=2&tab=0");
+                    updateOrder({ variables:confirmContent });
+                    $this.props.history.push("/#index=2&tab=0");
                 }
                 else{
                     message.error('支付失败，请稍后重试');
@@ -67,31 +68,31 @@ class UserNotPaid extends Component{
             id
         };
 
-        message.success('支付成功，等待发货');
-        confirmContent.orderStatus = "finishPay";
-        console.log('onBridgeReady confirmContent',confirmContent);
-        updateOrder({ variables:confirmContent });
-        this.props.history.push("/#index=2&tab=0");
+        // message.success('支付成功，等待发货');
+        // confirmContent.orderStatus = "finishPay";
+        // console.log('onBridgeReady confirmContent',confirmContent);
+        // updateOrder({ variables:confirmContent });
+        // this.props.history.push("/#index=2&tab=0");
 
-        // let $this = this;
-        // $.ajax({
-        //     url: '/payid',
-        //     type: 'get',
-        //     data: {
-        //         needPay:parseInt(needPay * 10 / 75,10),
-        //         openid: $this.props.openid
-        //     },
-        //     dataType: 'json',
-        //     success(res){
-        //         console.log('onBridgeReady res',res);
-        //         // if(res.code === 200){
-        //         $this.jsApiPay(res,confirmContent,updateOrder);
-        //         // }
-        //     },
-        //     error(err){
-        //         console.log('onBridgeReady err',err);
-        //     }
-        // });
+        let $this = this;
+        $.ajax({
+            url: '/payid',
+            type: 'get',
+            data: {
+                needPay:parseInt(needPay * 10 / 75,10),
+                openid: $this.props.openid
+            },
+            dataType: 'json',
+            success(res){
+                console.log('onBridgeReady res',res);
+                // if(res.code === 200){
+                $this.jsApiPay(res,confirmContent,updateOrder);
+                // }
+            },
+            error(err){
+                console.log('onBridgeReady err',err);
+            }
+        });
     };
 
     deleteNotPaidOrder = (e,deleteOrder,openid,orderId) =>{
