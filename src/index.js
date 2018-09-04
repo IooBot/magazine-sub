@@ -55,7 +55,7 @@ const client = new ApolloClient({
     // uri: "https://9a6ce86a69f849ab99fe5e803339d904.apigw.cn-south-1.huaweicloud.com/graphql",    // 华为云广州
 
     // uri: "http://305d7978.ngrok.io/graphql"
-    uri: "http://localhost:8888/graphql",
+    uri: "http://2026f31d.ngrok.io/graphql",
     // cache
 });
 
@@ -68,12 +68,14 @@ const client = new ApolloClient({
 
 class MainApp extends Component{
 // eslint-disable-next-line
-    wechatOauthLogin = () => {
+    wechatOauthLogin = (history) => {
         let openid =  getCookie("openid");
         console.log('wechatOauthLogin openid',openid);
         // console.log('wechatOauthLogin openid',document.cookie);
         if (!openid) {
-            window.location.href = "http://test.ioobot.com/subscribe";
+            // console.log('history',history);
+            history.push({pathname: '/subscribe'});
+            // window.location.href = "http://test.ioobot.com/subscribe";
         }
     };
 
@@ -82,8 +84,8 @@ class MainApp extends Component{
             <ApolloProvider client={client}>
                 <Router>
                     <Switch>
-                        <Route exact path="/" render={() => {
-                            //this.wechatOauthLogin();
+                        <Route exact path="/" render={({history}) => {
+                            this.wechatOauthLogin(history);
                             return <HomePage />;
                         } } />
                         <Route path = '/bindWechat'  component = { BindWechat }/>

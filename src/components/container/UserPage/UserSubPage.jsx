@@ -41,6 +41,8 @@ export default class UserSubPage extends Component{
 
     renderUserOrder = (subRecord) => {
         // console.log('subRecord',subRecord);
+        // subRecord.sort((a,b)=>{return b.id - a.id});
+        // console.log('renderUserOrder subRecord',subRecord);
 
         return subRecord.map((oder,idx)=>{
             let {id,createAt,subCount,havePay,subMonthCount,subYear,subMonth,orderStatus} = oder;

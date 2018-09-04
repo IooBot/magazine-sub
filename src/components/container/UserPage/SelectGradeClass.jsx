@@ -17,7 +17,7 @@ class SelectGradeClass extends Component{
     }
 
     componentWillReceiveProps(nextProps){
-        console.log('SelectGradeClass componentWillReceiveProps this.props',this.props,nextProps);
+        // console.log('SelectGradeClass componentWillReceiveProps this.props',this.props,nextProps);
         let {schoolType,openid,updateCustomer,getInputContent,herderContent} = this.props;
         if(schoolType !== nextProps.schoolType){
             let grade = 1;

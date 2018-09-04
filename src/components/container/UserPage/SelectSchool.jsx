@@ -23,8 +23,8 @@ class SelectSchool extends Component{
     }
 
     shouldComponentUpdate(nextProps,nextState){
-        console.log('SelectSchool shouldComponentUpdate this.props',this.props,nextProps);
-        console.log('SelectSchool shouldComponentUpdate this.state',this.state,nextState);
+        // console.log('SelectSchool shouldComponentUpdate this.props',this.props,nextProps);
+        // console.log('SelectSchool shouldComponentUpdate this.state',this.state,nextState);
         if(nextProps.school !== nextState.school[0]){
             return true;
         }
@@ -32,8 +32,8 @@ class SelectSchool extends Component{
     }
 
     componentWillReceiveProps(nextProps){
-        console.log('SelectSchool componentWillReceiveProps props',this.props,nextProps);
-        console.log('SelectSchool componentWillReceiveProps this.state',this.state);
+        // console.log('SelectSchool componentWillReceiveProps props',this.props,nextProps);
+        // console.log('SelectSchool componentWillReceiveProps this.state',this.state);
 
         let {area_name,gradeClass} = this.props;
         console.log('area_name',area_name,"nextProps.area_name",nextProps.area_name);

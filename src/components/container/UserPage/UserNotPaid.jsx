@@ -123,14 +123,10 @@ class UserNotPaid extends Component{
     };
 
     renderUserOrder = (notPaid,refetch) => {
-        console.log('notPaid1',notPaid);
+        // console.log('notPaid',notPaid);
 
-        notPaid.sort((a,b)=>{
-            console.log('a',a.createAt,a);
-            console.log('b',b.createAt,b);
-            console.log('b.id - a.id',b.createAt - a.createAt);
-            return b.createAt - a.createAt});
-        console.log('renderUserOrder notPaid',notPaid);
+        // notPaid.sort((a,b)=>{return b.id - a.id});
+        // console.log('renderUserOrder notPaid',notPaid);
 
         let {openid} = this.props;
         return notPaid.map((oder,idx)=>{
