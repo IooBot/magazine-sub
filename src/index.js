@@ -74,8 +74,8 @@ class MainApp extends Component{
         // console.log('wechatOauthLogin openid',document.cookie);
         if (!openid) {
             // console.log('history',history);
-            history.push({pathname: '/subscribe'});
-            // window.location.href = "http://test.ioobot.com/subscribe";
+            // history.push({pathname: '/subscribe'});
+            window.location.href = "http://test.ioobot.com/subscribe";
         }
     };
 
