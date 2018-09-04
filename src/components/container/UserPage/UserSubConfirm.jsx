@@ -233,10 +233,20 @@ class UserSubConfirm extends Component{
                 {({ loading,error, data }) => {
                     if (loading) return null;
                     if (error) return `Error!: ${error}`;
-                    // console.log('UserSubConfirm data',data);
+                    console.log('UserSubConfirm data',data);
 
-                    let {username,telephone,area,school,grade} = data.customer;
-                    let gClass = data.customer.class;
+                    let username='',telephone='',area=[],school=[],grade='',gClass='';
+                    if(data.customer){
+                        username = data.customer.username;
+                        telephone = data.customer.telephone;
+                        area = data.customer.area;
+                        school = data.customer.school;
+                        grade = data.customer.grade;
+                        gClass = data.customer.class;
+                    }
+                    // let {username,telephone,area,school,grade} = data.customer;
+                    // console.log('username',username);
+                    // let gClass = data.customer.class;
 
                     return (
                         <div id="userSubConfirm">
@@ -322,8 +332,8 @@ class UserSubConfirm extends Component{
                                                     onClick={()=>this.getBridgeReady(createOrder,needPay,telephone)}
                                             >确认并支付</button>
                                         </List.Item>
-                                        {loading && <p>Loading...</p>}
-                                        {error && <p>Error :( Please try again</p>}
+                                        {/*{loading && <p>Loading...</p>}*/}
+                                        {/*{error && <p>Error :( Please try again</p>}*/}
                                     </div>
                                 )}
                             </Mutation>

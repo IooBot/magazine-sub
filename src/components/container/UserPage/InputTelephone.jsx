@@ -34,7 +34,7 @@ class InputTelephone extends Component{
                 hasError: false,
             });
             // console.log('value1',this.state.telephone);
-            if(herderContent === '收货信息'){
+            if(herderContent === '收货地址'){
                 updateCustomer({ variables: { openid, telephone: value }});
             }else {
                 this.props.getInputContent("telephone",value);

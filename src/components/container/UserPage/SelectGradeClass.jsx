@@ -25,7 +25,7 @@ class SelectGradeClass extends Component{
                 grade = 7;
             }
             this.setState({gradeClass:[grade,1]});
-            if(herderContent === '收货信息'){
+            if(herderContent === '收货地址'){
                 updateCustomer({ variables: { openid, grade, class:1 }});
             }else {
                 getInputContent("gradeClass",[grade,1]);
@@ -90,7 +90,7 @@ class SelectGradeClass extends Component{
                     this.setState({ gradeClass: value });
                     this.props.changeSchoolTypeByGrade(value[0]);
 
-                    if(herderContent === '收货信息'){
+                    if(herderContent === '收货地址'){
                         updateCustomer({ variables: { openid, grade: value[0], class:value[1] }});
                     }else {
                         getInputContent("gradeClass",value);

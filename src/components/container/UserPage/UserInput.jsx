@@ -1,6 +1,4 @@
 import React, {Component} from 'react';
-// import PropTypes from 'prop-types';
-// import { Link } from "react-router-dom";
 import { withRouter } from "react-router-dom";
 import { Query,Mutation } from "react-apollo";
 
@@ -16,35 +14,30 @@ import InputTelephone from './InputTelephone.jsx';
 
 class UserInput extends Component{
 
-    saveUserInput = (e,username) => {
-        // 去除空格
-        const username1 = username ? username.replace(/\s/g, "") :'';
-
-        // console.log('saveUserInput',username1,telephone1,schoolArea,school1,gradeClass);
-
-        if(username1){
-            // Meteor.call('needInput.insert',this.props.openid,username1);
-
-        }
-    };
-
     render(){
-        let {type,openid} = this.props;
-
-        let herderContent={'create':'新建收货地址','display':'收货信息','re-edit':'编辑收货地址'}[type] ||'收货信息';
-        let saveButtonDisplay ={'create':'visible','display':'hidden','re-edit':'visible'}[type] ||'hidden';
+        let {openid} = this.props;
+        let herderContent='收货地址';
 
         return(
             <Query
                 query={GET_CUSTOMER_BY_OPENID}
-                variables={{ openid}}
+                variables={{openid}}
             >
                 {({ loading,error, data }) => {
                     if (loading) return null;
-                    if (error) return `Error!: ${error}`;
+                    // if (error) return `Error!: ${error}`;
                     console.log('UserInput data',data);
                     if(!data.customer){
-                        return '';
+                        return <div className="noSub">
+                            <span> </span>
+                            <div style={{paddingTop:'20px'}}>
+                                <button style={{width:'90px',height:'30px'}}
+                                        onClick={()=>{this.props.changeTab("订阅");
+                                            window.location.hash = 'index=1'}}>
+                                    去订阅
+                                </button>
+                            </div>
+                        </div>;
                     }
 
                     let {username,telephone,area,school,grade} = data.customer;
@@ -69,11 +62,6 @@ class UserInput extends Component{
                                                 updateCustomer={updateCustomer}
                                             />
                                         </List>
-                                        <div style={{visibility:saveButtonDisplay}}>
-                                            <List.Item>
-                                                <button className="long-button" onClick={(e)=> this.saveUserInput(e)}>保存</button>
-                                            </List.Item>
-                                        </div>
                                     </div>
                                     {/*{loading && <p>Loading...</p>}*/}
                                     {/*{error && <p>Error :( Please try again</p>}*/}

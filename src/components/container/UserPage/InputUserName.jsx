@@ -30,7 +30,7 @@ class InputUserName extends Component{
                     onBlur={value => {
                         if(value){
                             this.setState({username:value});
-                            if(herderContent === '收货信息'){
+                            if(herderContent === '收货地址'){
                                 updateCustomer({ variables: { openid, username: value } });
                             }else {
                                 this.props.getInputContent("username",username1)

@@ -101,7 +101,7 @@ class SelectDistrict extends Component{
                                     console.log('userSchoolArea onOk', value);
                                     // console.log('changeArea', value[2]);
 
-                                    if(herderContent === '收货信息'){
+                                    if(herderContent === '收货地址'){
                                         updateCustomer({ variables: { openid, area_name: value[2] } });
                                     }else {
                                         getInputContent("area_name",value[2]);

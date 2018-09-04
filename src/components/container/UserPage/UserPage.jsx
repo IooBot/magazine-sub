@@ -42,7 +42,7 @@ export default class UserPage extends Component{
                 content =  <UserNotPaid openid={openid} changeTab={this.props.changeTab}/>;
                 break;
             case '2':
-                content =  <UserInfoPage openid={openid}/>;
+                content =  <UserInfoPage openid={openid} changeTab={this.props.changeTab}/>;
                 break;
         }
         return(

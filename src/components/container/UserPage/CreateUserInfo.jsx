@@ -33,10 +33,12 @@ class CreateUserInfo extends Component{
 
     saveUserInput = (e,openid,updateCustomer) => {
         let {username,telephone,area,school,gradeClass} = this.props;
+        console.log('username',username);
         let area_name = this.state.area_name || area["name"];
         let telephone1 = this.state.telephone || telephone;
         let school_name = this.state.school_name || school["name"];
         let username1 = this.state.username || username;
+        console.log('username1',username1);
         let gradeClass1 = this.state.gradeClass || gradeClass;
         // 去除空格
         const username2 = username1 ? username1.replace(/\s/g, "") :'';
@@ -44,18 +46,11 @@ class CreateUserInfo extends Component{
 
         console.log('saveUserInput',username2,telephone2,area_name,school_name,gradeClass1);
 
-        if(username1 && telephone2.length === 11 && school_name && area_name && gradeClass1){
+        if(username2 && telephone2.length === 11 && school_name && area_name && gradeClass1){
             console.log("grade",gradeClass1[0],"class",gradeClass1[1]);
             updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,school_name,telephone:telephone2,username:username2 }});
 
-            // mutate({
-            //     //... insert comment mutation
-            //     refetchQueries: [{
-            //         query: GET_CUSTOMER_BY_OPENID,
-            //         variables:{openid:openid}
-            //     }],
-            // });
-
+            sessionStorage.setItem("userExists",true);
             this.props.history.push("/pay");
 
         }else if(!username1){
@@ -83,15 +78,16 @@ class CreateUserInfo extends Component{
         let {type,openid,username,telephone,area,school,gradeClass} = this.props;
 
         console.log('openid',openid);
-        let herderContent={'create':'新建收货地址','display':'收货信息','re-edit':'编辑收货地址'}[type] ||'收货信息';
+        let herderContent={'create':'新建收货地址','display':'收货地址','re-edit':'编辑收货地址'}[type] ||'收货地址';
         let saveButtonDisplay ={'create':'visible','display':'hidden','re-edit':'visible'}[type] ||'hidden';
 
         return(
             <Mutation mutation={type === 'create' ? CREATE_CUSTOMER:UPDATE_CUSTOMER}
                       update={(cache, { data:{customer} }) => {
-                          console.log('updateCustomer data',customer);
-                          console.log('CREATE_ORDER cache',cache);
+                          console.log('CREATE_CUSTOMER data',customer);
+                          console.log('CREATE_CUSTOMER cache',cache);
                       }}
+                      // onCompleted={()=>{ this.props.history.push("/pay");}}
                       refetchQueries={[{query:GET_CUSTOMER_BY_OPENID, variables:{openid}}]}
             >
                 {(updateCustomer, { loading, error }) => (

@@ -88,7 +88,6 @@ class MainApp extends Component{
                             this.wechatOauthLogin(history);
                             return <HomePage />;
                         } } />
-                        <Route path = '/bindWechat'  component = { BindWechat }/>
                         <Route path = '/address'  component = { UserInputPage }/>
                         <Route path = '/pay'  component = { UserPayPage }/>
                     </Switch>

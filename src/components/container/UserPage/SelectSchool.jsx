@@ -109,7 +109,7 @@ class SelectSchool extends Component{
                                     // console.log('onOk school', value);
                                     this.setState({ school: value });
 
-                                    if(herderContent === '收货信息'){
+                                    if(herderContent === '收货地址'){
                                         updateCustomer({ variables: { openid, school_name: value[1]} });
                                     }else {
                                         getInputContent("school_name",value[1]);
