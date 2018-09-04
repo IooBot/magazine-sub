@@ -40,7 +40,7 @@ class UserNotPaid extends Component{
             "package": "prepay_id=" + prepay_id,    // 统一下单接口返回的prepay_id参数值
             "signType": "MD5",         //微信签名方式
         };
-        // args.paySign = XMLSign(args);    //微信签名 调用签名算法
+        args.paySign = XMLSign(args);    //微信签名 调用签名算法
         let $this = this;
 
         function onBridgeReady() {
