@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import  ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
-import { InMemoryCache } from 'apollo-cache-inmemory';
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 
 import HomePage from './components/container/HomePage/HomePage.jsx';
-import BindWechat from './components/container/BasicInfo/BindWechat.jsx';
+// import BindWechat from './components/container/BasicInfo/BindWechat.jsx';
 import UserInputPage from "./components/container/UserPage/UserInputPage.jsx";
 import UserPayPage from "./components/container/UserPage/UserPayPage.jsx";
 import './main.css';
@@ -35,7 +34,7 @@ function getUri(arr) {
     // console.log('uriArray',arr);
     return arr;
 }
-const cache = new InMemoryCache();
+
 // let uri = getUri(uriArray);
 // console.log('uri:',uri[0]);
 const client = new ApolloClient({
@@ -56,7 +55,6 @@ const client = new ApolloClient({
 
     // uri: "http://localhost:8888/graphql"
     // uri: "http://2026f31d.ngrok.io/graphql",
-    // cache
 });
 
 // eslint-disable-next-line
@@ -75,7 +73,7 @@ class MainApp extends Component{
         if (!openid) {
             // console.log('history',history);
             // history.push({pathname: '/subscribe'});
-            window.location.href = "http://test.ioobot.com/subscribe";
+            window.location.href = "http://wechathf.snbl.com.cn/subscribe";
         }
     };
 
