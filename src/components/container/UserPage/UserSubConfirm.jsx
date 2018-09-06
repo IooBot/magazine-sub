@@ -107,8 +107,8 @@ class UserSubConfirm extends Component{
 
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
     jsApiPay = (prepay_id,confirmContent,createOrder) => {
-        console.log('prepay_id',prepay_id);
-        console.log('confirmContent',confirmContent);
+        // console.log('prepay_id',prepay_id);
+        // console.log('confirmContent',confirmContent);
         let timeStamp = String(Math.floor(new Date().getTime()/1000));
         let nonceStr = String(Math.random().toString(36).substr(2));
         let args = {
@@ -160,12 +160,12 @@ class UserSubConfirm extends Component{
     getBridgeReady = (createOrder,needPay,telephone) => {
         let { openid,magazineId} = this.props;
 
-        console.log('needPay',needPay,typeof(needPay),needPay !== 0);
+        // console.log('needPay',needPay,typeof(needPay),needPay !== 0);
 
         let createAt = moment().format('YYYY-MM-DD HH:mm:ss');
         let tag = telephone.replace(/[^0-9]/ig,"").slice(-4);
         let id = createAt.replace(/[^0-9]/ig,"").substr(2)+tag;
-        console.log('id',id);
+        // console.log('id',id);
         const confirmContent = {
             openid,
             magazine_id:magazineId,
@@ -202,7 +202,7 @@ class UserSubConfirm extends Component{
                 },
                 dataType: 'json',
                 success(res){
-                    console.log('onBridgeReady res',res);
+                    // console.log('onBridgeReady res',res);
                     // if(res.code === 200){
                         $this.jsApiPay(res,confirmContent,createOrder);
                     // }
@@ -232,8 +232,8 @@ class UserSubConfirm extends Component{
             >
                 {({ loading,error, data }) => {
                     if (loading) return null;
-                    if (error) return `Error!: ${error}`;
-                    console.log('UserSubConfirm data',data);
+                    // if (error) return `Error!: ${error}`;
+                    // console.log('UserSubConfirm data',data);
 
                     let username='',telephone='',area=[],school=[],grade='',gClass='';
                     if(data.customer){
@@ -311,18 +311,18 @@ class UserSubConfirm extends Component{
                             </List>
                             <Mutation mutation={CREATE_ORDER}
                                       update={(cache, { data:{createOrder} }) => {
-                                          console.log('createOrder',createOrder);
+                                          // console.log('createOrder',createOrder);
                                           let {orderStatus} = createOrder;
-                                          console.log('orderStatus',orderStatus);
+                                          // console.log('orderStatus',orderStatus);
                                           // Read the data from the cache for this query.
                                           const getQuery = { query: GET_ORDER_BY_PROPS,variables: {openid,orderStatus}};
                                           const data = cache.readQuery(getQuery);
-                                          console.log('data',data);
+                                          // console.log('data',data);
                                           // Add our channel from the mutation to the end.
                                           data.orderList.push(createOrder);
                                           // Write the data back to the cache.
                                           cache.writeQuery({ ...getQuery, data });
-                                          console.log('CREATE_ORDER cache',cache);
+                                          // console.log('CREATE_ORDER cache',cache);
                                       }}
                             >
                                 {(createOrder,{ loading, error }) => (

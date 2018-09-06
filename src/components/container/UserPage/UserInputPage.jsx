@@ -54,8 +54,8 @@ export default class UserInputPage extends Component{
                 >
                     {({ loading,error, data }) => {
                         if (loading) return null;
-                        if (error) return `Error!: ${error}`;
-                        console.log('UserInputPage data',data);
+                        // if (error) return `Error!: ${error}`;
+                        // console.log('UserInputPage data',data);
 
                         let model1Type = "re-edit";
                         let {username,telephone,area,school,grade} = data.customer;

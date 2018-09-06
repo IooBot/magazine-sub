@@ -27,12 +27,12 @@ export default class UserPayPage extends Component{
 
     render(){
         let openid =  getCookie("openid");
-        console.log('UserPayPage openid',openid);
+        // console.log('UserPayPage openid',openid);
 
         let magazineId = sessionStorage.getItem("magazineId");
         let subMagazine = sessionStorage.getItem("subMagazine");
         let unitPrice = sessionStorage.getItem("unitPrice");
-        console.log("magazineId",magazineId,'subMagazine',subMagazine,"unitPrice",unitPrice);
+        // console.log("magazineId",magazineId,'subMagazine',subMagazine,"unitPrice",unitPrice);
 
         return(
             <div id="userPayPage">

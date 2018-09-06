@@ -23,8 +23,6 @@ class SelectSchool extends Component{
     }
 
     shouldComponentUpdate(nextProps,nextState){
-        // console.log('SelectSchool shouldComponentUpdate this.props',this.props,nextProps);
-        // console.log('SelectSchool shouldComponentUpdate this.state',this.state,nextState);
         if(nextProps.school !== nextState.school[0]){
             return true;
         }
@@ -32,11 +30,8 @@ class SelectSchool extends Component{
     }
 
     componentWillReceiveProps(nextProps){
-        // console.log('SelectSchool componentWillReceiveProps props',this.props,nextProps);
-        // console.log('SelectSchool componentWillReceiveProps this.state',this.state);
-
         let {area_name,gradeClass} = this.props;
-        console.log('area_name',area_name,"nextProps.area_name",nextProps.area_name);
+        // console.log('area_name',area_name,"nextProps.area_name",nextProps.area_name);
         if(area_name !== nextProps.area_name){
             let type = this.state.grade || gradeClass[0] > 6 ? "中学" : "小学";
             this.setState({school:[type,""]});
@@ -44,7 +39,7 @@ class SelectSchool extends Component{
     }
 
     changeSchoolTypeByGrade = (grade) => {
-        console.log('changeSchoolTypeByGrade grade',grade);
+        // console.log('changeSchoolTypeByGrade grade',grade);
         this.setState({grade:grade});
     };
 
@@ -84,7 +79,7 @@ class SelectSchool extends Component{
     render(){
         // eslint-disable-next-line
         let {herderContent,school,area_name,updateCustomer,openid,gradeClass,getInputContent} = this.props;
-        console.log('SelectSchool area_name',area_name);
+        // console.log('SelectSchool area_name',area_name);
 
         return(
             <Query
@@ -93,13 +88,13 @@ class SelectSchool extends Component{
             >
                 {({ loading, error, data }) => {
                     if (loading) return null;
-                    if (error) return `Error!: ${error}`;
+                    // if (error) return `Error!: ${error}`;
                     // console.log('SelectSchool data: get schoolList',data);
                     let schoolList = this.changeSchoolList(data.school);
                     // console.log('schoolList',schoolList);
 
                     let school1 = this.state.school || school;
-                    console.log('SelectSchool school1',school1,school1[0]);
+                    // console.log('SelectSchool school1',school1,school1[0]);
                     return (
                         <div>
                             <Picker

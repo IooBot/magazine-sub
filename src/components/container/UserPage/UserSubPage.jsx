@@ -102,7 +102,7 @@ export default class UserSubPage extends Component{
         return(
             <Query query={GET_ORDER_BY_PROPS} variables={{openid,"orderStatus":"finishPay"}}>
                 {({ loading, error, data, refetch }) => {
-                    console.log("subRecord order data",data);
+                    // console.log("subRecord order data",data);
                     if (loading)
                         return <div style={{width:'100%',height:contentHeight}}>
                             <Spin style={{
@@ -112,7 +112,7 @@ export default class UserSubPage extends Component{
                                 transform: 'translate(-50%,-50%)'
                             }}/>
                         </div>;
-                    if (error) return `Error! ${error.message}`;
+                    // if (error) return `Error! ${error.message}`;
                     let subRecord = data.orderList;
                     // console.log('subRecord',subRecord,new Date().getTime());
 

@@ -86,7 +86,7 @@ class SelectGradeClass extends Component{
                 extra="请选择"
                 value={gradeClass1}
                 onOk={value => {
-                    console.log('onOk grade',value);
+                    // console.log('onOk grade',value);
                     this.setState({ gradeClass: value });
                     this.props.changeSchoolTypeByGrade(value[0]);
 

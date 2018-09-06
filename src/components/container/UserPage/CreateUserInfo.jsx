@@ -33,21 +33,20 @@ class CreateUserInfo extends Component{
 
     saveUserInput = (e,openid,updateCustomer) => {
         let {username,telephone,area,school,gradeClass} = this.props;
-        console.log('username',username);
+
         let area_name = this.state.area_name || area["name"];
         let telephone1 = this.state.telephone || telephone;
         let school_name = this.state.school_name || school["name"];
         let username1 = this.state.username || username;
-        console.log('username1',username1);
         let gradeClass1 = this.state.gradeClass || gradeClass;
         // 去除空格
         const username2 = username1 ? username1.replace(/\s/g, "") :'';
         const telephone2 = telephone1 ? telephone1.replace(/\s/g, "") :'';
 
-        console.log('saveUserInput',username2,telephone2,area_name,school_name,gradeClass1);
+        // console.log('saveUserInput',username2,telephone2,area_name,school_name,gradeClass1);
 
         if(username2 && telephone2.length === 11 && school_name && area_name && gradeClass1){
-            console.log("grade",gradeClass1[0],"class",gradeClass1[1]);
+            // console.log("grade",gradeClass1[0],"class",gradeClass1[1]);
             updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,school_name,telephone:telephone2,username:username2 }});
 
             sessionStorage.setItem("userExists",true);
@@ -83,11 +82,6 @@ class CreateUserInfo extends Component{
 
         return(
             <Mutation mutation={type === 'create' ? CREATE_CUSTOMER:UPDATE_CUSTOMER}
-                      update={(cache, { data:{customer} }) => {
-                          console.log('CREATE_CUSTOMER data',customer);
-                          console.log('CREATE_CUSTOMER cache',cache);
-                      }}
-                      // onCompleted={()=>{ this.props.history.push("/pay");}}
                       refetchQueries={[{query:GET_CUSTOMER_BY_OPENID, variables:{openid}}]}
             >
                 {(updateCustomer, { loading, error }) => (
@@ -124,8 +118,8 @@ class CreateUserInfo extends Component{
                                 </List.Item>
                             </div>
                         </div>
-                        {loading && <p>Loading...</p>}
-                        {error && <p>Error :( Please try again</p>}
+                        {/*{loading && <p>Loading...</p>}*/}
+                        {/*{error && <p>Error :( Please try again</p>}*/}
                     </div>
                 )}
             </Mutation>

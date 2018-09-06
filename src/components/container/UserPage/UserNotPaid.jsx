@@ -20,13 +20,6 @@ const alert = Modal.alert;
 
 class UserNotPaid extends Component{
 
-    // shouldComponentUpdate(nextProps,nextState){
-    //     if(nextProps){
-    //         console.log('nextProps',nextProps);
-    //         return true;
-    //     }
-    // }
-
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
     jsApiPay = (prepay_id,confirmContent,updateOrder) => {
         console.log('prepay_id', prepay_id);
@@ -97,7 +90,7 @@ class UserNotPaid extends Component{
             },
             dataType: 'json',
             success(res){
-                console.log('onBridgeReady res',res);
+                // console.log('onBridgeReady res',res);
                 // if(res.code === 200){
                 $this.jsApiPay(res,confirmContent,updateOrder);
                 // }
@@ -151,17 +144,12 @@ class UserNotPaid extends Component{
             let subTime = this.getSubTime(subMonthCount,subMonth);
 
             let {magazineName,unitPrice} = oder.magazine;
-            console.log('idx',idx,"orderId",id);
+            // console.log('idx',idx,"orderId",id);
 
             // const confirmContent = {openid,orderId,subMagazine:magazineName,subCount,subYear,subMonth,unitPrice,havePay:needPay,subMonthCount};
             return <div key={'order'+idx}>
                 <Mutation mutation={DELETE_ORDER}
-                          update={(cache, { data }) => {
-                              console.log('UserNotPaid data',data);
-                              console.log('DELETE_ORDER cache',cache);
-                          }}
-                          onCompleted={()=>{refetch();}
-                          }
+                          onCompleted={()=>{refetch();}}
                 >
                     {(deleteOrder, { loading, error }) => (
                         <div>
@@ -221,7 +209,7 @@ class UserNotPaid extends Component{
         return(
             <Query query={GET_ORDER_BY_PROPS} variables={{openid,orderStatus:"waitPay"}}>
                 {({ loading, error, data, refetch }) => {
-                    console.log("notPaid order data",data);
+                    // console.log("notPaid order data",data);
                     if (loading)
                         return <div style={{width:'100%',height:contentHeight}}>
                             <Spin style={{
@@ -231,9 +219,9 @@ class UserNotPaid extends Component{
                                 transform: 'translate(-50%,-50%)'
                             }}/>
                         </div>;
-                    if (error) return `Error! ${error.message}`;
+                    // if (error) return `Error! ${error.message}`;
                     let notPaid = data.orderList;
-                    console.log('notPaid',notPaid,notPaid === [],!notPaid.length);
+                    // console.log('notPaid',notPaid,notPaid === [],!notPaid.length);
 
                     return (
                         <div id="userSubPage">

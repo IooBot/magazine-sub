@@ -76,7 +76,7 @@ class SelectDistrict extends Component{
             <Query query={GET_AREA}>
                 {({ loading, error, data }) => {
                     if (loading) return null;
-                    if (error) return `Error!: ${error}`;
+                    // if (error) return `Error!: ${error}`;
                     // console.log('SelectDistrict data: get areaList',data);
                     let districtData = this.changeAreaList(data.area);
                     // console.log('districtData',districtData);
@@ -85,7 +85,7 @@ class SelectDistrict extends Component{
                     let userSchoolArea1 = this.state.userSchoolArea || userSchoolArea;
 
                     let userSchoolDistrict = this.state.userSchoolDistrict || area["name"] ;
-                    console.log('userSchoolDistrict',area["name"],userSchoolDistrict);
+                    // console.log('userSchoolDistrict',area["name"],userSchoolDistrict);
 
                     let school1 = [school.type ,school.name];
                     // console.log('SelectDistrict school1',school1);
@@ -100,7 +100,7 @@ class SelectDistrict extends Component{
                                 })}
                                 onOk={(value) => {
                                     this.setState({ userSchoolArea: value, userSchoolDistrict:value[2]  });
-                                    console.log('userSchoolArea onOk', value);
+                                    // console.log('userSchoolArea onOk', value);
                                     // console.log('changeArea', value[2]);
 
                                     if(herderContent === '收货地址'){
