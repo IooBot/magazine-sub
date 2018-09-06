@@ -43,7 +43,7 @@ class SubPage extends Component{
                        variables={{openid}}
         >
             {({ loading, error, data }) => {
-                console.log('data',data);
+                // console.log('data',data);
                 if (loading)
                     return <div style={{width:'100%',height:contentHeight}}>
                         <Spin style={{

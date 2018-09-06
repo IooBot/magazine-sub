@@ -29,7 +29,6 @@ export default class UserPage extends Component{
     render(){
         let contentHeight = window.innerHeight - 138.5;
         let {openid} = this.props;
-        console.log("UserPage openid",openid);
         let tab = this.state.tab;
 
         let content;

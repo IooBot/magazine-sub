@@ -82,7 +82,7 @@ export default class HomePage extends Component{
                                  selected={index === "1"}>
                         <Query query={GET_SLIDER_SHOW}>
                             {({ loading, error, data }) => {
-                                console.log('data',data);
+                                // console.log('data',data);
                                 if (loading) return <div style={{width:'100%',height:contentHeight}}>
                                     <Spin style={{
                                         position: 'relative',

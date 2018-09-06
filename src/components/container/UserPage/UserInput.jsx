@@ -26,7 +26,7 @@ class UserInput extends Component{
                 {({ loading,error, data }) => {
                     if (loading) return null;
                     // if (error) return `Error!: ${error}`;
-                    console.log('UserInput data',data);
+                    // console.log('UserInput data',data);
                     if(!data.customer){
                         return <div className="noSub">
                             <span> </span>

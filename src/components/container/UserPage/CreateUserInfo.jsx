@@ -76,7 +76,6 @@ class CreateUserInfo extends Component{
     render(){
         let {type,openid,username,telephone,area,school,gradeClass} = this.props;
 
-        console.log('openid',openid);
         let herderContent={'create':'新建收货地址','display':'收货地址','re-edit':'编辑收货地址'}[type] ||'收货地址';
         let saveButtonDisplay ={'create':'visible','display':'hidden','re-edit':'visible'}[type] ||'hidden';
 
