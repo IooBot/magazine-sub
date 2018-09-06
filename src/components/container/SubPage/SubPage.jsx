@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import { withRouter } from "react-router-dom";
-// import PropTypes from 'prop-types';
 import { Query  } from "react-apollo";
 
 import Spin from 'antd/lib/spin';
@@ -26,7 +25,6 @@ class SubPage extends Component{
 
     componentDidMount() {
         // simulate img loading
-        // console.log('slideshow',this.props.slideshow);
         setTimeout(() => {
             this.setState({
                 data: this.props.slideshow,
@@ -36,7 +34,6 @@ class SubPage extends Component{
 
     renderMagazine = () => {
         let {openid} = this.props;
-        // console.log('renderMagazine openid',openid);
         let contentHeight = window.innerHeight - 295;
 
         return <Query query={GET_MAGAZINE}
@@ -53,7 +50,7 @@ class SubPage extends Component{
                             transform: 'translate(-50%,-50%)'
                         }}/>
                     </div>;
-                if (error) return <p>Error :(</p>;
+                // if (error) return <p>Error :(</p>;
 
                 let userExists = data.user ? true : false;
 

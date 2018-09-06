@@ -16,12 +16,6 @@ export default class UserSubPage extends Component{
         };
     }
 
-    // componentWillReceiveProps(nextProps) {
-    //     // we don't resubscribe on changed props, because it never happens in our app
-    //     console.log('this.props',this.props);
-    //     console.log('nextProps',nextProps);
-    // }
-
     getSubTime = (subMonthCount,subMonth) => {
         // console.log('subMonthCount',subMonthCount);
         // console.log('subMonth',subMonth);

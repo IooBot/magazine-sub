@@ -159,13 +159,11 @@ class UserSubConfirm extends Component{
     // ajax请求后端请求获得prepay_id
     getBridgeReady = (createOrder,needPay,telephone) => {
         let { openid,magazineId} = this.props;
-
         // console.log('needPay',needPay,typeof(needPay),needPay !== 0);
 
         let createAt = moment().format('YYYY-MM-DD HH:mm:ss');
         let tag = telephone.replace(/[^0-9]/ig,"").slice(-4);
         let id = createAt.replace(/[^0-9]/ig,"").substr(2)+tag;
-        // console.log('id',id);
         const confirmContent = {
             openid,
             magazine_id:magazineId,
@@ -177,21 +175,8 @@ class UserSubConfirm extends Component{
             createAt,
             id
         };
-        // Math.floor(new Date().getTime()/1000)
-        // console.log('onBridgeReady confirmContent',confirmContent);
 
         if(needPay !== 0){
-            // message.success('支付成功，等待发货');
-            // confirmContent.orderStatus = "finishPay";
-            // createOrder({ variables:confirmContent });
-            // this.props.history.push("/#index=2&tab=0");
-            // console.log('onBridgeReady confirmContent',confirmContent);
-
-            // message.error('支付失败，请稍后重试');
-            // confirmContent.orderStatus = "waitPay";
-            // createOrder({ variables:confirmContent });
-            // this.props.history.push("/#index=2&tab=1");
-
             let $this = this;
             $.ajax({
                 url: '/payid',
@@ -217,12 +202,7 @@ class UserSubConfirm extends Component{
     };
 
     render(){
-        // console.log('year_type',this.state.year_type);
-        // console.log('subYear',this.state.subYear,'subMonth',this.state.subMonth);
-        // console.log('subTime',this.state.subTime);
         let { openid,subMagazine,unitPrice} = this.props;
-        // console.log('userInfo',openid,subMagazine,unitPrice);
-
         let subMonthCount = this.state.subMonth.length;
         let needPay = unitPrice * subMonthCount * this.state.subCount;
         return(
@@ -244,9 +224,6 @@ class UserSubConfirm extends Component{
                         grade = data.customer.grade;
                         gClass = data.customer.class;
                     }
-                    // let {username,telephone,area,school,grade} = data.customer;
-                    // console.log('username',username);
-                    // let gClass = data.customer.class;
 
                     return (
                         <div id="userSubConfirm">

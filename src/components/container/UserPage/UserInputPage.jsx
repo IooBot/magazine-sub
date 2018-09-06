@@ -29,10 +29,6 @@ export default class UserInputPage extends Component{
 
     render(){
         let openid =  getCookie("openid");
-        // console.log('UserInputPage openid',openid);
-
-        // let search = this.props.location.search;
-        // let userExists = search.substr(search.indexOf("=")+1);
         // 注意userExists类型为string
         let userExists =  sessionStorage.getItem("userExists");
         // console.log('UserInputPage userExists',userExists,typeof userExists);
@@ -56,7 +52,6 @@ export default class UserInputPage extends Component{
                         if (loading) return null;
                         // if (error) return `Error!: ${error}`;
                         // console.log('UserInputPage data',data);
-
                         let model1Type = "re-edit";
                         let {username,telephone,area,school,grade} = data.customer;
                         let gradeClass = [grade,data.customer.class];

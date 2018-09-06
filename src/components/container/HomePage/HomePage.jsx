@@ -25,7 +25,6 @@ export default class HomePage extends Component{
 
     componentWillMount(){
         document.title = '少年博览';
-        // console.log('location.hash', location.hash.replace(/[^0-9]/ig,""));
         let index = window.location.hash.replace(/[^0-9]/ig,"").substr(0,1);
         let name={1:'订阅',2:'我的',}[index] ||'订阅';
         this.setState({

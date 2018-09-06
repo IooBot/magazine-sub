@@ -39,14 +39,11 @@ class CreateUserInfo extends Component{
         let school_name = this.state.school_name || school["name"];
         let username1 = this.state.username || username;
         let gradeClass1 = this.state.gradeClass || gradeClass;
-        // 去除空格
+
         const username2 = username1 ? username1.replace(/\s/g, "") :'';
         const telephone2 = telephone1 ? telephone1.replace(/\s/g, "") :'';
 
-        // console.log('saveUserInput',username2,telephone2,area_name,school_name,gradeClass1);
-
         if(username2 && telephone2.length === 11 && school_name && area_name && gradeClass1){
-            // console.log("grade",gradeClass1[0],"class",gradeClass1[1]);
             updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,school_name,telephone:telephone2,username:username2 }});
 
             sessionStorage.setItem("userExists",true);

@@ -44,8 +44,6 @@ class SelectSchool extends Component{
     };
 
     changeSchoolList = (school) => {
-        // console.log('school',school);
-        // console.log('school',JSON.stringify(school));
         let hash = {},i = 0,res = [],res1 = [];
 
         school.forEach(function(item) {
@@ -56,7 +54,6 @@ class SelectSchool extends Component{
             });
         });
         // console.log("Schools are classified by type",res);
-        // console.log("Schools are classified by type",JSON.stringify(res));
         res.forEach(function(item) {
             let {type,name} = item;
             let schoolName = name.map(item => {
@@ -77,9 +74,7 @@ class SelectSchool extends Component{
     };
 
     render(){
-        // eslint-disable-next-line
         let {herderContent,school,area_name,updateCustomer,openid,gradeClass,getInputContent} = this.props;
-        // console.log('SelectSchool area_name',area_name);
 
         return(
             <Query
@@ -91,10 +86,8 @@ class SelectSchool extends Component{
                     // if (error) return `Error!: ${error}`;
                     // console.log('SelectSchool data: get schoolList',data);
                     let schoolList = this.changeSchoolList(data.school);
-                    // console.log('schoolList',schoolList);
-
                     let school1 = this.state.school || school;
-                    // console.log('SelectSchool school1',school1,school1[0]);
+
                     return (
                         <div>
                             <Picker

@@ -22,8 +22,8 @@ class UserNotPaid extends Component{
 
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
     jsApiPay = (prepay_id,confirmContent,updateOrder) => {
-        console.log('prepay_id', prepay_id);
-        console.log('confirmContent', confirmContent);
+        // console.log('prepay_id', prepay_id);
+        // console.log('confirmContent', confirmContent);
         let timeStamp = String(Math.floor(new Date().getTime() / 1000));
         let nonceStr = String(Math.random().toString(36).substr(2));
         let args = {
@@ -68,17 +68,10 @@ class UserNotPaid extends Component{
 
     getBridgeReady = (updateOrder,id,needPay) => {
         let {openid} = this.props;
-
         const confirmContent = {
             openid,
             id
         };
-
-        // message.success('支付成功，等待发货');
-        // confirmContent.orderStatus = "finishPay";
-        // console.log('onBridgeReady confirmContent',confirmContent);
-        // updateOrder({ variables:confirmContent });
-        // this.props.history.push("/#index=2&tab=0");
 
         let $this = this;
         $.ajax({
@@ -113,8 +106,6 @@ class UserNotPaid extends Component{
     };
 
     getSubTime = (subMonthCount,subMonth) => {
-        // console.log('subMonthCount',subMonthCount);
-        // console.log('subMonth',subMonth);
         let subTime;
         if(subMonthCount === 12){
             subTime = "全年";

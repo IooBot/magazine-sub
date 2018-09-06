@@ -56,19 +56,10 @@ const client = new ApolloClient({
     // uri: "http://2026f31d.ngrok.io/graphql",
 });
 
-// eslint-disable-next-line
-/*function getGraphqlUri() {
-    // 固定uri数组，产生随机数获取uri
-    let index = Math.floor((Math.random()*6));
-    return uriArray[index];
-}*/
-
 class MainApp extends Component{
 // eslint-disable-next-line
     wechatOauthLogin = (history) => {
         let openid =  getCookie("openid");
-        // console.log('wechatOauthLogin openid',openid);
-        // console.log('wechatOauthLogin openid',document.cookie);
         if (!openid) {
             // console.log('history',history);
             // history.push({pathname: '/subscribe'});
