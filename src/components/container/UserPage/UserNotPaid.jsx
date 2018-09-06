@@ -132,9 +132,7 @@ class UserNotPaid extends Component{
     renderUserOrder = (notPaid,refetch) => {
         // console.log('notPaid',notPaid,JSON.stringify(notPaid));
         let sub = JSON.stringify(notPaid);
-        // console.log('sub', sub);
         let notPaid1 = JSON.parse(sub);
-        // console.log('notPaid1', notPaid1);
         notPaid1.sort((a,b)=>{return b.id - a.id});
         // console.log('renderUserOrder notPaid1',notPaid1);
 
@@ -144,9 +142,7 @@ class UserNotPaid extends Component{
             let subTime = this.getSubTime(subMonthCount,subMonth);
 
             let {magazineName,unitPrice} = oder.magazine;
-            // console.log('idx',idx,"orderId",id);
 
-            // const confirmContent = {openid,orderId,subMagazine:magazineName,subCount,subYear,subMonth,unitPrice,havePay:needPay,subMonthCount};
             return <div key={'order'+idx}>
                 <Mutation mutation={DELETE_ORDER}
                           onCompleted={()=>{refetch();}}
