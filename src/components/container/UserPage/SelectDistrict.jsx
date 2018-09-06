@@ -24,6 +24,7 @@ class SelectDistrict extends Component{
     }
 
     changeAreaList = (area) => {
+        // console.log('area',area);
         let hash = {},obj = {},i = 0,res = [],res1 = [];
         area.forEach(function(item) {
             let {city,name,district,province} = item;
@@ -35,6 +36,7 @@ class SelectDistrict extends Component{
             });
         });
         // console.log("area are classified by city",res);
+        // console.log("area are classified by city",JSON.stringify(res));
         res.forEach(function(item) {
             let {city,district,province} = item;
             let district1 = district.map(item => {

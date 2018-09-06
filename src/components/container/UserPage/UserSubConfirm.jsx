@@ -197,7 +197,7 @@ class UserSubConfirm extends Component{
                 url: '/payid',
                 type: 'get',
                 data: {
-                    needPay:parseInt(needPay * 10 / 75,10),
+                    needPay:parseInt(needPay * 100,10),
                     openid: $this.props.openid
                 },
                 dataType: 'json',

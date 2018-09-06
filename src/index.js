@@ -73,6 +73,7 @@ class MainApp extends Component{
         if (!openid) {
             // console.log('history',history);
             // history.push({pathname: '/subscribe'});
+            // window.location.href = "http://test.ioobot.com/subscribe";
             window.location.href = "http://wechathf.snbl.com.cn/subscribe";
         }
     };

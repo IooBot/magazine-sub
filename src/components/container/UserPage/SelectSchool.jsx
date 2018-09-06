@@ -49,6 +49,8 @@ class SelectSchool extends Component{
     };
 
     changeSchoolList = (school) => {
+        // console.log('school',school);
+        // console.log('school',JSON.stringify(school));
         let hash = {},i = 0,res = [],res1 = [];
 
         school.forEach(function(item) {
@@ -59,6 +61,7 @@ class SelectSchool extends Component{
             });
         });
         // console.log("Schools are classified by type",res);
+        // console.log("Schools are classified by type",JSON.stringify(res));
         res.forEach(function(item) {
             let {type,name} = item;
             let schoolName = name.map(item => {

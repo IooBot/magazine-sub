@@ -63,16 +63,16 @@ class SelectGradeClass extends Component{
         let startGrade,endGrade,classCount;
         switch(schoolType){
             case '小学':
-                startGrade = 1;endGrade = 6;classCount = 10;
+                startGrade = 1;endGrade = 6;classCount = 30;
                 break;
             case '中学':
-                startGrade = 7;endGrade = 9;classCount = 20;
+                startGrade = 7;endGrade = 9;classCount = 30;
                 break;
             case '中小学':
-                startGrade = 1;endGrade = 9;classCount = 20;
+                startGrade = 1;endGrade = 9;classCount = 30;
                 break;
             default:
-                startGrade = 1;endGrade = 9;classCount = 20;
+                startGrade = 1;endGrade = 9;classCount = 30;
         }
 
         let grade_class = this.getGradeClassArr(startGrade,endGrade,classCount);
