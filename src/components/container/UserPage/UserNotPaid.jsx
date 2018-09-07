@@ -12,30 +12,16 @@ import 'antd/lib/message/style/css';
 import Modal from 'antd-mobile/lib/modal/index';
 import 'antd-mobile/lib/modal/style/css';
 
-import { XMLSign } from '../../../api/wx.js';
 import './userSubPage.css';
 import {GET_ORDER_BY_PROPS,DELETE_ORDER,UPDATE_ORDER} from '../../graphql/order.js';
-let config = require('../../../api/config');
 const alert = Modal.alert;
 
 class UserNotPaid extends Component{
 
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
-    jsApiPay = (prepay_id,confirmContent,updateOrder) => {
-        // console.log('prepay_id', prepay_id);
-        // console.log('confirmContent', confirmContent);
-        let timeStamp = String(Math.floor(new Date().getTime() / 1000));
-        let nonceStr = String(Math.random().toString(36).substr(2));
-        let args = {
-            "appId": config.appID,     //公众号名称，由商户传入
-            "timeStamp": timeStamp,         //时间戳，自1970年以来的秒数：当前的时间
-            "nonceStr": nonceStr, // 随机字符串，不长于32位。
-            "package": "prepay_id=" + prepay_id,    // 统一下单接口返回的prepay_id参数值
-            "signType": "MD5",         //微信签名方式
-        };
-        args.paySign = XMLSign(args);    //微信签名 调用签名算法
+    jsApiPay = (args,confirmContent,updateOrder) => {
+        // console.log('args res', args);
         let $this = this;
-
         function onBridgeReady() {
             WeixinJSBridge.invoke(
                 'getBrandWCPayRequest', args,
@@ -75,7 +61,7 @@ class UserNotPaid extends Component{
 
         let $this = this;
         $.ajax({
-            url: '/payid',
+            url: '/payinfo',
             type: 'get',
             data: {
                 needPay:parseInt(needPay * 100,10),
@@ -84,9 +70,7 @@ class UserNotPaid extends Component{
             dataType: 'json',
             success(res){
                 // console.log('onBridgeReady res',res);
-                // if(res.code === 200){
                 $this.jsApiPay(res,confirmContent,updateOrder);
-                // }
             },
             error(err){
                 console.log('onBridgeReady err',err);

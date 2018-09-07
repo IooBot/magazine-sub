@@ -21,10 +21,7 @@ import './userSubConfirm.css';
 // eslint-disable-next-line
 import {CREATE_ORDER,GET_ORDER_BY_PROPS} from '../../graphql/order.js';
 import {GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
-import { XMLSign } from '../../../api/wx.js';
-
 moment.locale('zh-CN');
-let config = require('../../../api/config.js');
 const Item = List.Item;
 const Brief = Item.Brief;
 
@@ -106,27 +103,15 @@ class UserSubConfirm extends Component{
     };
 
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
-    jsApiPay = (prepay_id,confirmContent,createOrder) => {
-        // console.log('prepay_id',prepay_id);
-        // console.log('confirmContent',confirmContent);
-        let timeStamp = String(Math.floor(new Date().getTime()/1000));
-        let nonceStr = String(Math.random().toString(36).substr(2));
-        let args = {
-            "appId" : config.appID,                  //公众号名称，由商户传入
-            "timeStamp": timeStamp,                 //时间戳，自1970年以来的秒数：当前的时间
-            "nonceStr" : nonceStr,                  // 随机字符串，不长于32位。
-            "package" : "prepay_id="+prepay_id,    // 统一下单接口返回的prepay_id参数值
-            "signType" : "MD5",                     //微信签名方式
-        };
-        args.paySign = XMLSign(args);    //微信签名 调用签名算法
+    jsApiPay = (args,confirmContent,createOrder) => {
+        // console.log('args res',args);
         let $this = this;
-
         function onBridgeReady(){
             WeixinJSBridge.invoke(
                 'getBrandWCPayRequest', args,
                 function(res){
-                    console.log('jsApiPay res',res);
-                    console.log('jsApiPay confirmContent',confirmContent);
+                    // console.log('jsApiPay res',res);
+                    // console.log('jsApiPay confirmContent',confirmContent);
                     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回 ok，但并不保证它绝对可靠。
                     if(res.err_msg === "get_brand_wcpay_request:ok" ) {
                         // 成功完成支付
@@ -179,7 +164,7 @@ class UserSubConfirm extends Component{
         if(needPay !== 0){
             let $this = this;
             $.ajax({
-                url: '/payid',
+                url: '/payinfo',
                 type: 'get',
                 data: {
                     needPay:parseInt(needPay * 100,10),
@@ -188,9 +173,7 @@ class UserSubConfirm extends Component{
                 dataType: 'json',
                 success(res){
                     // console.log('onBridgeReady res',res);
-                    // if(res.code === 200){
-                        $this.jsApiPay(res,confirmContent,createOrder);
-                    // }
+                    $this.jsApiPay(res,confirmContent,createOrder);
                 },
                 error(err){
                     console.log('onBridgeReady err',err);
@@ -243,10 +226,10 @@ class UserSubConfirm extends Component{
                                         title="选择订阅期限"
                                         value={this.state.subTime}
                                         onOk={value => {
-                                            console.log('onOk subTime',value);
+                                            // console.log('onOk subTime',value);
                                             this.setState({ subTime: value });
                                             let timeValue = this.getTimeValueArray(value[1]);
-                                            console.log('onOk timeValue',timeValue);
+                                            // console.log('onOk timeValue',timeValue);
                                             this.setState({
                                                 subYear:value[0],
                                                 subMonth:timeValue
