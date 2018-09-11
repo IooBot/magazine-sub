@@ -1,14 +1,15 @@
 import React, {Component} from 'react';
 import { Query } from "react-apollo";
 
+import Spin from 'antd/lib/spin';
+import 'antd/lib/spin/style/css';
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 import List from 'antd-mobile/lib/list/index';
 import 'antd-mobile/lib/list/style/css';
 import Picker from 'antd-mobile/lib/picker/index';
 import 'antd-mobile/lib/picker/style/css';
-// eslint-disable-next-line
-import './userInput.css';
+
 import {GET_SCHOOL_BY_PROPS} from '../../graphql/school.js';
 import SelectGradeClass from './SelectGradeClass.jsx';
 
@@ -30,12 +31,11 @@ class SelectSchool extends Component{
     }
 
     componentWillReceiveProps(nextProps){
-        console.log('SelectSchool nextProps',nextProps);
         let {area_name,gradeClass} = this.props;
         // console.log('area_name',area_name,"nextProps.area_name",nextProps.area_name);
         if(area_name !== nextProps.area_name){
             let type = this.state.grade || gradeClass[0] > 6 ? "中学" : "小学";
-            this.setState({school:["",""]});
+            this.setState({school:[type,""]});
         }
     }
 
@@ -75,15 +75,19 @@ class SelectSchool extends Component{
     };
 
     render(){
-        let {herderContent,school,area_name,updateCustomer,openid,gradeClass,getInputContent} = this.props;
+        let {school,area_name,gradeClass,getInputContent} = this.props;
 
         return(
-            <Query
-                query={GET_SCHOOL_BY_PROPS}
-                variables={{area_name}}
-            >
+            <Query query={GET_SCHOOL_BY_PROPS} variables={{area_name}}>
                 {({ loading, error, data }) => {
-                    if (loading) return null;
+                    if (loading) return <div style={{width:'100%',height:40}}>
+                        <Spin style={{
+                            position: 'relative',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%,-50%)'
+                        }}/>
+                    </div>;
                     // if (error) return `Error!: ${error}`;
                     // console.log('SelectSchool data: get schoolList',data);
                     let schoolList = this.changeSchoolList(data.school);
@@ -100,12 +104,7 @@ class SelectSchool extends Component{
                                 onOk={value => {
                                     // console.log('onOk school', value);
                                     this.setState({ school: value });
-
-                                    if(herderContent === '收货地址'){
-                                        updateCustomer({ variables: { openid, school_name: value[1]} });
-                                    }else {
-                                        getInputContent("school_name",value[1]);
-                                    }
+                                    getInputContent("school_name",value[1]);
                                 }}
                             >
                                 <List.Item arrow="horizontal" thumb={<Icon type="team" style={{color:'#ff5f16',fontSize:20}}/>}
@@ -113,11 +112,8 @@ class SelectSchool extends Component{
                                 >学校</List.Item>
                             </Picker>
                             <SelectGradeClass
-                                openid={openid}
-                                herderContent={herderContent}
                                 schoolType={school1[0]}
                                 gradeClass={gradeClass}
-                                updateCustomer={updateCustomer}
                                 changeSchoolTypeByGrade={this.changeSchoolTypeByGrade}
                                 getInputContent={getInputContent}
                             />

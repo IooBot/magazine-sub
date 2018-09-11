@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { withRouter } from "react-router-dom";
-import { Query,Mutation } from "react-apollo";
+import { Query } from "react-apollo";
 
 import List from 'antd-mobile/lib/list/index';
 import 'antd-mobile/lib/list/style/css';
@@ -9,11 +9,8 @@ import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 
 import './userInput.css';
-import {GET_CUSTOMER_BY_OPENID,UPDATE_CUSTOMER} from '../../graphql/customer.js';
+import {GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
 import {RenderToast,Loading}  from "../HomePage/HomePage";
-import SelectDistrict from './SelectDistrict.jsx';
-import InputUserName from './InputUserName.jsx';
-import InputTelephone from './InputTelephone.jsx';
 const Item = List.Item;
 const Brief = Item.Brief;
 
@@ -27,7 +24,7 @@ class UserInput extends Component{
             <Query query={GET_CUSTOMER_BY_OPENID} variables={{openid}}>
                 {({ loading,error, data }) => {
                     if (loading) return <Loading contentHeight={window.innerHeight - 139}/>;
-                    if (error) return <RenderToast content="网络缓慢，请稍后再试!!!"/>;
+                    if (error) return <RenderToast content="请稍后!"/>;
                     // console.log('UserInput data',data);
                     if(!data.customer){
                         return <div className="noSub">
@@ -43,34 +40,23 @@ class UserInput extends Component{
                     }
 
                     let {username,telephone,area,school,grade} = data.customer;
-                    let gradeClass = [grade,data.customer.class];
 
                     return (
-                        <Mutation mutation={UPDATE_CUSTOMER}
-                                  refetchQueries={[{query:GET_CUSTOMER_BY_OPENID,variables: {openid}}]}
-                        >
-                            {(updateCustomer, { loading, error }) => (
-                                <div>
-                                    <div id="userInput">
-                                        <List renderHeader={() => herderContent}>
-                                            <InputUserName herderContent={herderContent} openid={openid} username={username} updateCustomer={updateCustomer}/>
-                                            <InputTelephone herderContent={herderContent} openid={openid} telephone={telephone} updateCustomer={updateCustomer}/>
-                                            <SelectDistrict
-                                                herderContent={herderContent}
-                                                area={area}
-                                                school={school}
-                                                gradeClass={gradeClass}
-                                                openid={openid}
-                                                updateCustomer={updateCustomer}
-                                            />
-                                        </List>
-
-                                    </div>
-                                    {/*{loading && <p>Loading...</p>}*/}
-                                    {/*{error && <p>Error :( Please try again</p>}*/}
-                                </div>
-                            )}
-                        </Mutation>
+                        <div id="userInfo">
+                            <List renderHeader={() => herderContent}>
+                                <Item
+                                    // thumb={<Icon type="environment-o"  style={{fontSize: 20, color: '#108ee9'}}/>}
+                                    multipleLine
+                                    extra={<Icon type="edit"  style={{fontSize: 20, color: '#108ee9'}}/>}
+                                    onClick={(e) => { this.props.history.push("/address");}}
+                                >
+                                    收货人:&nbsp;&nbsp;{username} <br/>
+                                    <Brief>{telephone}</Brief>
+                                    <Brief>收货地址:&nbsp;&nbsp;{area["province"]} {area["city"]} {area["district"]}<br />
+                                        {school["name"]}  {grade}年级  {data.customer.class}班</Brief>
+                                </Item>
+                            </List>
+                        </div>
                     );
                 }}
             </Query>

@@ -2,14 +2,15 @@ import React, {Component} from 'react';
 import { createForm } from 'rc-form';
 import { Query } from "react-apollo";
 
+import Spin from 'antd/lib/spin';
+import 'antd/lib/spin/style/css';
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 import List from 'antd-mobile/lib/list/index';
 import 'antd-mobile/lib/list/style/css';
 import Picker from 'antd-mobile/lib/picker/index';
 import 'antd-mobile/lib/picker/style/css';
-// eslint-disable-next-line
-import './userInput.css';
+
 import {GET_AREA} from '../../graphql/area.js';
 import SelectSchool from './SelectSchool.jsx';
 
@@ -61,12 +62,19 @@ class SelectDistrict extends Component{
 
     render(){
         const { getFieldProps } = this.props.form;
-        let {herderContent,area,school,gradeClass,updateCustomer,openid,getInputContent} = this.props;
+        let {area,school,gradeClass,getInputContent} = this.props;
 
         return(
             <Query query={GET_AREA}>
                 {({ loading, error, data }) => {
-                    if (loading) return null;
+                    if (loading) return <div style={{width:'100%',height:40}}>
+                        <Spin style={{
+                            position: 'relative',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%,-50%)'
+                        }}/>
+                    </div>;
                     // if (error) return `Error!: ${error}`;
                     let districtData = this.changeAreaList(data.area);
                     let userSchoolArea = [area["province"] || "",area["city"] || "",area["name"] || ""];
@@ -84,14 +92,9 @@ class SelectDistrict extends Component{
                                     initialValue: userSchoolArea1,
                                 })}
                                 onOk={(value) => {
-                                    this.setState({ userSchoolArea: value, userSchoolDistrict:value[2]  });
-
-                                    if(herderContent === '收货地址'){
-                                        updateCustomer({ variables: { openid, area_name: value[2] } });
-                                    }else {
-                                        getInputContent("area_name",value[2]);
-                                        getInputContent("school_name",'');
-                                    }
+                                    this.setState({ userSchoolArea: value, userSchoolDistrict:value[2]});
+                                    getInputContent("area_name",value[2]);
+                                    getInputContent("school_name"," ");
                                 }}
                             >
                                 <List.Item
@@ -101,11 +104,8 @@ class SelectDistrict extends Component{
                                 >学校地区</List.Item>
                             </Picker>
                             <SelectSchool
-                                herderContent={herderContent}
                                 school={school1}
-                                openid={openid}
                                 area_name={userSchoolDistrict}
-                                updateCustomer={updateCustomer}
                                 gradeClass={gradeClass}
                                 getInputContent={getInputContent}
                             />

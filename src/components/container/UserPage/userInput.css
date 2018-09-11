@@ -9,10 +9,6 @@
     font-size: 15px;
 }
 
-#userInfoPage .am-list-header {
-    padding: 5px 15px!important;
-}
-
 #userInput .am-list-line{
     border-bottom: 1px solid #f0f0f0 !important;
 }
@@ -44,3 +40,10 @@
     color: #525252;
 }
 
+#userInfo .am-list-extra{
+    flex-basis: 10%;
+}
+
+#userInfo .am-list-header {
+    padding: 7px 15px!important;
+}

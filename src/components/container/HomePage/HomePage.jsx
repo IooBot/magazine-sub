@@ -88,7 +88,7 @@ export default class HomePage extends Component{
                             {({ loading, error, data }) => {
                                 // console.log('data',data);
                                 if (loading) return <Loading contentHeight={contentHeight}/>;
-                                if (error) return <RenderToast content="网络缓慢，请稍后再试!!!"/>;
+                                if (error) return <RenderToast content="请稍后!"/>;
                                 return  <SubPage openid={openid} slideshow={data.slideshow} magazineList={data.magazineList} user={data.user}/>
                             }}
                         </Query>
@@ -108,7 +108,7 @@ export default class HomePage extends Component{
     }
 }
 
-export const RenderToast = ({content}) => (<div>{Toast.offline(content,5)}</div>);
+export const RenderToast = ({content}) => (<div>{Toast.info(content)}</div>);
 export const Loading = ({contentHeight}) => (
     <div style={{width:'100%',height:contentHeight}}>
         <Spin

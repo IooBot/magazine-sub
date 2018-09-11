@@ -23,7 +23,7 @@ class InputTelephone extends Component{
         }
     };
 
-    onChange = (value,updateCustomer,openid,herderContent) => {
+    onChange = (value) => {
         // console.log('herderContent',herderContent);
         if (value.replace(/\s/g, '').length < 11) {
             this.setState({
@@ -34,11 +34,8 @@ class InputTelephone extends Component{
                 hasError: false,
             });
             // console.log('value1',this.state.telephone);
-            if(herderContent === '收货地址'){
-                updateCustomer({ variables: { openid, telephone: value }});
-            }else {
-                this.props.getInputContent("telephone",value);
-            }
+            this.props.getInputContent("telephone",value);
+
         }
         this.setState({
             telephone:value,
@@ -46,8 +43,7 @@ class InputTelephone extends Component{
     };
 
     render(){
-        // eslint-disable-next-line
-        let {herderContent,updateCustomer,openid,telephone} = this.props;
+        let {telephone} = this.props;
         let telephone1 = this.state.telephone || telephone;
         return(
             <InputItem
@@ -55,7 +51,7 @@ class InputTelephone extends Component{
                     placeholder="请输入您的手机号码"
                     error={this.state.hasError}
                     onErrorClick={this.onErrorClick}
-                    onChange={(value)=>this.onChange(value,updateCustomer,openid,herderContent)}
+                    onChange={(value)=>this.onChange(value)}
                     value={telephone1}
                 >
                     <Icon type="phone" style={{color:'#ff5f16',fontSize:20}}/>&nbsp;&nbsp;&nbsp;&nbsp;手机号码

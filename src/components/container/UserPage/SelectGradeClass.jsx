@@ -18,18 +18,14 @@ class SelectGradeClass extends Component{
 
     componentWillReceiveProps(nextProps){
         // console.log('SelectGradeClass componentWillReceiveProps this.props',this.props,nextProps);
-        let {schoolType,openid,updateCustomer,getInputContent,herderContent} = this.props;
+        let {schoolType,getInputContent} = this.props;
         if(schoolType !== nextProps.schoolType){
             let grade = 1;
             if(nextProps.schoolType === "中学"){
                 grade = 7;
             }
             this.setState({gradeClass:[grade,1]});
-            if(herderContent === '收货地址'){
-                updateCustomer({ variables: { openid, grade, class:1 }});
-            }else {
-                getInputContent("gradeClass",[grade,1]);
-            }
+            getInputContent("gradeClass",[grade,1]);
         }
     }
 
@@ -56,42 +52,36 @@ class SelectGradeClass extends Component{
     };
 
     render(){
-        let {openid,herderContent,schoolType,gradeClass,updateCustomer,getInputContent} = this.props;
+        let {schoolType,gradeClass,getInputContent} = this.props;
         let gradeClass1 = this.state.gradeClass || gradeClass;
         // console.log('gradeClass1',gradeClass1);
 
-        let startGrade,endGrade,classCount;
+        let startGrade,endGrade;
         switch(schoolType){
             case '小学':
-                startGrade = 1;endGrade = 6;classCount = 30;
+                startGrade = 1;endGrade = 6;
                 break;
             case '中学':
-                startGrade = 7;endGrade = 9;classCount = 30;
+                startGrade = 7;endGrade = 9;
                 break;
             default:
-                startGrade = 1;endGrade = 9;classCount = 30;
+                startGrade = 1;endGrade = 9;
         }
-
-        let grade_class = this.getGradeClassArr(startGrade,endGrade,classCount);
+        let grade_class = this.getGradeClassArr(startGrade,endGrade,30);
 
         return(
             <Picker
                 cols={2}
                 data={grade_class}
-                title="选择年级-班级"
+                title="所在年级-班级"
                 cascade={false}
-                extra="请选择"
+                extra="请选择年级-班级"
                 value={gradeClass1}
                 onOk={value => {
                     // console.log('onOk grade',value);
                     this.setState({ gradeClass: value });
                     this.props.changeSchoolTypeByGrade(value[0]);
-
-                    if(herderContent === '收货地址'){
-                        updateCustomer({ variables: { openid, grade: value[0], class:value[1] }});
-                    }else {
-                        getInputContent("gradeClass",value);
-                    }
+                    getInputContent("gradeClass",value);
                 }}
             >
                 <List.Item arrow="horizontal" thumb={<Icon type="book" style={{color:'#ff5f16',fontSize:20}}/>}>年级-班级</List.Item>

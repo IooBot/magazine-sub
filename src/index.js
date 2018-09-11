@@ -31,6 +31,7 @@ function getUri(arr) {
 let uri = getUri(uriArray);
 const client = new ApolloClient({
     // uri:uri[0],
+    // uri: "http://aliqlsh.ioobot.com/graphql"
     uri: "http://ebookqqsh.ioobot.com/release/graphql"
     // uri: "http://localhost:8888/graphql"
     // uri: "http://2026f31d.ngrok.io/graphql",
@@ -40,9 +41,10 @@ class MainApp extends Component{
 // eslint-disable-next-line
     wechatOauthLogin = () => {
         let openid =  getCookie("openid");
+        // console.log('openid',openid);
         if (!openid) {
-            // window.location.href = "http://test.ioobot.com/subscribe";
-            window.location.href = "http://wechathf.snbl.com.cn/subscribe";
+            window.location.href = "http://test.ioobot.com/subscribe";
+            // window.location.href = "http://wechathf.snbl.com.cn/subscribe";
         }
     };
 

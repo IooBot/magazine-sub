@@ -33,7 +33,7 @@ class CreateUserInfo extends Component{
     }
 
     saveUserInput = (e,openid,updateCustomer) => {
-        let {username,telephone,area,school,gradeClass} = this.props;
+        let {username,telephone,area,school,gradeClass,type} = this.props;
 
         let area_name = this.state.area_name || area["name"];
         let telephone1 = this.state.telephone || telephone;
@@ -41,27 +41,34 @@ class CreateUserInfo extends Component{
         let username1 = this.state.username || username;
         let gradeClass1 = this.state.gradeClass || gradeClass;
 
+        const school_name1 = school_name ? school_name.replace(/\s/g, "") :'';
         const username2 = username1 ? username1.replace(/\s/g, "") :'';
         const telephone2 = telephone1 ? telephone1.replace(/\s/g, "") :'';
+        const testPhoneNum = /^1[0-9]{10}$/;
+        let isPoneAvailable = testPhoneNum.test(telephone2);
 
-        if(username2 && telephone2.length === 11 && school_name && area_name && gradeClass1){
+        if(username2 && isPoneAvailable && school_name1 && area_name && gradeClass1){
             updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,school_name,telephone:telephone2,username:username2 }});
-
             sessionStorage.setItem("userExists",true);
-            this.props.history.push("/pay");
-
+            if(type === 'create'){
+                this.props.history.push("/pay");
+            }else if(type === 'display'){
+                this.props.history.push("/#index=2&tab=2");
+            }else {
+                this.props.history.goBack();
+            }
         }else if(!username1){
             Toast.info('请输入姓名！');
-        }else if(telephone1.length < 11){
+        }else if(!isPoneAvailable){
             Toast.info('请输入11位有效手机号码！');
         }else if(!area_name){
-            Toast.info('请选择所在学校所在地区！');
-        }else if(!school_name){
+            Toast.info('请选择所在学校的所处地区！');
+        }else if(!school_name1){
             Toast.info('请选择所在学校！');
         }else if(!gradeClass){
-            Toast.info('请选择班级-年级！');
+            Toast.info('请选择所在班级-年级！');
         }else {
-            message.warning('收货地址还未完善');
+            message.warning('收货地址暂未完善');
         }
     };
 
@@ -86,26 +93,17 @@ class CreateUserInfo extends Component{
                         <div id="userInput">
                             <List renderHeader={() => herderContent}>
                                 <InputUserName
-                                    herderContent={herderContent}
-                                    openid={openid}
                                     username={username}
-                                    updateCustomer={updateCustomer}
                                     getInputContent={this.getInputContent}
                                 />
                                 <InputTelephone
-                                    herderContent={herderContent}
-                                    openid={openid}
                                     telephone={telephone}
-                                    updateCustomer={updateCustomer}
                                     getInputContent={this.getInputContent}
                                 />
                                 <SelectDistrict
-                                    herderContent={herderContent}
                                     area={area}
                                     school={school}
                                     gradeClass={gradeClass}
-                                    openid={openid}
-                                    updateCustomer={updateCustomer}
                                     getInputContent={this.getInputContent}
                                 />
                             </List>
@@ -116,7 +114,7 @@ class CreateUserInfo extends Component{
                             </div>
                         </div>
                         {loading && <Loading contentHeight={window.innerHeight - 95}/>}
-                        {error && <RenderToast content="网络缓慢，请稍后再试!!!"/>}
+                        {error && <RenderToast content="请稍后!"/>}
                     </div>
                 )}
             </Mutation>

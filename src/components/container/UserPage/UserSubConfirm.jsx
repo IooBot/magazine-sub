@@ -70,7 +70,6 @@ class UserSubConfirm extends Component{
     }
 
     componentWillMount(){
-        // document.title = '个人中心';
         let subTime = sessionStorage.getItem("magazineEnableSubTime");
         // console.log('magazineEnableSubTime',subTime);
         let year_type = changeSubTimeList(JSON.parse(subTime));
@@ -91,15 +90,6 @@ class UserSubConfirm extends Component{
     getTimeValueArray = (value) => {
         let result = {"1":[1,2,3,4,5,6,7,8,9,10,11,12], "2":[1,2,3,4,5,6], "3":[7,8,9,10,11,12]}[value];
         return result;
-    };
-
-    getRandomNum = ()=> {
-        // 生成3位随机数
-        let char = '0123456789', num = '';
-        for(let i = 0; i < 3; i++){
-            num += char[Math.floor(char.length*Math.random())]
-        }
-        return num;
     };
 
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
