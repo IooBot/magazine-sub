@@ -5,6 +5,7 @@ import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 
 import CreateUserInfo from './CreateUserInfo.jsx';
+import {RenderToast,Loading}  from "../HomePage/HomePage";
 import {GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
 import {getCookie} from "../../../api/cookie.js";
 
@@ -21,8 +22,7 @@ export default class UserInputPage extends Component{
                     <Icon type="left" />
                 </span>
                 <span className="title">地址信息</span>
-                <span>
-                </span>
+                <span> </span>
             </div>
         )
     };
@@ -31,6 +31,7 @@ export default class UserInputPage extends Component{
         let openid =  getCookie("openid");
         // 注意userExists类型为string
         let userExists =  sessionStorage.getItem("userExists");
+        let contentHeight = window.innerHeight - 95;
         // console.log('UserInputPage userExists',userExists,typeof userExists);
 
         if(userExists === 'false'){
@@ -44,13 +45,10 @@ export default class UserInputPage extends Component{
             );
         }else {
             return(
-                <Query
-                    query={GET_CUSTOMER_BY_OPENID}
-                    variables={{openid}}
-                >
+                <Query query={GET_CUSTOMER_BY_OPENID} variables={{openid}}>
                     {({ loading,error, data }) => {
-                        if (loading) return null;
-                        // if (error) return `Error!: ${error}`;
+                        if (loading) return <Loading contentHeight={contentHeight}/>;
+                        if (error) return <RenderToast content="网络缓慢，请稍后再试!!!"/>;
                         // console.log('UserInputPage data',data);
                         let model1Type = "re-edit";
                         let {username,telephone,area,school,grade} = data.customer;

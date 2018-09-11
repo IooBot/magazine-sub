@@ -14,6 +14,7 @@ import 'antd-mobile/lib/input-item/style/css';
 
 import './userInput.css';
 import {CREATE_CUSTOMER,UPDATE_CUSTOMER,GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
+import {RenderToast,Loading}  from "../HomePage/HomePage";
 import SelectDistrict from './SelectDistrict.jsx';
 import InputUserName from './InputUserName.jsx';
 import InputTelephone from './InputTelephone.jsx';
@@ -114,8 +115,8 @@ class CreateUserInfo extends Component{
                                 </List.Item>
                             </div>
                         </div>
-                        {/*{loading && <p>Loading...</p>}*/}
-                        {/*{error && <p>Error :( Please try again</p>}*/}
+                        {loading && <Loading contentHeight={window.innerHeight - 95}/>}
+                        {error && <RenderToast content="网络缓慢，请稍后再试!!!"/>}
                     </div>
                 )}
             </Mutation>

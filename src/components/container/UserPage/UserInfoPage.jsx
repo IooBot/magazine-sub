@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 
-import Spin from 'antd/lib/spin';
-import 'antd/lib/spin/style/css';
-import Avatar from 'antd/lib/avatar';
-import 'antd/lib/avatar/style/css';
+// import Spin from 'antd/lib/spin';
+// import 'antd/lib/spin/style/css';
+// import Avatar from 'antd/lib/avatar';
+// import 'antd/lib/avatar/style/css';
 
 import './userInfoPage.css';
 import UserInput from './UserInput.jsx';
@@ -24,7 +24,7 @@ export default class UserInfoPage extends Component{
         )
     }
 }
-
-UserInfoPage.defaultProps = {
-    wechatInfo: { nickname:'',headimgurl:''},
-};
+//
+// UserInfoPage.defaultProps = {
+//     wechatInfo: { nickname:'',headimgurl:''},
+// };

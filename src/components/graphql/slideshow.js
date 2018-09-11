@@ -1,11 +1,21 @@
 import gql from "graphql-tag";
 
-export const GET_SLIDER_SHOW = gql`
-    {
+export const GET_MAIN_PAGE = gql`
+    query getMain($openid: String){
         slideshow:slideshow_by_props{
-            briefIntro
-            id
             picture
+        }
+        magazineList:magazine_by_props {
+            id
+            magazineName:name,
+            picture,
+            magazineIntro,
+            unitPrice
+            enableSub
+        }
+        user:customer_by_openid(openid: $openid) {
+            openid
+            username
         }
     }
 `;

@@ -5,12 +5,17 @@ import { Query,Mutation } from "react-apollo";
 import List from 'antd-mobile/lib/list/index';
 import 'antd-mobile/lib/list/style/css';
 import 'antd-mobile/lib/input-item/style/css';
+import Icon from 'antd/lib/icon';
+import 'antd/lib/icon/style/css';
 
 import './userInput.css';
 import {GET_CUSTOMER_BY_OPENID,UPDATE_CUSTOMER} from '../../graphql/customer.js';
+import {RenderToast,Loading}  from "../HomePage/HomePage";
 import SelectDistrict from './SelectDistrict.jsx';
 import InputUserName from './InputUserName.jsx';
 import InputTelephone from './InputTelephone.jsx';
+const Item = List.Item;
+const Brief = Item.Brief;
 
 class UserInput extends Component{
 
@@ -19,13 +24,10 @@ class UserInput extends Component{
         let herderContent='收货地址';
 
         return(
-            <Query
-                query={GET_CUSTOMER_BY_OPENID}
-                variables={{openid}}
-            >
+            <Query query={GET_CUSTOMER_BY_OPENID} variables={{openid}}>
                 {({ loading,error, data }) => {
-                    if (loading) return null;
-                    // if (error) return `Error!: ${error}`;
+                    if (loading) return <Loading contentHeight={window.innerHeight - 139}/>;
+                    if (error) return <RenderToast content="网络缓慢，请稍后再试!!!"/>;
                     // console.log('UserInput data',data);
                     if(!data.customer){
                         return <div className="noSub">
@@ -62,6 +64,7 @@ class UserInput extends Component{
                                                 updateCustomer={updateCustomer}
                                             />
                                         </List>
+
                                     </div>
                                     {/*{loading && <p>Loading...</p>}*/}
                                     {/*{error && <p>Error :( Please try again</p>}*/}

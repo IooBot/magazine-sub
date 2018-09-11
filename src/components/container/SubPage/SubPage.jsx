@@ -2,15 +2,12 @@ import React, {Component} from 'react';
 import { withRouter } from "react-router-dom";
 import { Query  } from "react-apollo";
 
-import Spin from 'antd/lib/spin';
-import 'antd/lib/spin/style/css';
 import Carousel from 'antd-mobile/lib/carousel/index';
 import 'antd-mobile/lib/carousel/style/css';
 import Card from 'antd-mobile/lib/card/index';
 import 'antd-mobile/lib/card/style/css';
 
 import './subPage.css';
-import {GET_MAGAZINE} from '../../graphql/magazine.js';
 
 class SubPage extends Component{
     constructor(props){
@@ -33,83 +30,59 @@ class SubPage extends Component{
     }
 
     renderMagazine = () => {
-        let {openid} = this.props;
-        let contentHeight = window.innerHeight - 295;
-
-        return <Query query={GET_MAGAZINE}
-                       variables={{openid}}
-        >
-            {({ loading, error, data }) => {
-                // console.log('data',data);
-                if (loading)
-                    return <div style={{width:'100%',height:contentHeight}}>
-                        <Spin style={{
-                            position: 'relative',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%,-50%)'
-                        }}/>
-                    </div>;
-                // if (error) return <p>Error :(</p>;
-
-                let userExists = data.user ? true : false;
-
-                return data.magazineList.map((magazine, idx) => {
-                    let {id,magazineName,picture,magazineIntro,unitPrice,enableSub} = magazine;
-                    return <Card full key={idx}>
-                        <Card.Header
-                            thumb={picture}
-                            extra={
-                                <div className="magazine-title">
-                                    <p>少年博览</p>
-                                    <p>{magazineName}</p>
-                                    <br/>
-                                    <p>¥{unitPrice}/月</p>
-                                </div>
-                            }
-                        />
-                        <Card.Body>
-                            <div className="magazine-footer">
-                                <span>{magazineIntro}</span>
-                                <div className="sub-button">
-                                    <button style={{width:'60px',height:'30px'}}
-                                            onClick={()=>{
-                                                sessionStorage.setItem("magazineId",id);
-                                                sessionStorage.setItem("subMagazine",magazineName);
-                                                sessionStorage.setItem("unitPrice",unitPrice);
-                                                sessionStorage.setItem("userExists",userExists);
-                                                sessionStorage.setItem("magazineEnableSubTime",JSON.stringify(enableSub));
-                                                if(userExists){
-                                                    this.props.history.push(`/pay`);
-                                                }else {
-                                                    this.props.history.push(`/address`);
-                                                }
-                                            }}>订阅
-                                    </button>
-                                </div>
-                            </div>
-                        </Card.Body>
-                    </Card>
-                })
-            }}
-        </Query>
+        let {magazineList,user} = this.props;
+        let userExists = user ? true : false;
+        return magazineList.map((magazine, idx) => {
+            let {id,magazineName,picture,magazineIntro,unitPrice,enableSub} = magazine;
+            return <Card full key={idx}>
+                <Card.Header
+                    thumb={picture}
+                    extra={
+                        <div className="magazine-title">
+                            <p>少年博览</p>
+                            <p>{magazineName}</p>
+                            <br/>
+                            <p>¥{unitPrice}/月</p>
+                        </div>
+                    }
+                />
+                <Card.Body>
+                    <div className="magazine-footer">
+                        <span>{magazineIntro}</span>
+                        <div className="sub-button">
+                            <button style={{width:'60px',height:'30px'}}
+                                    onClick={()=>{
+                                        sessionStorage.setItem("magazineId",id);
+                                        sessionStorage.setItem("subMagazine",magazineName);
+                                        sessionStorage.setItem("unitPrice",unitPrice);
+                                        sessionStorage.setItem("userExists",userExists);
+                                        sessionStorage.setItem("magazineEnableSubTime",JSON.stringify(enableSub));
+                                        if(userExists){
+                                            this.props.history.push(`/pay`);
+                                        }else {
+                                            this.props.history.push(`/address`);
+                                        }
+                                    }}>订阅
+                            </button>
+                        </div>
+                    </div>
+                </Card.Body>
+            </Card>
+        });
     };
 
     render(){
         let contentHeight = window.innerHeight - 95;
-
         return(
             <div className="scroll-content" style={{height: contentHeight}}>
                 <div id="subPage">
                     <Carousel
                         autoplay={true}
                         infinite
-                        beforeChange={(from, to) => {}}
-                        afterChange={index => {}}
                     >
-                        {this.state.data.map(val => (
+                        {this.state.data.map((val,idx) => (
                             <a
-                                key={"slideshow"+val.id}
+                                key={"slideshow"+idx}
                                 // href="#"
                                 style={{ display: 'inline-block', width: '100%', height: this.state.imgHeight }}
                             >

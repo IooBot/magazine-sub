@@ -19,8 +19,7 @@ export default class UserPayPage extends Component{
                     <Icon type="left" />
                 </span>
                 <span className="title">订阅支付</span>
-                <span>
-                </span>
+                <span> </span>
             </div>
         )
     };

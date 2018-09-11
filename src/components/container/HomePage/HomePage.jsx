@@ -1,25 +1,26 @@
 import React, {Component} from 'react';
-import { Link } from 'react-router-dom';
 import { Query  } from "react-apollo";
 
 import Spin from 'antd/lib/spin';
 import 'antd/lib/spin/style/css';
 import TabBar from 'antd-mobile/lib/tab-bar/index';
 import 'antd-mobile/lib/tab-bar/style/css';
+import Toast from 'antd-mobile/lib/toast/index';
+import 'antd-mobile/lib/toast/style/css';
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 
 import SubPage from '../SubPage/SubPage.jsx';
 import UserPage from '../UserPage/UserPage.jsx';
 import {getCookie} from "../../../api/cookie.js";
-
-import {GET_SLIDER_SHOW} from '../../graphql/slideshow.js';
+import {GET_MAIN_PAGE} from '../../graphql/slideshow.js';
 
 export default class HomePage extends Component{
     constructor(props){
         super(props);
         this.state = {
-            title:'订阅'
+            title:'订阅',
+            getUser:false
         }
     }
 
@@ -30,6 +31,11 @@ export default class HomePage extends Component{
         this.setState({
             title: name
         });
+        if(name === '我的'){
+            this.setState({
+                getUser: true
+            });
+        }
     }
 
     changeTab =(name)=>{
@@ -58,11 +64,9 @@ export default class HomePage extends Component{
 
         return(
             <div className="tabBar-top">
-                <span>
-                </span>
+                <span> </span>
                 <span className="title">{title}</span>
-                <span>
-                </span>
+                <span> </span>
             </div>
         )
     };
@@ -71,6 +75,7 @@ export default class HomePage extends Component{
         let {index,tab}  = this.getHash();
         let openid =  getCookie("openid");
         let contentHeight = window.innerHeight - 95;
+
         return(
             <div id="homePage">
                 {this.renderTitle()}
@@ -79,27 +84,23 @@ export default class HomePage extends Component{
                                  onPress={() => {this.changeTab("订阅");window.location.hash = 'index=1'}}
                                  icon={<Icon type="home" />} selectedIcon={<Icon type="home" style={{color: '#ff5f16'}}/>}
                                  selected={index === "1"}>
-                        <Query query={GET_SLIDER_SHOW}>
+                        <Query query={GET_MAIN_PAGE} variables={{openid}}>
                             {({ loading, error, data }) => {
                                 // console.log('data',data);
-                                if (loading) return <div style={{width:'100%',height:contentHeight}}>
-                                    <Spin style={{
-                                        position: 'relative',
-                                        top: '50%',
-                                        left: '50%',
-                                        transform: 'translate(-50%,-50%)'
-                                    }}/>
-                                </div>;
-                                // if (error) return <p>Error :(</p>;
-                                return  <SubPage openid={openid} slideshow={data.slideshow}/>
+                                if (loading) return <Loading contentHeight={contentHeight}/>;
+                                if (error) return <RenderToast content="网络缓慢，请稍后再试!!!"/>;
+                                return  <SubPage openid={openid} slideshow={data.slideshow} magazineList={data.magazineList} user={data.user}/>
                             }}
                         </Query>
                     </TabBar.Item>
                     <TabBar.Item title="我的" key="person"
-                                 onPress={() => {this.changeTab("我的");window.location.hash = `index=2&tab=${tab}`}}
-                                 icon={<Icon type="user" />} selectedIcon={<Icon type="user" style={{color: '#ff5f16'}}/>}
+                                 onPress={() => {
+                                     this.changeTab("我的");
+                                     this.setState({getUser:true});
+                                     window.location.hash = `index=2&tab=${tab}`}}
+                                 icon={<Icon type="user" />} selectedIcon={<Icon type="user" style={{color:'#ff5f16'}}/>}
                                  selected={index === "2"}>
-                        <UserPage openid={openid} changeTab={()=>this.changeTab()}/>
+                        {this.state.getUser ? <UserPage openid={openid} changeTab={()=>this.changeTab()}/>:''}
                     </TabBar.Item>
                 </TabBar>
             </div>
@@ -107,3 +108,16 @@ export default class HomePage extends Component{
     }
 }
 
+export const RenderToast = ({content}) => (<div>{Toast.offline(content,5)}</div>);
+export const Loading = ({contentHeight}) => (
+    <div style={{width:'100%',height:contentHeight}}>
+        <Spin
+            tip="数据加载中..."
+            style={{
+                position: 'relative',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%,-50%)'
+            }}/>
+    </div>
+    );

@@ -68,9 +68,6 @@ class SelectGradeClass extends Component{
             case '中学':
                 startGrade = 7;endGrade = 9;classCount = 30;
                 break;
-            case '中小学':
-                startGrade = 1;endGrade = 9;classCount = 30;
-                break;
             default:
                 startGrade = 1;endGrade = 9;classCount = 30;
         }

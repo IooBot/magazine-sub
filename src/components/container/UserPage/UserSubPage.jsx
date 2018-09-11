@@ -17,8 +17,6 @@ export default class UserSubPage extends Component{
     }
 
     getSubTime = (subMonthCount,subMonth) => {
-        // console.log('subMonthCount',subMonthCount);
-        // console.log('subMonth',subMonth);
         let subTime;
         if(subMonthCount === 12){
             subTime = "全年";
@@ -34,20 +32,12 @@ export default class UserSubPage extends Component{
     };
 
     renderUserOrder = (subRecord) => {
-        // console.log('subRecord',subRecord, "isArray",subRecord instanceof Array,"isSymbol",typeof subRecord[0].magazine);
-        // console.log(' Object.keys( subRecord[0])',  Object.keys(subRecord[0]));
-        // Object.keys( subRecord[0]).forEach((item)=>{
-        //     console.log(`${item}`,typeof subRecord[0][item])
-        // });
         let sub = JSON.stringify(subRecord);
-        // console.log('sub', sub);
         let subRecord1 = JSON.parse(sub);
-        // console.log('subRecord1', subRecord1);
         subRecord1.sort((a,b)=>{return b.id - a.id});
-        // console.log('renderUserOrder subRecord1',subRecord1);
 
         return subRecord1.map((oder,idx)=>{
-            let {id,createAt,subCount,havePay,subMonthCount,subYear,subMonth,orderStatus} = oder;
+            let {id,createAt,subCount,havePay,subMonthCount,subYear,subMonth} = oder;
             let subTime = this.getSubTime(subMonthCount,subMonth);
 
             let {magazineName,unitPrice} = oder.magazine;
@@ -68,7 +58,6 @@ export default class UserSubPage extends Component{
                         </div>
                         <div style={{color:'#888'}}>
                             <span style={{color:'#108ee9'}}>{subYear} {subTime}</span>
-                            {/*<span>{startDate}至{endDate ? endDate : startDate}</span>*/}
                             <span>x{subCount}</span>
                         </div>
                         <div>
@@ -79,10 +68,6 @@ export default class UserSubPage extends Component{
                             <span style={{color:'#888'}}>创建时间: {createAt}</span>
                             <span> </span>
                         </div>
-                        {/*<div>*/}
-                            {/*<span> </span>*/}
-                            {/*<span style={{color:"#ff5f16"}}>{orderStatus}</span>*/}
-                        {/*</div>*/}
                     </div>
                 </div>
             </div>

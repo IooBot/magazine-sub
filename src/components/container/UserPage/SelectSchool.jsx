@@ -30,11 +30,12 @@ class SelectSchool extends Component{
     }
 
     componentWillReceiveProps(nextProps){
+        console.log('SelectSchool nextProps',nextProps);
         let {area_name,gradeClass} = this.props;
         // console.log('area_name',area_name,"nextProps.area_name",nextProps.area_name);
         if(area_name !== nextProps.area_name){
             let type = this.state.grade || gradeClass[0] > 6 ? "中学" : "小学";
-            this.setState({school:[type,""]});
+            this.setState({school:["",""]});
         }
     }
 
