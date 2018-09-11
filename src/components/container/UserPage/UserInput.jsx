@@ -24,7 +24,7 @@ class UserInput extends Component{
             <Query query={GET_CUSTOMER_BY_OPENID} variables={{openid}}>
                 {({ loading,error, data }) => {
                     if (loading) return <Loading contentHeight={window.innerHeight - 139}/>;
-                    if (error) return <RenderToast content="请稍后!"/>;
+                    if (error) return <RenderToast content="加载中，请稍等"/>;
                     // console.log('UserInput data',data);
                     if(!data.customer){
                         return <div className="noSub">
@@ -45,7 +45,6 @@ class UserInput extends Component{
                         <div id="userInfo">
                             <List renderHeader={() => herderContent}>
                                 <Item
-                                    // thumb={<Icon type="environment-o"  style={{fontSize: 20, color: '#108ee9'}}/>}
                                     multipleLine
                                     extra={<Icon type="edit"  style={{fontSize: 20, color: '#108ee9'}}/>}
                                     onClick={(e) => { this.props.history.push("/address");}}

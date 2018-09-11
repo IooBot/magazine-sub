@@ -114,7 +114,7 @@ class CreateUserInfo extends Component{
                             </div>
                         </div>
                         {loading && <Loading contentHeight={window.innerHeight - 95}/>}
-                        {error && <RenderToast content="请稍后!"/>}
+                        {error && <RenderToast content="加载中，请稍等"/>}
                     </div>
                 )}
             </Mutation>

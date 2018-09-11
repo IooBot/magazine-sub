@@ -58,6 +58,20 @@ export const UPDATE_ORDER = gql`
     ${customer_order}
 `;
 
+export const UPDATE_ORDER_MAGAZINE = gql`
+    mutation updateOrderMagazine($id:String!,$openid:String,$magazine_id:String){
+        updateOrderMagazine:update_order(
+            id:$id
+            openid :$openid
+            magazine_id:$magazine_id){
+            id
+            magazine {
+                magazineName:name
+            }
+        }
+    }
+`;
+
 export const DELETE_ORDER = gql`
     mutation deleteOrder($id: String){
         delete_order(id: $id)

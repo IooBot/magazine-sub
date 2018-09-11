@@ -28,20 +28,20 @@ export default class UserPage extends Component{
 
     render(){
         let contentHeight = window.innerHeight - 138.5;
-        let {openid} = this.props;
+        let {openid,magazineList,changeTab} = this.props;
         let tab = this.state.tab;
 
         let content;
         // eslint-disable-next-line
         switch(tab){
             case '0':
-                content =  <UserSubPage openid={openid} changeTab={this.props.changeTab}/>;
+                content =  <UserSubPage openid={openid} changeTab={changeTab} magazineList={magazineList}/>;
                 break;
             case '1':
-                content =  <UserNotPaid openid={openid} changeTab={this.props.changeTab}/>;
+                content =  <UserNotPaid openid={openid} changeTab={changeTab}/>;
                 break;
             case '2':
-                content =  <UserInfoPage openid={openid} changeTab={this.props.changeTab}/>;
+                content =  <UserInfoPage openid={openid} changeTab={changeTab}/>;
                 break;
         }
         return(

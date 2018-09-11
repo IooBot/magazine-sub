@@ -79,30 +79,32 @@ export default class HomePage extends Component{
         return(
             <div id="homePage">
                 {this.renderTitle()}
-                <TabBar tintColor="#ff5f16">
-                    <TabBar.Item title="订阅" key="subscribe"
-                                 onPress={() => {this.changeTab("订阅");window.location.hash = 'index=1'}}
-                                 icon={<Icon type="home" />} selectedIcon={<Icon type="home" style={{color: '#ff5f16'}}/>}
-                                 selected={index === "1"}>
-                        <Query query={GET_MAIN_PAGE} variables={{openid}}>
-                            {({ loading, error, data }) => {
-                                // console.log('data',data);
-                                if (loading) return <Loading contentHeight={contentHeight}/>;
-                                if (error) return <RenderToast content="请稍后!"/>;
-                                return  <SubPage openid={openid} slideshow={data.slideshow} magazineList={data.magazineList} user={data.user}/>
-                            }}
-                        </Query>
-                    </TabBar.Item>
-                    <TabBar.Item title="我的" key="person"
-                                 onPress={() => {
-                                     this.changeTab("我的");
-                                     this.setState({getUser:true});
-                                     window.location.hash = `index=2&tab=${tab}`}}
-                                 icon={<Icon type="user" />} selectedIcon={<Icon type="user" style={{color:'#ff5f16'}}/>}
-                                 selected={index === "2"}>
-                        {this.state.getUser ? <UserPage openid={openid} changeTab={()=>this.changeTab()}/>:''}
-                    </TabBar.Item>
-                </TabBar>
+                <Query query={GET_MAIN_PAGE} variables={{openid}}>
+                    {({ loading, error, data }) => {
+                        // console.log('data',data);
+                        if (loading) return <Loading contentHeight={contentHeight}/>;
+                        if (error) return <RenderToast content="加载中，请稍等"/>;
+                        return (
+                            <TabBar tintColor="#ff5f16">
+                                <TabBar.Item title="订阅" key="subscribe"
+                                             onPress={() => {this.changeTab("订阅");window.location.hash = 'index=1'}}
+                                             icon={<Icon type="home" />} selectedIcon={<Icon type="home" style={{color: '#ff5f16'}}/>}
+                                             selected={index === "1"}>
+                                    <SubPage openid={openid} slideshow={data.slideshow} magazineList={data.magazineList} user={data.user}/>
+                                </TabBar.Item>
+                                <TabBar.Item title="我的" key="person"
+                                             onPress={() => {
+                                                 this.changeTab("我的");
+                                                 this.setState({getUser:true});
+                                                 window.location.hash = `index=2&tab=${tab}`}}
+                                             icon={<Icon type="user" />} selectedIcon={<Icon type="user" style={{color:'#ff5f16'}}/>}
+                                             selected={index === "2"}>
+                                    {this.state.getUser ? <UserPage openid={openid} changeTab={()=>this.changeTab()} magazineList={data.magazineList}/>:''}
+                                </TabBar.Item>
+                            </TabBar>
+                        )
+                    }}
+                </Query>
             </div>
         )
     }

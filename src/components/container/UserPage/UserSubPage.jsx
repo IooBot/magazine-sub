@@ -1,18 +1,23 @@
 import React, {Component} from 'react';
-import { Query  } from "react-apollo";
+import { Query,Mutation } from "react-apollo";
+import moment from 'moment';
 
+import Icon from 'antd/lib/icon';
+import 'antd/lib/icon/style/css';
 import Spin from 'antd/lib/spin';
 import 'antd/lib/spin/style/css';
+import Picker from 'antd-mobile/lib/picker/index';
+import 'antd-mobile/lib/picker/style/css';
 
 import './userSubPage.css';
-import {GET_ORDER_BY_PROPS} from '../../graphql/order.js';
+import {GET_ORDER_BY_PROPS,UPDATE_ORDER_MAGAZINE} from '../../graphql/order.js';
 
 export default class UserSubPage extends Component{
     constructor(props) {
         super(props);
         this.state = {
             errors: false,
-            canSubmit: true,
+            canSubmit: true
         };
     }
 
@@ -35,41 +40,67 @@ export default class UserSubPage extends Component{
         let sub = JSON.stringify(subRecord);
         let subRecord1 = JSON.parse(sub);
         subRecord1.sort((a,b)=>{return b.id - a.id});
+        // console.log('magazineList',this.props.magazineList);
+        let magazineList = this.props.magazineList.map(item => {
+            let {magazineName,id} = item;
+            return {
+                label: magazineName,
+                value: id,
+            }
+        });
 
         return subRecord1.map((oder,idx)=>{
-            let {id,createAt,subCount,havePay,subMonthCount,subYear,subMonth} = oder;
+            let {id,openid,createAt,subCount,havePay,subMonthCount,subYear,subMonth} = oder;
             let subTime = this.getSubTime(subMonthCount,subMonth);
-
+            let lastTime = moment().subtract(1, "days").format("YYYY-MM-DD HH:mm:ss");
+            // console.log(createAt,lastTime);
+            let enableEdit = createAt >= lastTime ? true:false;
             let {magazineName,unitPrice} = oder.magazine;
             // console.log('oder.magazine',oder.magazine);
 
             return <div key={'order'+idx}>
-                <div className="sub-content">
-                    <div className="sub-title">
-                        <div>
-                            <span style={{color:'#3e3d3d'}}>订单编号: {id}</span>
-                            <span> </span>
+                <Mutation mutation={UPDATE_ORDER_MAGAZINE}>
+                    {(updateOrderMagazine) => (
+                        <div className="sub-content">
+                            <div className="sub-title">
+                                <div>
+                                    <span style={{color:'#3e3d3d'}}>订单编号: {id}</span>
+                                    <span> </span>
+                                </div>
+                            </div>
+                            <div className="sub-record">
+                                <div>
+                                    {enableEdit ?
+                                        <Picker
+                                            cols={1}
+                                            data={magazineList}
+                                            title="选择杂志"
+                                            onOk={value => {
+                                                // console.log('onOk magazineName value',value);
+                                                updateOrderMagazine({variables: {id,openid,magazine_id:value[0]}});
+                                            }}
+                                        ><span style={{fontSize:'17px'}}>{magazineName} <Icon type="edit"  style={{fontSize: 18, color: '#ff5f16'}}/></span></Picker>
+                                        :
+                                        <span style={{fontSize:'17px'}}>{magazineName}</span>
+                                    }
+                                    <span>¥{unitPrice}/月</span>
+                                </div>
+                                <div style={{color:'#888'}}>
+                                    <span style={{color:'#108ee9'}}>{subYear} {subTime}</span>
+                                    <span>x{subCount}</span>
+                                </div>
+                                <div>
+                                    <span> </span>
+                                    <span>合计:&nbsp;&nbsp;<span style={{color:"#ff5f16"}}>¥{havePay}</span></span>
+                                </div>
+                                <div>
+                                    <span style={{color:'#888'}}>创建时间: {createAt}</span>
+                                    <span> </span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div className="sub-record">
-                        <div>
-                            <span style={{fontSize:'17px'}}>{magazineName}</span>
-                            <span>¥{unitPrice}/月</span>
-                        </div>
-                        <div style={{color:'#888'}}>
-                            <span style={{color:'#108ee9'}}>{subYear} {subTime}</span>
-                            <span>x{subCount}</span>
-                        </div>
-                        <div>
-                            <span> </span>
-                            <span>合计:&nbsp;&nbsp;<span style={{color:"#ff5f16"}}>¥{havePay}</span></span>
-                        </div>
-                        <div>
-                            <span style={{color:'#888'}}>创建时间: {createAt}</span>
-                            <span> </span>
-                        </div>
-                    </div>
-                </div>
+                    )}
+                </Mutation>
             </div>
         });
     };
@@ -108,7 +139,7 @@ export default class UserSubPage extends Component{
                                         </button>
                                     </div>
                                 </div>:
-                                this.renderUserOrder(subRecord,refetch)
+                                this.renderUserOrder(subRecord)
                             }
                         </div>
                     );

@@ -48,7 +48,7 @@ export default class UserInputPage extends Component{
                 <Query query={GET_CUSTOMER_BY_OPENID} variables={{openid}}>
                     {({ loading,error, data }) => {
                         if (loading) return <Loading contentHeight={contentHeight}/>;
-                        if (error) return <RenderToast content="请稍后!"/>;
+                        if (error) return <RenderToast content="加载中，请稍等"/>;
                         // console.log('UserInputPage data',data);
                         let model1Type = "re-edit";
                         let {username,telephone,area,school,grade} = data.customer;

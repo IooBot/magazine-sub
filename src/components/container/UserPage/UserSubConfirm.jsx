@@ -15,13 +15,10 @@ import 'antd-mobile/lib/stepper/style/css';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style/css';
 
-// 日期选择汉化
-import 'moment/locale/zh-cn';
 import './userSubConfirm.css';
 // eslint-disable-next-line
 import {CREATE_ORDER,GET_ORDER_BY_PROPS} from '../../graphql/order.js';
 import {GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
-moment.locale('zh-CN');
 const Item = List.Item;
 const Brief = Item.Brief;
 
