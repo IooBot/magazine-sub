@@ -19,6 +19,7 @@ import './userSubConfirm.css';
 // eslint-disable-next-line
 import {CREATE_ORDER,GET_ORDER_BY_PROPS} from '../../graphql/order.js';
 import {GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
+import {Loading}  from "../HomePage/HomePage.jsx";
 const Item = List.Item;
 const Brief = Item.Brief;
 
@@ -181,7 +182,7 @@ class UserSubConfirm extends Component{
                 variables={{openid}}
             >
                 {({ loading,error, data }) => {
-                    if (loading) return null;
+                    if (loading) return <Loading contentHeight={window.innerHeight - 90} tip="数据加载中..."/>;
                     // if (error) return `Error!: ${error}`;
                     // console.log('UserSubConfirm data',data);
 
@@ -244,7 +245,7 @@ class UserSubConfirm extends Component{
                                     thumb={<Icon type="environment-o"  style={{fontSize: 20, color: '#108ee9'}}/>}
                                     multipleLine
                                     extra={<Icon type="edit"  style={{fontSize: 20, color: '#108ee9'}}/>}
-                                    onClick={(e) => { this.props.history.push("/address");}}
+                                    onClick={() => { this.props.history.push("/address");}}
                                 >
                                     收货人:&nbsp;&nbsp;{username} <br/>
                                     <Brief>{telephone}</Brief>

@@ -4,13 +4,12 @@ import moment from 'moment';
 
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
-import Spin from 'antd/lib/spin';
-import 'antd/lib/spin/style/css';
 import Picker from 'antd-mobile/lib/picker/index';
 import 'antd-mobile/lib/picker/style/css';
 
 import './userSubPage.css';
 import {GET_ORDER_BY_PROPS,UPDATE_ORDER_MAGAZINE} from '../../graphql/order.js';
+import {Loading}  from "../HomePage/HomePage.jsx";
 
 export default class UserSubPage extends Component{
     constructor(props) {
@@ -114,14 +113,7 @@ export default class UserSubPage extends Component{
                 {({ loading, error, data, refetch }) => {
                     // console.log("subRecord order data",data);
                     if (loading)
-                        return <div style={{width:'100%',height:contentHeight}}>
-                            <Spin style={{
-                                position: 'relative',
-                                top: '50%',
-                                left: '50%',
-                                transform: 'translate(-50%,-50%)'
-                            }}/>
-                        </div>;
+                        return <Loading contentHeight={contentHeight} tip=""/>;
                     // if (error) return `Error! ${error.message}`;
                     let subRecord = data.orderList;
                     // console.log('subRecord',subRecord,new Date().getTime());

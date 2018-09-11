@@ -5,8 +5,6 @@ import $ from 'jquery';
 
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
-import Spin from 'antd/lib/spin';
-import 'antd/lib/spin/style/css';
 import message from 'antd/lib/message';
 import 'antd/lib/message/style/css';
 import Modal from 'antd-mobile/lib/modal/index';
@@ -14,6 +12,7 @@ import 'antd-mobile/lib/modal/style/css';
 
 import './userSubPage.css';
 import {GET_ORDER_BY_PROPS,DELETE_ORDER,UPDATE_ORDER} from '../../graphql/order.js';
+import {Loading}  from "../HomePage/HomePage.jsx";
 const alert = Modal.alert;
 
 class UserNotPaid extends Component{
@@ -182,14 +181,7 @@ class UserNotPaid extends Component{
                 {({ loading, error, data, refetch }) => {
                     // console.log("notPaid order data",data);
                     if (loading)
-                        return <div style={{width:'100%',height:contentHeight}}>
-                            <Spin style={{
-                                position: 'relative',
-                                top: '50%',
-                                left: '50%',
-                                transform: 'translate(-50%,-50%)'
-                            }}/>
-                        </div>;
+                        return <Loading contentHeight={contentHeight} tip=""/>;
                     // if (error) return `Error! ${error.message}`;
                     let notPaid = data.orderList;
                     // console.log('notPaid',notPaid,notPaid === [],!notPaid.length);

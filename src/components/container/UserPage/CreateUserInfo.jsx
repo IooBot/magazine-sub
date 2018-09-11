@@ -113,7 +113,7 @@ class CreateUserInfo extends Component{
                                 </List.Item>
                             </div>
                         </div>
-                        {loading && <Loading contentHeight={window.innerHeight - 95}/>}
+                        {loading && <Loading contentHeight={window.innerHeight - 95} tip=""/>}
                         {error && <RenderToast content="加载中，请稍等"/>}
                     </div>
                 )}

@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 
-// import Spin from 'antd/lib/spin';
-// import 'antd/lib/spin/style/css';
 // import Avatar from 'antd/lib/avatar';
 // import 'antd/lib/avatar/style/css';
 

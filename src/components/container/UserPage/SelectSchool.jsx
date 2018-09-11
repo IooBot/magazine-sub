@@ -12,6 +12,7 @@ import 'antd-mobile/lib/picker/style/css';
 
 import {GET_SCHOOL_BY_PROPS} from '../../graphql/school.js';
 import SelectGradeClass from './SelectGradeClass.jsx';
+import {Loading}  from "../HomePage/HomePage.jsx";
 
 class SelectSchool extends Component{
     constructor(props){
@@ -80,14 +81,7 @@ class SelectSchool extends Component{
         return(
             <Query query={GET_SCHOOL_BY_PROPS} variables={{area_name}}>
                 {({ loading, error, data }) => {
-                    if (loading) return <div style={{width:'100%',height:40}}>
-                        <Spin style={{
-                            position: 'relative',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%,-50%)'
-                        }}/>
-                    </div>;
+                    if (loading) return <Loading contentHeight={40} tip=""/>;
                     // if (error) return `Error!: ${error}`;
                     // console.log('SelectSchool data: get schoolList',data);
                     let schoolList = this.changeSchoolList(data.school);

@@ -82,7 +82,7 @@ export default class HomePage extends Component{
                 <Query query={GET_MAIN_PAGE} variables={{openid}}>
                     {({ loading, error, data }) => {
                         // console.log('data',data);
-                        if (loading) return <Loading contentHeight={contentHeight}/>;
+                        if (loading) return <Loading contentHeight={contentHeight} tip="数据加载中..."/>;
                         if (error) return <RenderToast content="加载中，请稍等"/>;
                         return (
                             <TabBar tintColor="#ff5f16">
@@ -111,10 +111,10 @@ export default class HomePage extends Component{
 }
 
 export const RenderToast = ({content}) => (<div>{Toast.info(content)}</div>);
-export const Loading = ({contentHeight}) => (
+export const Loading = ({contentHeight,tip}) => (
     <div style={{width:'100%',height:contentHeight}}>
         <Spin
-            tip="数据加载中..."
+            tip={tip}
             style={{
                 position: 'relative',
                 top: '50%',

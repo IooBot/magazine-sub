@@ -5,7 +5,7 @@ import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 
 import CreateUserInfo from './CreateUserInfo.jsx';
-import {RenderToast,Loading}  from "../HomePage/HomePage";
+import {RenderToast,Loading}  from "../HomePage/HomePage.jsx";
 import {GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
 import {getCookie} from "../../../api/cookie.js";
 
@@ -47,7 +47,7 @@ export default class UserInputPage extends Component{
             return(
                 <Query query={GET_CUSTOMER_BY_OPENID} variables={{openid}}>
                     {({ loading,error, data }) => {
-                        if (loading) return <Loading contentHeight={contentHeight}/>;
+                        if (loading) return <Loading contentHeight={contentHeight} tip=""/>;
                         if (error) return <RenderToast content="加载中，请稍等"/>;
                         // console.log('UserInputPage data',data);
                         let model1Type = "re-edit";

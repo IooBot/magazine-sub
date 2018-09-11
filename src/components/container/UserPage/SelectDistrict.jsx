@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 import { createForm } from 'rc-form';
 import { Query } from "react-apollo";
 
-import Spin from 'antd/lib/spin';
-import 'antd/lib/spin/style/css';
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 import List from 'antd-mobile/lib/list/index';
@@ -13,6 +11,7 @@ import 'antd-mobile/lib/picker/style/css';
 
 import {GET_AREA} from '../../graphql/area.js';
 import SelectSchool from './SelectSchool.jsx';
+import {Loading}  from "../HomePage/HomePage.jsx";
 
 class SelectDistrict extends Component{
     constructor(props){
@@ -67,14 +66,7 @@ class SelectDistrict extends Component{
         return(
             <Query query={GET_AREA}>
                 {({ loading, error, data }) => {
-                    if (loading) return <div style={{width:'100%',height:40}}>
-                        <Spin style={{
-                            position: 'relative',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%,-50%)'
-                        }}/>
-                    </div>;
+                    if (loading) return <Loading contentHeight={40} tip=""/>;
                     // if (error) return `Error!: ${error}`;
                     let districtData = this.changeAreaList(data.area);
                     let userSchoolArea = [area["province"] || "",area["city"] || "",area["name"] || ""];

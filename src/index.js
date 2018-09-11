@@ -43,8 +43,8 @@ class MainApp extends Component{
         let openid =  getCookie("openid");
         // console.log('openid',openid);
         if (!openid) {
-            // window.location.href = "http://test.ioobot.com/subscribe";
-            window.location.href = "http://wechathf.snbl.com.cn/subscribe";
+            window.location.href = "http://test.ioobot.com/subscribe";
+            // window.location.href = "http://wechathf.snbl.com.cn/subscribe";
         }
     };
 

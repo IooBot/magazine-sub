@@ -23,7 +23,7 @@ class UserInput extends Component{
         return(
             <Query query={GET_CUSTOMER_BY_OPENID} variables={{openid}}>
                 {({ loading,error, data }) => {
-                    if (loading) return <Loading contentHeight={window.innerHeight - 139}/>;
+                    if (loading) return <Loading contentHeight={window.innerHeight - 139} tip=""/>;
                     if (error) return <RenderToast content="加载中，请稍等"/>;
                     // console.log('UserInput data',data);
                     if(!data.customer){
