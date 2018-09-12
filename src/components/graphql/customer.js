@@ -31,9 +31,9 @@ export const GET_CUSTOMER_BY_OPENID = gql`
 
 export const CREATE_CUSTOMER = gql`
     mutation createCustomer($area_name: String!,$class: Int!,$grade: Int!,$openid: String!,$school_name: String!,
-    $telephone: String,$username: String) {
+    $telephone: String,$username: String,$createAt:String,$updateAt:String) {
         customer:create_customer(area_name:$area_name,class:$class,grade:$grade,openid: $openid,school_name: $school_name,
-            telephone: $telephone,username:$username) {
+            telephone: $telephone,username:$username,createAt:$createAt,updateAt:$updateAt) {
             ...customerContent
         }
     }
@@ -41,8 +41,10 @@ export const CREATE_CUSTOMER = gql`
 `;
 
 export const UPDATE_CUSTOMER = gql`
-    mutation updateCustomer($openid: String!,$username:String,$telephone:String,$grade:Int,$class:Int,$area_name:String,$school_name:String) {
-        customer:update_customer(openid: $openid,username:$username,telephone:$telephone,grade:$grade,class:$class,area_name:$area_name,school_name:$school_name) {
+    mutation updateCustomer($openid: String!,$username:String,$telephone:String,$grade:Int,$class:Int,$area_name:String,$school_name:String,
+    $createAt:String,$updateAt:String) {
+        customer:update_customer(openid: $openid,username:$username,telephone:$telephone,grade:$grade,class:$class,
+            area_name:$area_name,school_name:$school_name,updateAt:$updateAt) {
             ...customerContent
         }
     }

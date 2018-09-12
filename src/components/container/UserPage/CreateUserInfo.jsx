@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-// import PropTypes from 'prop-types';
-// import { Link } from "react-router-dom";
 import { withRouter } from "react-router-dom";
 import { Mutation } from "react-apollo";
+import moment from 'moment';
 
 import message from 'antd/lib/message';
 import 'antd/lib/message/style/css';
@@ -48,13 +47,19 @@ class CreateUserInfo extends Component{
         let isPoneAvailable = testPhoneNum.test(telephone2);
 
         if(username2 && isPoneAvailable && school_name1 && area_name && gradeClass1){
-            updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,school_name,telephone:telephone2,username:username2 }});
+            let nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
             sessionStorage.setItem("userExists",true);
             if(type === 'create'){
+                updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
+                    school_name,telephone:telephone2,username:username2,createAt:nowTime,updateAt:"" }});
                 this.props.history.push("/pay");
             }else if(type === 'display'){
+                updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
+                    school_name,telephone:telephone2,username:username2,updateAt:nowTime }});
                 this.props.history.push("/#index=2&tab=2");
             }else {
+                updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
+                    school_name,telephone:telephone2,username:username2,updateAt:nowTime }});
                 this.props.history.goBack();
             }
         }else if(!username1){

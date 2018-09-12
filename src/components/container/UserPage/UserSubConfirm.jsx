@@ -16,7 +16,6 @@ import message from 'antd/lib/message';
 import 'antd/lib/message/style/css';
 
 import './userSubConfirm.css';
-// eslint-disable-next-line
 import {CREATE_ORDER,GET_ORDER_BY_PROPS} from '../../graphql/order.js';
 import {GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
 import {Loading}  from "../HomePage/HomePage.jsx";
@@ -68,19 +67,32 @@ class UserSubConfirm extends Component{
     }
 
     componentWillMount(){
-        let subTime = sessionStorage.getItem("magazineEnableSubTime");
+        let magazineEnableSubTime = sessionStorage.getItem("magazineEnableSubTime");
         // console.log('magazineEnableSubTime',subTime);
-        let year_type = changeSubTimeList(JSON.parse(subTime));
+        let year_type = changeSubTimeList(JSON.parse(magazineEnableSubTime));
         // console.log('year_type',year_type);
 
         let defaultSubTime = [year_type[0].value,year_type[0].children[0].value];
         // console.log('defaultSubTime',defaultSubTime);
-        let timeValue = this.getTimeValueArray(defaultSubTime[1]);
+        let subYear = defaultSubTime[0];
+        let subMonthLabel = defaultSubTime[1];
+
+        if(sessionStorage.getItem("subCount")){
+            this.setState({subCount:sessionStorage.getItem("subCount")});
+        }
+        if(sessionStorage.getItem("subYear")){
+            subYear = parseInt(sessionStorage.getItem("subYear"),10);
+        }
+        if(sessionStorage.getItem("subMonth")){
+            subMonthLabel = sessionStorage.getItem("subMonth");
+        }
+        let timeValue = this.getTimeValueArray(subMonthLabel);
+        let subTime = [subYear,subMonthLabel];
         // console.log('timeValue',timeValue);
         this.setState({
             year_type:year_type,
-            subTime:defaultSubTime,
-            subYear:defaultSubTime[0],
+            subTime:subTime,
+            subYear:subYear,
             subMonth:timeValue
         });
     }
@@ -222,6 +234,8 @@ class UserSubConfirm extends Component{
                                                 subYear:value[0],
                                                 subMonth:timeValue
                                             });
+                                            sessionStorage.setItem("subYear",value[0]);
+                                            sessionStorage.setItem("subMonth",value[1]);
                                         }}
                                     >
                                         <List.Item arrow="horizontal" thumb={<Icon type="book" style={{color:'#108ee9',fontSize:20}}/>}>订阅期限</List.Item>
@@ -238,7 +252,10 @@ class UserSubConfirm extends Component{
                                         showNumber
                                         min={1}
                                         value={this.state.subCount}
-                                        onChange={(value)=>this.setState({ subCount:value })}
+                                        onChange={(value)=> {
+                                            this.setState({ subCount:value });
+                                            sessionStorage.setItem("subCount",value);
+                                        }}
                                     /></span>
                                 </div>
                                 <Item
