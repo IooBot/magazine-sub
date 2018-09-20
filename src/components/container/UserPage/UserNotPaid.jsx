@@ -64,7 +64,8 @@ class UserNotPaid extends Component{
             type: 'get',
             data: {
                 needPay:parseInt(needPay * 100,10),
-                openid: $this.props.openid
+                openid: $this.props.openid,
+                tradeNo:id
             },
             dataType: 'json',
             success(res){
