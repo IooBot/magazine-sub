@@ -62,22 +62,23 @@ class CreateUserInfo extends Component{
                     school_name,telephone:telephone2,username:username2,updateAt:nowTime }});
                 this.props.history.goBack();
             }
-        }else if(!username1){
-            Toast.info('请输入姓名！');
+        }else if(!username2){
+            Toast.info('请输入姓名！',1);
         }else if(!isPoneAvailable){
-            Toast.info('请输入11位有效手机号码！');
+            Toast.info('请输入11位有效手机号码！',1);
         }else if(!area_name){
-            Toast.info('请选择所在学校的所处地区！');
+            Toast.info('请选择所在学校的所处地区！',1);
         }else if(!school_name1){
-            Toast.info('请选择所在学校！');
-        }else if(!gradeClass){
-            Toast.info('请选择所在班级-年级！');
+            Toast.info('请选择所在学校！',1);
+        }else if(!gradeClass1){
+            Toast.info('请选择所在班级-年级！',1);
         }else {
-            message.warning('收货地址暂未完善');
+            message.warning('收货地址暂未完善',2);
         }
     };
 
     getInputContent = (item,value) => {
+        // console.log('item',item,'value',value);
         this.setState({
             [item]:value
         });

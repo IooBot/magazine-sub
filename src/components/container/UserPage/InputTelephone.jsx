@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
-import Toast from 'antd-mobile/lib/toast/index';
-import 'antd-mobile/lib/toast/style/css';
 import InputItem from 'antd-mobile/lib/input-item/index';
 import 'antd-mobile/lib/input-item/style/css';
 
@@ -12,50 +10,31 @@ class InputTelephone extends Component{
         super(props);
 
         this.state = {
-            telephone:'',
-            hasError: false
+            telephone:this.props.telephone
         }
     }
 
-    onErrorClick = () => {
-        if (this.state.hasError) {
-            Toast.info('请输入11位有效手机号码！');
-        }
-    };
-
-    onChange = (value) => {
-        // console.log('herderContent',herderContent);
-        if (value.replace(/\s/g, '').length < 11) {
-            this.setState({
-                hasError: true,
-            });
-        } else {
-            this.setState({
-                hasError: false,
-            });
-            // console.log('value1',this.state.telephone);
-            this.props.getInputContent("telephone",value);
-
-        }
-        this.setState({
-            telephone:value,
-        });
-    };
-
     render(){
         let {telephone} = this.props;
-        let telephone1 = this.state.telephone || telephone;
+
         return(
             <InputItem
-                    type="phone"
-                    placeholder="请输入您的手机号码"
-                    error={this.state.hasError}
-                    onErrorClick={this.onErrorClick}
-                    onChange={(value)=>this.onChange(value)}
-                    value={telephone1}
-                >
-                    <Icon type="phone" style={{color:'#ff5f16',fontSize:20}}/>&nbsp;&nbsp;&nbsp;&nbsp;手机号码
-                </InputItem>
+                clear
+                type="phone"
+                placeholder="请输入您的手机号码"
+                defaultValue={telephone}
+                value={this.state.telephone}
+                onChange={value => {
+                    this.setState({telephone:value});
+                    if(!value){
+                        this.props.getInputContent("telephone"," ");
+                    }else {
+                        this.props.getInputContent("telephone",value);
+                    }
+                }}
+            >
+                <Icon type="phone" style={{color:'#ff5f16',fontSize:20}}/>&nbsp;&nbsp;&nbsp;&nbsp;手机号码
+            </InputItem>
         );
     }
 }

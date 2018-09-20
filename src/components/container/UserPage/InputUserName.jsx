@@ -10,27 +10,26 @@ class InputUserName extends Component{
         super(props);
 
         this.state = {
-            username:'',
+            username:this.props.username,
         }
     }
 
     render(){
-        // eslint-disable-next-line
         let {username} = this.props;
-        let username1 = this.state.username || username;
+
         return(
             <InputItem
+                clear
+                maxLength="10"
                 placeholder="请输入您的姓名"
-                value={username1}
+                defaultValue={username}
+                value={this.state.username}
                 onChange={value => {
-                    if(value){
-                        this.setState({username:value});
-                    }
-                }}
-                onBlur={value => {
-                    if(value){
-                        this.setState({username:value});
-                        this.props.getInputContent("username",username1)
+                    this.setState({username:value});
+                    if(!value){
+                        this.props.getInputContent("username"," ");
+                    }else {
+                        this.props.getInputContent("username",value);
                     }
                 }}
             >
