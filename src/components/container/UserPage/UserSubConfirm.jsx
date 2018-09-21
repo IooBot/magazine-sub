@@ -24,15 +24,15 @@ const Brief = Item.Brief;
 
 function changeSubTimeList(subTime) {
     // eslint-disable-next-line
-    let nowTime = `${new Date().getFullYear()}` + `${new Date().getMonth()+1}`;
+    let nowTime = parseInt(`${new Date().getFullYear()}` + `${new Date().getMonth()+1}`);
     let res = [],res1 = [];
     let timeType1 = {label:"全年",value:"1"};   // value为数组[1,2,3,4,5,6,7,8,9,10,11,12],label匹配时无法显示
     let timeType2 = {label:"上半年",value:"2"};
     let timeType3 = {label:"下半年",value:"3"};
 
     subTime.forEach(function(item) {
-        let time1 = `${item}1`;        // 20191
-        let time2 = `${item}7`;        // 20197
+        let time1 = parseInt(`${item}2`);        // 20192
+        let time2 = parseInt(`${item}8`);        // 20198
         // 当前时间小于对应杂志订阅时间1月：可订阅时间的全年杂志
         if(nowTime < time1){
             res = [timeType1,timeType2,timeType3];
