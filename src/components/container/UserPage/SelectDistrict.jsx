@@ -84,6 +84,7 @@ class SelectDistrict extends Component{
                                     initialValue: userSchoolArea1,
                                 })}
                                 onOk={(value) => {
+                                    console.log('district value',value);
                                     this.setState({ userSchoolArea: value, userSchoolDistrict:value[2]});
                                     getInputContent("area_name",value[2]);
                                     getInputContent("school_name"," ");

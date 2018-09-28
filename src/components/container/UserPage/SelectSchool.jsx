@@ -96,7 +96,7 @@ class SelectSchool extends Component{
                                 title="所在学校"
                                 value={school1}
                                 onOk={value => {
-                                    // console.log('onOk school', value);
+                                    console.log('onOk school', value);
                                     this.setState({ school: value });
                                     getInputContent("school_name",value[1]);
                                 }}

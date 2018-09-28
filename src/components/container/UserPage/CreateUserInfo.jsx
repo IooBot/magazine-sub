@@ -31,7 +31,7 @@ class CreateUserInfo extends Component{
         }
     }
 
-    saveUserInput = (e,openid,updateCustomer) => {
+    saveUserInput = (e,openid,mutate) => {
         let {username,telephone,area,school,gradeClass,type} = this.props;
 
         let area_name = this.state.area_name || area["name"];
@@ -50,16 +50,69 @@ class CreateUserInfo extends Component{
             let nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
             sessionStorage.setItem("userExists",true);
             if(type === 'create'){
-                updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
-                    school_name,telephone:telephone2,username:username2,createAt:nowTime,updateAt:"" }});
+                console.log('create customer');
+                mutate({
+                    variables: { area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
+                        school_name,telephone:telephone2,username:username2,createAt:nowTime,updateAt:"" },
+                    optimisticResponse: {
+                        __typename: "Mutation",
+                        createCustomer: {
+                            __typename: "Customer",
+                            class:gradeClass1[1],grade:gradeClass1[0],openid,
+                            telephone:telephone2,username:username2
+                        }
+                    },
+                    update: (proxy, { data: { createCustomer } }) => {
+                        // console.log('createCustomer',createCustomer);
+                        const data = proxy.readQuery({ query: GET_CUSTOMER_BY_OPENID, variables:{openid}});
+                        data.customer = createCustomer;
+                        proxy.writeQuery({  query: GET_CUSTOMER_BY_OPENID, variables:{openid},data });
+                        // console.log('createCustomer proxy',proxy);
+                    }
+                });
+                // updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
+                //     school_name,telephone:telephone2,username:username2,createAt:nowTime,updateAt:"" }});
                 this.props.history.push("/pay");
             }else if(type === 'display'){
-                updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
-                    school_name,telephone:telephone2,username:username2,updateAt:nowTime }});
+                console.log('display customer');
+                mutate({
+                    variables: {area_name:area_name,class:gradeClass1[1],grade:gradeClass1[0],openid:openid,
+                        school_name,telephone:telephone2,username:username2,updateAt:nowTime},
+                    optimisticResponse: {
+                        __typename: "Mutation",
+                        updateCustomer: {
+                            __typename: "Customer",
+                            area_name:area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
+                            school_name,telephone:telephone2,username:username2
+                        }
+                    }
+                });
+                // updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
+                //     school_name,telephone:telephone2,username:username2,updateAt:nowTime }});
                 this.props.history.push("/#index=2&tab=2");
             }else {
-                updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
-                    school_name,telephone:telephone2,username:username2,updateAt:nowTime }});
+                console.log('re-edit customer');
+                console.log({area_name:area_name,class:gradeClass1[1],grade:gradeClass1[0],openid:openid,
+                    school_name:school_name,telephone:telephone2,username:username2,updateAt:nowTime});
+                mutate({
+                    variables: {area_name:area_name,class:gradeClass1[1],grade:gradeClass1[0],openid:openid,
+                        school_name:school_name,telephone:telephone2,username:username2,updateAt:nowTime},
+                    optimisticResponse: {
+                        __typename: "Mutation",
+                        updateCustomer: {
+                            __typename: "Customer",
+                            area:area_name,
+                            class:gradeClass1[1],
+                            grade:gradeClass1[0],
+                            openid:openid,
+                            school:school_name,
+                            telephone:telephone2,
+                            username:username2,
+                        }
+                    }
+                });
+                // updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
+                //     school_name,telephone:telephone2,username:username2,updateAt:nowTime }});
                 this.props.history.goBack();
             }
         }else if(!username2){
@@ -93,8 +146,9 @@ class CreateUserInfo extends Component{
         return(
             <Mutation mutation={type === 'create' ? CREATE_CUSTOMER:UPDATE_CUSTOMER}
                       refetchQueries={[{query:GET_CUSTOMER_BY_OPENID, variables:{openid}}]}
+                      onError={(error)=>{console.log('error',error)}}
             >
-                {(updateCustomer, { loading, error }) => (
+                {(mutate, { loading, error }) => (
                     <div>
                         <div id="userInput">
                             <List renderHeader={() => herderContent}>
@@ -115,14 +169,14 @@ class CreateUserInfo extends Component{
                             </List>
                             <div style={{visibility:saveButtonDisplay}}>
                                 <List.Item>
-                                    <button className="long-button" onClick={(e)=> this.saveUserInput(e,openid,updateCustomer)}>保存</button>
+                                    <button className="long-button" onClick={(e)=> this.saveUserInput(e,openid,mutate)}>保存</button>
                                 </List.Item>
                             </div>
                         </div>
                         {loading && <Loading contentHeight={window.innerHeight - 95} tip=""/>}
                         {error && <RenderToast content="加载中，请稍等"/>}
                     </div>
-                )}
+            )}
             </Mutation>
         );
     }
