@@ -42,7 +42,7 @@ class SelectDistrict extends Component{
                 let {label,name} = item;
                 return {
                     label: label,
-                    value: name,
+                    value: `${name}+${label}`,
                 }
             });
             res1.push({
@@ -69,7 +69,7 @@ class SelectDistrict extends Component{
                     if (loading) return <Loading contentHeight={40} tip=""/>;
                     // if (error) return `Error!: ${error}`;
                     let districtData = this.changeAreaList(data.area);
-                    let userSchoolArea = [area["province"] || "",area["city"] || "",area["name"] || ""];
+                    let userSchoolArea = [area["province"] || "",area["city"] || "",`${area["name"]}+${area["district"]}` || ""];
                     let userSchoolArea1 = this.state.userSchoolArea || userSchoolArea;
                     let userSchoolDistrict = this.state.userSchoolDistrict || area["name"] ;
                     let school1 = [school.type ,school.name];
@@ -84,10 +84,13 @@ class SelectDistrict extends Component{
                                     initialValue: userSchoolArea1,
                                 })}
                                 onOk={(value) => {
-                                    console.log('district value',value);
-                                    this.setState({ userSchoolArea: value, userSchoolDistrict:value[2]});
-                                    getInputContent("area_name",value[2]);
+                                    // console.log('district value',value);
+                                    let area_name = value[2].split("+")[0];
+                                    let district = value[2].split("+")[1];
+                                    this.setState({ userSchoolArea: value, userSchoolDistrict:area_name});
+                                    getInputContent("area_name",area_name);
                                     getInputContent("school_name"," ");
+                                    getInputContent("areaArr",[value[0],value[1],district]);
                                 }}
                             >
                                 <List.Item

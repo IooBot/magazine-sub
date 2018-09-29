@@ -41,11 +41,13 @@ const client = new ApolloClient({
 class MainApp extends Component{
 // eslint-disable-next-line
     wechatOauthLogin = () => {
+        // setCookie("openid","o2fcFv8x3wy5WtcP116S5GzzkgDQ");
         let openid =  getCookie("openid");
         // console.log('openid',openid);
         if (!openid) {
             // window.location.href = "http://test.ioobot.com/subscribe";
-            window.location.href = "http://wechathf.snbl.com.cn/subscribe";
+            // window.location.href = "http://wechathf.snbl.com.cn/subscribe";
+            window.location.href = "http://snbl.ioobot.com/subscribe";
         }
     };
 

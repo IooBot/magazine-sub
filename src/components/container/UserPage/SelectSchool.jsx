@@ -96,9 +96,10 @@ class SelectSchool extends Component{
                                 title="所在学校"
                                 value={school1}
                                 onOk={value => {
-                                    console.log('onOk school', value);
+                                    // console.log('onOk school', value);
                                     this.setState({ school: value });
                                     getInputContent("school_name",value[1]);
+                                    getInputContent("schoolArr",value);
                                 }}
                             >
                                 <List.Item arrow="horizontal" thumb={<Icon type="team" style={{color:'#ff5f16',fontSize:20}}/>}

@@ -19,13 +19,8 @@ import './userSubConfirm.css';
 import {CREATE_ORDER,GET_ORDER_BY_PROPS} from '../../graphql/order.js';
 import {GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
 import {Loading}  from "../HomePage/HomePage.jsx";
-const ChatBot = require('dingtalk-robot-sender');
 const Item = List.Item;
 const Brief = Item.Brief;
-// 直接使用 webhook
-const robot = new ChatBot({
-    webhook: 'https://oapi.dingtalk.com/robot/send?access_token=4088783aadbd47e51f99587d74c7fd1dd2be6325766f5668985c29d95dffe6b1'
-});
 
 function changeSubTimeList(subTime) {
     // eslint-disable-next-line
@@ -165,30 +160,29 @@ class UserSubConfirm extends Component{
             createAt,
             id
         };
-        confirmContent.orderStatus = "waitPay";
-        createOrder({ variables:confirmContent });
-        // if(needPay !== 0){
-        //     let $this = this;
-        //     $.ajax({
-        //         url: '/payinfo',
-        //         type: 'get',
-        //         data: {
-        //             needPay:parseInt(needPay * 100,10),
-        //             openid: $this.props.openid,
-        //             tradeNo:id
-        //         },
-        //         dataType: 'json',
-        //         success(res){
-        //             // console.log('onBridgeReady res',res);
-        //             $this.jsApiPay(res,confirmContent,createOrder);
-        //         },
-        //         error(err){
-        //             console.log('onBridgeReady err',err);
-        //         }
-        //     });
-        // }else {
-        //     message.warning('支付金额不能为0');
-        // }
+
+        if(needPay !== 0){
+            let $this = this;
+            $.ajax({
+                url: '/payinfo',
+                type: 'get',
+                data: {
+                    needPay:parseInt(needPay * 100,10),
+                    openid: $this.props.openid,
+                    tradeNo:id
+                },
+                dataType: 'json',
+                success(res){
+                    // console.log('onBridgeReady res',res);
+                    $this.jsApiPay(res,confirmContent,createOrder);
+                },
+                error(err){
+                    console.log('onBridgeReady err',err);
+                }
+            });
+        }else {
+            message.warning('支付金额不能为0');
+        }
     };
 
     render(){
@@ -283,12 +277,12 @@ class UserSubConfirm extends Component{
                             </List>
                             <Mutation mutation={CREATE_ORDER}
                                       update={(cache, { data:{createOrder} }) => {
-                                          console.log('createOrder',createOrder);
+                                          // console.log('createOrder',createOrder);
                                           let {orderStatus} = createOrder;
                                           // console.log('orderStatus',orderStatus);
                                           // Read the data from the cache for this query.
                                           const data = cache.readQuery({ query: GET_ORDER_BY_PROPS,variables: {openid,orderStatus}});
-                                          console.log('data orderList',data);
+                                          // console.log('data orderList',data);
                                           // Add our channel from the mutation to the end.
                                           data.orderList.push(createOrder);
                                           // Write the data back to the cache.

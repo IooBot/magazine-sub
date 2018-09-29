@@ -27,7 +27,9 @@ class CreateUserInfo extends Component{
             gradeClass: "",
             school_name:"",
             telephone: "",
-            username: ""
+            username: "",
+            areaArr: "",
+            schoolArr: ""
         }
     }
 
@@ -49,18 +51,34 @@ class CreateUserInfo extends Component{
         if(username2 && isPoneAvailable && school_name1 && area_name && gradeClass1){
             let nowTime = moment().format('YYYY-MM-DD HH:mm:ss');
             sessionStorage.setItem("userExists",true);
+            let {areaArr,schoolArr} = this.state;
+            let updateContent = {
+                __typename: "Customer",
+                area:{
+                    city:areaArr[1] || area["city"],
+                    district:areaArr[2] || area["district"],
+                    province:areaArr[0] || area["province"],
+                    name:area_name,
+                    __typename:"Area"
+                },
+                class:gradeClass1[1],
+                grade:gradeClass1[0],
+                openid:openid,
+                school:{
+                    name:school_name,
+                    type:schoolArr[0] || school["type"],
+                    __typename:"School"
+                },
+                telephone:telephone2,
+                username:username2,
+            };
             if(type === 'create'){
-                console.log('create customer');
                 mutate({
                     variables: { area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
                         school_name,telephone:telephone2,username:username2,createAt:nowTime,updateAt:"" },
                     optimisticResponse: {
                         __typename: "Mutation",
-                        createCustomer: {
-                            __typename: "Customer",
-                            class:gradeClass1[1],grade:gradeClass1[0],openid,
-                            telephone:telephone2,username:username2
-                        }
+                        createCustomer: updateContent
                     },
                     update: (proxy, { data: { createCustomer } }) => {
                         // console.log('createCustomer',createCustomer);
@@ -70,49 +88,26 @@ class CreateUserInfo extends Component{
                         // console.log('createCustomer proxy',proxy);
                     }
                 });
-                // updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
-                //     school_name,telephone:telephone2,username:username2,createAt:nowTime,updateAt:"" }});
                 this.props.history.push("/pay");
             }else if(type === 'display'){
-                console.log('display customer');
                 mutate({
                     variables: {area_name:area_name,class:gradeClass1[1],grade:gradeClass1[0],openid:openid,
                         school_name,telephone:telephone2,username:username2,updateAt:nowTime},
                     optimisticResponse: {
                         __typename: "Mutation",
-                        updateCustomer: {
-                            __typename: "Customer",
-                            area_name:area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
-                            school_name,telephone:telephone2,username:username2
-                        }
+                        updateCustomer: updateContent
                     }
                 });
-                // updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
-                //     school_name,telephone:telephone2,username:username2,updateAt:nowTime }});
                 this.props.history.push("/#index=2&tab=2");
             }else {
-                console.log('re-edit customer');
-                console.log({area_name:area_name,class:gradeClass1[1],grade:gradeClass1[0],openid:openid,
-                    school_name:school_name,telephone:telephone2,username:username2,updateAt:nowTime});
                 mutate({
                     variables: {area_name:area_name,class:gradeClass1[1],grade:gradeClass1[0],openid:openid,
                         school_name:school_name,telephone:telephone2,username:username2,updateAt:nowTime},
                     optimisticResponse: {
                         __typename: "Mutation",
-                        updateCustomer: {
-                            __typename: "Customer",
-                            area:area_name,
-                            class:gradeClass1[1],
-                            grade:gradeClass1[0],
-                            openid:openid,
-                            school:school_name,
-                            telephone:telephone2,
-                            username:username2,
-                        }
+                        updateCustomer: updateContent
                     }
                 });
-                // updateCustomer({ variables:{area_name,class:gradeClass1[1],grade:gradeClass1[0],openid,
-                //     school_name,telephone:telephone2,username:username2,updateAt:nowTime }});
                 this.props.history.goBack();
             }
         }else if(!username2){
