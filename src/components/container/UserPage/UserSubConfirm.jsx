@@ -31,8 +31,8 @@ function changeSubTimeList(subTime) {
     let timeType3 = {label:"下半年",value:"3"};
 
     subTime.forEach(function(item) {
-        let time1 = parseInt(`${item}2`,10);        // 20192
-        let time2 = parseInt(`${item}8`,10);        // 20198
+        let time1 = parseInt(`${item}02`,10);        // 20192
+        let time2 = parseInt(`${item}08`,10);        // 20198
         // 当前时间小于对应杂志订阅时间1月：可订阅时间的全年杂志
         if(nowTime < time1){
             res = [timeType1,timeType2,timeType3];
@@ -68,7 +68,7 @@ class UserSubConfirm extends Component{
 
     componentWillMount(){
         let magazineEnableSubTime = sessionStorage.getItem("magazineEnableSubTime");
-        // console.log('magazineEnableSubTime',subTime);
+        // console.log('magazineEnableSubTime',magazineEnableSubTime);
         let year_type = changeSubTimeList(JSON.parse(magazineEnableSubTime));
         // console.log('year_type',year_type);
 
