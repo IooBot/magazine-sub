@@ -13,6 +13,8 @@ import 'antd-mobile/lib/modal/style/css';
 import './userSubPage.css';
 import {GET_ORDER_BY_PROPS,DELETE_ORDER,UPDATE_ORDER} from '../../graphql/order.js';
 import {Loading}  from "../HomePage/HomePage.jsx";
+import {sendError} from "./UserSubConfirm.jsx";
+
 const alert = Modal.alert;
 
 class UserNotPaid extends Component{
@@ -121,6 +123,7 @@ class UserNotPaid extends Component{
             return <div key={'order'+idx}>
                 <Mutation mutation={DELETE_ORDER}
                           onCompleted={()=>{refetch();}}
+                          onError={error=>sendError(error,'DELETE_ORDER')}
                 >
                     {(deleteOrder, { loading, error }) => (
                         <div>
@@ -151,6 +154,7 @@ class UserNotPaid extends Component{
                                               refetchQueries={[{query:GET_ORDER_BY_PROPS,variables: {openid,orderStatus:'finishPay'}},
                                                   {query:GET_ORDER_BY_PROPS,variables: {openid,orderStatus:'waitPay'}}
                                               ]}
+                                              onError={error=>sendError(error,'UPDATE_ORDER')}
                                     >
                                         {(updateOrder,{ loading, error }) => (
                                             <div>

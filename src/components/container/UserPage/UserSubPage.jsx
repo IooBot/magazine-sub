@@ -10,6 +10,7 @@ import 'antd-mobile/lib/picker/style/css';
 import './userSubPage.css';
 import {GET_ORDER_BY_PROPS,UPDATE_ORDER_MAGAZINE} from '../../graphql/order.js';
 import {Loading}  from "../HomePage/HomePage.jsx";
+import {sendError} from "./UserSubConfirm.jsx";
 
 export default class UserSubPage extends Component{
     constructor(props) {
@@ -58,7 +59,9 @@ export default class UserSubPage extends Component{
             // console.log('oder.magazine',oder.magazine);
 
             return <div key={'order'+idx}>
-                <Mutation mutation={UPDATE_ORDER_MAGAZINE}>
+                <Mutation mutation={UPDATE_ORDER_MAGAZINE}
+                    onError={error=>sendError(error,'UPDATE_ORDER_MAGAZINE')}
+                >
                     {(updateOrderMagazine) => (
                         <div className="sub-content">
                             <div className="sub-title">
@@ -110,7 +113,7 @@ export default class UserSubPage extends Component{
 
         return(
             <Query query={GET_ORDER_BY_PROPS} variables={{openid,"orderStatus":"finishPay"}}>
-                {({ loading, error, data, refetch }) => {
+                {({ loading, error, data }) => {
                     // console.log("subRecord order data",data);
                     if (loading)
                         return <Loading contentHeight={contentHeight} tip=""/>;

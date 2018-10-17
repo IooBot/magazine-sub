@@ -27,8 +27,8 @@ export const GET_ORDER_BY_PROPS = gql`
 `;
 
 export const CREATE_ORDER = gql`
-    mutation createOrder($id:String!,$magazine_id:String,$openid:String,$subCount:Int,$subMonthCount:Int,
-    $havePay:Float,$subYear:String,$subMonth:[Int],$createAt:String,$orderStatus:String){
+    mutation createOrder($id:String!,$magazine_id:String!,$openid:String!,$subCount:Int!,$subMonthCount:Int!,
+    $havePay:Float!,$subYear:String!,$subMonth:[Int]!,$createAt:String!,$orderStatus:String!){
         createOrder:create_order(
             id:$id
             magazine_id : $magazine_id

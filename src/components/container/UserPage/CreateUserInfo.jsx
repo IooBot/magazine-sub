@@ -14,6 +14,7 @@ import 'antd-mobile/lib/input-item/style/css';
 import './userInput.css';
 import {CREATE_CUSTOMER,UPDATE_CUSTOMER,GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
 import {RenderToast,Loading}  from "../HomePage/HomePage";
+import {sendError} from "./UserSubConfirm.jsx";
 import SelectDistrict from './SelectDistrict.jsx';
 import InputUserName from './InputUserName.jsx';
 import InputTelephone from './InputTelephone.jsx';
@@ -141,7 +142,7 @@ class CreateUserInfo extends Component{
         return(
             <Mutation mutation={type === 'create' ? CREATE_CUSTOMER:UPDATE_CUSTOMER}
                       refetchQueries={[{query:GET_CUSTOMER_BY_OPENID, variables:{openid}}]}
-                      onError={(error)=>{console.log('error',error)}}
+                      onError={error=>sendError(error,type === 'create' ? 'CREATE_CUSTOMER':'UPDATE_CUSTOMER')}
             >
                 {(mutate, { loading, error }) => (
                     <div>

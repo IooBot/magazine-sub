@@ -31,8 +31,8 @@ function changeSubTimeList(subTime) {
     let timeType3 = {label:"下半年",value:"3"};
 
     subTime.forEach(function(item) {
-        let time1 = parseInt(`${item}02`,10);        // 20192
-        let time2 = parseInt(`${item}08`,10);        // 20198
+        let time1 = parseInt(`${item}02`,10);        // 201902
+        let time2 = parseInt(`${item}08`,10);        // 201908
         // 当前时间小于对应杂志订阅时间1月：可订阅时间的全年杂志
         if(nowTime < time1){
             res = [timeType1,timeType2,timeType3];
@@ -51,6 +51,27 @@ function changeSubTimeList(subTime) {
     });
     // console.log("changeSubTimeList subTimeList",res1);
     return res1;
+}
+
+export function sendError(error,type) {
+    // console.log(type,'sendError data',error);
+    if(error){
+        $.ajax({
+            url: '/api/error',
+            type: 'post',
+            data: {
+                mutationError:error,
+                mutationMethod:type
+            },
+            dataType: 'json',
+            success(res){
+                console.log('sendError res',res);
+            },
+            error(err){
+                console.log('sendError err',err);
+            }
+        });
+    }
 }
 
 class UserSubConfirm extends Component{
@@ -289,6 +310,7 @@ class UserSubConfirm extends Component{
                                           cache.writeQuery({ query: GET_ORDER_BY_PROPS,variables: {openid,orderStatus}, data });
                                           // console.log('CREATE_ORDER cache',cache);
                                       }}
+                                      onError={error=>sendError(error,'CREATE_ORDER')}
                             >
                                 {(createOrder,{ loading, error }) => (
                                     <div>
