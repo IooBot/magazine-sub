@@ -182,6 +182,8 @@ class UserSubConfirm extends Component{
             id
         };
 
+        console.log('confirmContent',confirmContent);
+        console.log('tradeNo',id);
         if(needPay !== 0){
             let $this = this;
             $.ajax({
