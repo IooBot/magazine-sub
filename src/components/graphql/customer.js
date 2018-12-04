@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import {customer_order} from './order';
 
 const customer_Content = gql`
     fragment customerContent on Customer {
@@ -27,6 +28,25 @@ export const GET_CUSTOMER_BY_OPENID = gql`
         }
     }
     ${customer_Content}
+`;
+
+export const GET_CUSTOMER_AND_ORDER = gql`
+    query getCustomerAndOrder($openid: String,$id:String) {
+        customer:customer_by_openid(openid: $openid) {
+            ...customerContent
+        }
+        finishPayOrder:order_by_props(openid: $openid,orderStatus:"finishPay"){
+            ...customerOrder
+        }
+        waitPayOrder:order_by_props(openid: $id,orderStatus:"waitPay"){
+            ...customerOrder
+        }
+        ishaveOrder:order_by_id(id:$id){
+            orderStatus
+        }
+    }
+    ${customer_Content}
+    ${customer_order}
 `;
 
 export const CREATE_CUSTOMER = gql`

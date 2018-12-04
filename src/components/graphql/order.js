@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-const customer_order = gql`
+export const customer_order = gql`
     fragment customerOrder on Order {
         id
         createAt

@@ -17,7 +17,7 @@ import 'antd/lib/message/style/css';
 
 import './userSubConfirm.css';
 import {CREATE_ORDER,GET_ORDER_BY_PROPS} from '../../graphql/order.js';
-import {GET_CUSTOMER_BY_OPENID} from '../../graphql/customer.js';
+import {GET_CUSTOMER_BY_OPENID,GET_CUSTOMER_AND_ORDER} from '../../graphql/customer.js';
 import {Loading}  from "../HomePage/HomePage.jsx";
 const Item = List.Item;
 const Brief = Item.Brief;
@@ -124,7 +124,7 @@ class UserSubConfirm extends Component{
     };
 
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
-    jsApiPay = (args,confirmContent,createOrder) => {
+    jsApiPay = (args,confirmContent,refetch) => {
         // console.log('args res',args);
         let $this = this;
         function onBridgeReady(){
@@ -136,15 +136,26 @@ class UserSubConfirm extends Component{
                     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回 ok，但并不保证它绝对可靠。
                     if(res.err_msg === "get_brand_wcpay_request:ok" ) {
                         // 成功完成支付
-                        message.success('支付成功，等待发货');
-                        confirmContent.orderStatus = "finishPay";
-                        createOrder({ variables:confirmContent });
-                        $this.props.history.push("/#index=2&tab=0");
+                        let {openid,id} = confirmContent;
+                        setTimeout(() => {
+                            refetch({variables:openid,id}).then((res)=>{
+                                console.log('complete pay update res',res);
+                                let ishave = res.data.ishaveOrder.orderStatus;
+                                if(ishave === "finishPay"){
+                                    message.success('支付成功，等待发货');
+                                }else if(ishave === "waitPay"){
+                                    message.success('支付成功，等待确认');
+                                    sendError('complete pay but status is also waitPay','get_brand_wcpay_request:ok but error')
+                                }
+                                $this.props.history.push("/#index=2&tab=0");
+                            }).catch((err)=>{
+                                console.log('complete pay update refetch err',err);
+                                sendError(err,'get_brand_wcpay_request:ok but refetch error');
+                            });
+                        }, 2000);
                     }
                     else{
                         message.error('支付失败，请稍后重试');
-                        confirmContent.orderStatus = "waitPay";
-                        createOrder({ variables:confirmContent });
                         $this.props.history.push("/#index=2&tab=1");
                     }
                 }
@@ -163,45 +174,70 @@ class UserSubConfirm extends Component{
     };
 
     // ajax请求后端请求获得prepay_id
-    getBridgeReady = (createOrder,needPay,telephone) => {
-        let { openid,magazineId} = this.props;
-        // console.log('needPay',needPay,typeof(needPay),needPay !== 0);
+    getBridgeReady = (createOrder,needPay,telephone,refetch) => {
 
-        let createAt = moment().format('YYYY-MM-DD HH:mm:ss');
-        let tag = telephone.replace(/[^0-9]/ig,"").slice(-4);
-        let id = createAt.replace(/[^0-9]/ig,"").substr(2)+tag;
-        const confirmContent = {
-            openid,
-            magazine_id:magazineId,
-            subCount:this.state.subCount,
-            subYear:this.state.subYear,
-            subMonth:this.state.subMonth,
-            subMonthCount:this.state.subMonth.length,
-            havePay:needPay,
-            createAt,
-            id
-        };
-
-        console.log('confirmContent',confirmContent);
-        console.log('tradeNo',id);
         if(needPay !== 0){
+            let {openid,magazineId} = this.props;
+            let createAt = moment().format('YYYY-MM-DD HH:mm:ss');
+            let tag = telephone.replace(/[^0-9]/ig,"").slice(-4);
+            let id = createAt.replace(/[^0-9]/ig,"").substr(2)+tag;
+            const confirmContent = {
+                openid,
+                magazine_id:magazineId,
+                subCount:this.state.subCount,
+                subYear:this.state.subYear,
+                subMonth:this.state.subMonth,
+                subMonthCount:this.state.subMonth.length,
+                havePay:needPay,
+                createAt,
+                id,
+                orderStatus:"waitPay"
+            };
+            console.log('confirmContent',confirmContent);
+
+            // setTimeout(() => {
+            //     refetch({variables:openid,id}).then((res)=>{
+            //         console.log('data2 res',res);
+            //         let ishave = res.data.ishaveOrder.orderStatus;
+            //         if(ishave === "finishPay"){
+            //             message.success('支付成功，等待发货');
+            //         }else if(ishave === "waitPay"){
+            //             console.log('data2 ishave',ishave);
+            //         }
+            //         this.props.history.push("/#index=2&tab=0");
+            //     }).catch((err)=>{
+            //         console.log('data2 err',err);
+            //     });
+            // }, 2000);
+
             let $this = this;
-            $.ajax({
-                url: '/payinfo',
-                type: 'get',
-                data: {
-                    needPay:parseInt(needPay * 100,10),
-                    openid: $this.props.openid,
-                    tradeNo:id
-                },
-                dataType: 'json',
-                success(res){
-                    // console.log('onBridgeReady res',res);
-                    $this.jsApiPay(res,confirmContent,createOrder);
-                },
-                error(err){
-                    console.log('onBridgeReady err',err);
+            createOrder({ variables:confirmContent }).then(res => {
+                console.log('createOrder waitPay order res',res);
+                let {id:id1,createAt:createAt1} = res.data.createOrder;
+                let {id:id2,createAt:createAt2} = confirmContent;
+                if( id1 === id2 && createAt1 === createAt2){
+                    console.log('success');
+                    $.ajax({
+                        url: '/payinfo',
+                        type: 'get',
+                        data: {
+                            needPay:parseInt(needPay * 100,10),
+                            openid: $this.props.openid,
+                            tradeNo:id,
+                            orderData:JSON.stringify(confirmContent)
+                        },
+                        dataType: 'json',
+                        success(res){
+                            // console.log('onBridgeReady res',res);
+                            $this.jsApiPay(res,confirmContent,refetch);
+                        },
+                        error(err){
+                            console.log('onBridgeReady err',err);
+                        }
+                    });
                 }
+            }).catch(()=>{
+                message.warning('网络或系统故障，请稍后重试');
             });
         }else {
             message.warning('支付金额不能为0');
@@ -214,13 +250,13 @@ class UserSubConfirm extends Component{
         let needPay = unitPrice * subMonthCount * this.state.subCount;
         return(
             <Query
-                query={GET_CUSTOMER_BY_OPENID}
-                variables={{openid}}
+                query={GET_CUSTOMER_AND_ORDER}
+                variables={{openid,id:openid}}
             >
-                {({ loading,error, data }) => {
+                {({ loading,error, data,refetch  }) => {
                     if (loading) return <Loading contentHeight={window.innerHeight - 90} tip="数据加载中..."/>;
                     // if (error) return `Error!: ${error}`;
-                    // console.log('UserSubConfirm data',data);
+                    console.log('UserSubConfirm data',data);
 
                     let username='',telephone='',area=[],school=[],grade='',gClass='';
                     if(data.customer){
@@ -300,17 +336,18 @@ class UserSubConfirm extends Component{
                             </List>
                             <Mutation mutation={CREATE_ORDER}
                                       update={(cache, { data:{createOrder} }) => {
-                                          // console.log('createOrder',createOrder);
+                                          console.log('createOrder',createOrder);
                                           let {orderStatus} = createOrder;
-                                          // console.log('orderStatus',orderStatus);
+                                          console.log('orderStatus',orderStatus);
                                           // Read the data from the cache for this query.
+                                          console.log('CREATE_ORDER cache',cache);
                                           const data = cache.readQuery({ query: GET_ORDER_BY_PROPS,variables: {openid,orderStatus}});
-                                          // console.log('data orderList',data);
+                                          console.log('data orderList',data);
                                           // Add our channel from the mutation to the end.
                                           data.orderList.push(createOrder);
                                           // Write the data back to the cache.
                                           cache.writeQuery({ query: GET_ORDER_BY_PROPS,variables: {openid,orderStatus}, data });
-                                          // console.log('CREATE_ORDER cache',cache);
+
                                       }}
                                       onError={error=>sendError(error,'CREATE_ORDER')}
                             >
@@ -318,7 +355,7 @@ class UserSubConfirm extends Component{
                                     <div>
                                         <List.Item>
                                             <button className="long-button"
-                                                    onClick={()=>this.getBridgeReady(createOrder,needPay,telephone)}
+                                                    onClick={()=>this.getBridgeReady(createOrder,needPay,telephone,refetch)}
                                             >确认并支付</button>
                                         </List.Item>
                                         {/*{loading && <p>Loading...</p>}*/}
