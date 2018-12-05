@@ -11,7 +11,7 @@ import Modal from 'antd-mobile/lib/modal/index';
 import 'antd-mobile/lib/modal/style/css';
 
 import './userSubPage.css';
-import {GET_ORDER_BY_PROPS,DELETE_ORDER,UPDATE_ORDER} from '../../graphql/order.js';
+import {GET_ORDER_BY_PROPS,DELETE_ORDER,UPDATE_ORDER ,GET_WAIT_PAY_ORDER} from '../../graphql/order.js';
 import {Loading}  from "../HomePage/HomePage.jsx";
 import {sendError} from "./UserSubConfirm.jsx";
 
@@ -20,7 +20,7 @@ const alert = Modal.alert;
 class UserNotPaid extends Component{
 
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
-    jsApiPay = (args,confirmContent,updateOrder) => {
+    jsApiPay = (args,confirmContent,updateOrder,refetch) => {
         // console.log('args res', args);
         let $this = this;
         function onBridgeReady() {
@@ -30,10 +30,29 @@ class UserNotPaid extends Component{
                     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回 ok，但并不保证它绝对可靠。
                     if (res.err_msg === "get_brand_wcpay_request:ok") {
                         // 成功完成支付
-                        message.success('支付成功，等待发货');
-                        confirmContent.orderStatus = "finishPay";
-                        updateOrder({variables: confirmContent});
-                        $this.props.history.push("/#index=2&tab=0");
+                        let {openid,id} = confirmContent;
+                        setTimeout(() => {
+                            refetch({variables:openid,id}).then((res)=>{
+                                // console.log('complete pay update res',res);
+                                let ishave = res.data.ishaveOrder.orderStatus;
+                                if(ishave === "finishPay"){
+                                    confirmContent.orderStatus = "finishPay";
+                                    updateOrder({variables: confirmContent});
+                                    message.success('支付成功，等待发货');
+                                }else if(ishave === "waitPay"){
+                                    confirmContent.orderStatus = "finishPay";
+                                    updateOrder({
+                                        variables: confirmContent,
+                                        refetchQueries:[{query:GET_ORDER_BY_PROPS,variables: {openid,orderStatus:'waitPay'}}]});
+                                    message.success('支付成功，等待确认');
+                                    sendError('complete pay but status is also waitPay','get_brand_wcpay_request:ok but error')
+                                }
+                                $this.props.history.push("/#index=2&tab=0");
+                            }).catch((err)=>{
+                                // console.log('complete pay update refetch err',err);
+                                sendError(err,'get_brand_wcpay_request:ok but refetch error');
+                            });
+                        }, 2000);
                     }
                     else {
                         message.error('支付失败，请稍后重试');
@@ -53,12 +72,29 @@ class UserNotPaid extends Component{
         }
     };
 
-    getBridgeReady = (updateOrder,id,needPay) => {
+    getBridgeReady = (updateOrder,id,needPay,refetch) => {
         let {openid} = this.props;
         const confirmContent = {
             openid,
             id
         };
+
+        // confirmContent.orderStatus = "finishPay";
+        // updateOrder({variables: confirmContent});
+        // setTimeout(() => {
+        //     refetch({variables:openid,id}).then((res)=>{
+        //         console.log('data2 res',res);
+        //         let ishave = res.data.ishaveOrder.orderStatus;
+        //         if(ishave === "finishPay"){
+        //             message.success('支付成功，等待发货');
+        //         }else if(ishave === "waitPay"){
+        //             console.log('data2 ishave',ishave);
+        //         }
+        //         this.props.history.push("/#index=2&tab=0");
+        //     }).catch((err)=>{
+        //         console.log('data2 err',err);
+        //     });
+        // }, 1000);
 
         let $this = this;
         $.ajax({
@@ -72,10 +108,12 @@ class UserNotPaid extends Component{
             dataType: 'json',
             success(res){
                 // console.log('onBridgeReady res',res);
-                $this.jsApiPay(res,confirmContent,updateOrder);
+                $this.jsApiPay(res,confirmContent,updateOrder,refetch);
             },
             error(err){
-                console.log('onBridgeReady err',err);
+                $this.props.history.push("/#index=2&tab=1");
+                message.warning('网络或系统故障，请稍后重试');
+                // console.log('onBridgeReady err',err);
             }
         });
     };
@@ -125,7 +163,7 @@ class UserNotPaid extends Component{
                           onCompleted={()=>{refetch();}}
                           onError={error=>sendError(error,'DELETE_ORDER')}
                 >
-                    {(deleteOrder, { loading, error }) => (
+                    {(deleteOrder,{ loading, error }) => (
                         <div>
                             <div className="sub-content">
                                 <div className="sub-title">
@@ -148,9 +186,6 @@ class UserNotPaid extends Component{
                                         <span>合计:&nbsp;&nbsp;<span style={{color:"#ff5f16"}}>¥{havePay}</span></span>
                                     </div>
                                     <Mutation mutation={UPDATE_ORDER}
-                                              // onCompleted={()=>{
-                                              //     this.props.history.push("/#index=2&tab=0");
-                                              // }}
                                               refetchQueries={[{query:GET_ORDER_BY_PROPS,variables: {openid,orderStatus:'finishPay'}},
                                                   {query:GET_ORDER_BY_PROPS,variables: {openid,orderStatus:'waitPay'}}
                                               ]}
@@ -161,7 +196,7 @@ class UserNotPaid extends Component{
                                                 <span style={{color:'#888'}}>创建时间: {createAt}</span>
                                                 <span >
                                                     <button className="color-button" style={{width:'90px',height:'30px',lineHeight:'20px'}}
-                                                        onClick={()=>this.getBridgeReady(updateOrder,id,havePay)}>确认支付</button>
+                                                        onClick={()=>this.getBridgeReady(updateOrder,id,havePay,refetch)}>确认支付</button>
                                                 </span>
                                             </div>
                                         )}
@@ -182,13 +217,13 @@ class UserNotPaid extends Component{
         let {openid} = this.props;
 
         return(
-            <Query query={GET_ORDER_BY_PROPS} variables={{openid,orderStatus:"waitPay"}}>
+            <Query query={GET_WAIT_PAY_ORDER} variables={{openid,id:openid}}>
                 {({ loading, error, data, refetch }) => {
                     // console.log("notPaid order data",data);
                     if (loading)
                         return <Loading contentHeight={contentHeight} tip=""/>;
                     // if (error) return `Error! ${error.message}`;
-                    let notPaid = data.orderList;
+                    let notPaid = data.waitPayOrder;
                     // console.log('notPaid',notPaid,notPaid === [],!notPaid.length);
 
                     return (

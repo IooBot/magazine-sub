@@ -13,13 +13,6 @@ import {Loading}  from "../HomePage/HomePage.jsx";
 import {sendError} from "./UserSubConfirm.jsx";
 
 export default class UserSubPage extends Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-            errors: false,
-            canSubmit: true
-        };
-    }
 
     getSubTime = (subMonthCount,subMonth) => {
         let subTime;

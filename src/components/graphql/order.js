@@ -17,6 +17,21 @@ export const customer_order = gql`
     }
 `;
 
+export const GET_WAIT_PAY_ORDER = gql`
+    query getCustomerOrderStatus($openid: String,$id:String){
+        finishPayOrder:order_by_props(openid: $openid,orderStatus:"finishPay"){
+            ...customerOrder
+        }
+        waitPayOrder:order_by_props(openid: $openid,orderStatus:"waitPay"){
+            ...customerOrder
+        }
+        ishaveOrder:order_by_id(id:$id){
+            orderStatus
+        }
+    }
+    ${customer_order}
+`;
+
 export const GET_ORDER_BY_PROPS = gql`
     query getCustomerOrder($openid: String $orderStatus: String){
         orderList:order_by_props(openid: $openid,orderStatus:$orderStatus){

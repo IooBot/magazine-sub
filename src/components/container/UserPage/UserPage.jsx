@@ -26,6 +26,18 @@ export default class UserPage extends Component{
         });
     }
 
+    componentWillReceiveProps(){
+        let hash = window.location.hash || '#index=2&tab=0';
+        let tab = '0';
+        if(window.location.hash && hash.indexOf("&")>0){
+            let tabHash = hash.split("&")[1];
+            tab = tabHash.substr(tabHash.indexOf("=")+1);
+        }
+        this.setState({
+            tab:tab
+        });
+    }
+
     render(){
         let contentHeight = window.innerHeight - 138.5;
         let {openid,magazineList,changeTab} = this.props;

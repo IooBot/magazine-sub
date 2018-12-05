@@ -124,7 +124,7 @@ class UserSubConfirm extends Component{
     };
 
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
-    jsApiPay = (args,confirmContent,refetch) => {
+    jsApiPay = (args,confirmContent,createOrder,refetch) => {
         // console.log('args res',args);
         let $this = this;
         function onBridgeReady(){
@@ -139,17 +139,21 @@ class UserSubConfirm extends Component{
                         let {openid,id} = confirmContent;
                         setTimeout(() => {
                             refetch({variables:openid,id}).then((res)=>{
-                                console.log('complete pay update res',res);
+                                // console.log('complete pay update res',res);
                                 let ishave = res.data.ishaveOrder.orderStatus;
                                 if(ishave === "finishPay"){
                                     message.success('支付成功，等待发货');
                                 }else if(ishave === "waitPay"){
+                                    confirmContent.orderStatus = "finishPay";
+                                    createOrder({
+                                        refetchQueries:[{query:GET_ORDER_BY_PROPS,variables: {openid,orderStatus:'waitPay'}}]
+                                    });
                                     message.success('支付成功，等待确认');
                                     sendError('complete pay but status is also waitPay','get_brand_wcpay_request:ok but error')
                                 }
                                 $this.props.history.push("/#index=2&tab=0");
                             }).catch((err)=>{
-                                console.log('complete pay update refetch err',err);
+                                // console.log('complete pay update refetch err',err);
                                 sendError(err,'get_brand_wcpay_request:ok but refetch error');
                             });
                         }, 2000);
@@ -193,26 +197,11 @@ class UserSubConfirm extends Component{
                 id,
                 orderStatus:"waitPay"
             };
-            console.log('confirmContent',confirmContent);
-
-            // setTimeout(() => {
-            //     refetch({variables:openid,id}).then((res)=>{
-            //         console.log('data2 res',res);
-            //         let ishave = res.data.ishaveOrder.orderStatus;
-            //         if(ishave === "finishPay"){
-            //             message.success('支付成功，等待发货');
-            //         }else if(ishave === "waitPay"){
-            //             console.log('data2 ishave',ishave);
-            //         }
-            //         this.props.history.push("/#index=2&tab=0");
-            //     }).catch((err)=>{
-            //         console.log('data2 err',err);
-            //     });
-            // }, 2000);
+            // console.log('confirmContent',confirmContent);
 
             let $this = this;
             createOrder({ variables:confirmContent }).then(res => {
-                console.log('createOrder waitPay order res',res);
+                // console.log('createOrder waitPay order res',res);
                 let {id:id1,createAt:createAt1} = res.data.createOrder;
                 let {id:id2,createAt:createAt2} = confirmContent;
                 if( id1 === id2 && createAt1 === createAt2){
@@ -229,12 +218,29 @@ class UserSubConfirm extends Component{
                         dataType: 'json',
                         success(res){
                             // console.log('onBridgeReady res',res);
-                            $this.jsApiPay(res,confirmContent,refetch);
+                            $this.jsApiPay(res,confirmContent,createOrder,refetch);
                         },
                         error(err){
-                            console.log('onBridgeReady err',err);
+                            // console.log('onBridgeReady err',err);
+                            $this.props.history.push("/#index=2&tab=1");
+                            message.warning('网络或系统故障，请稍后重试');
                         }
                     });
+
+                    // setTimeout(() => {
+                    //     refetch({variables:openid,id}).then((res)=>{
+                    //         console.log('data2 res',res);
+                    //         let ishave = res.data.ishaveOrder.orderStatus;
+                    //         if(ishave === "finishPay"){
+                    //             message.success('支付成功，等待发货');
+                    //         }else if(ishave === "waitPay"){
+                    //             console.log('data2 ishave',ishave);
+                    //         }
+                    //         this.props.history.push("/#index=2&tab=0");
+                    //     }).catch((err)=>{
+                    //         console.log('data2 err',err);
+                    //     });
+                    // }, 2000);
                 }
             }).catch(()=>{
                 message.warning('网络或系统故障，请稍后重试');
@@ -256,7 +262,7 @@ class UserSubConfirm extends Component{
                 {({ loading,error, data,refetch  }) => {
                     if (loading) return <Loading contentHeight={window.innerHeight - 90} tip="数据加载中..."/>;
                     // if (error) return `Error!: ${error}`;
-                    console.log('UserSubConfirm data',data);
+                    // console.log('UserSubConfirm data',data);
 
                     let username='',telephone='',area=[],school=[],grade='',gClass='';
                     if(data.customer){
@@ -336,18 +342,17 @@ class UserSubConfirm extends Component{
                             </List>
                             <Mutation mutation={CREATE_ORDER}
                                       update={(cache, { data:{createOrder} }) => {
-                                          console.log('createOrder',createOrder);
+                                          // console.log('createOrder',createOrder);
                                           let {orderStatus} = createOrder;
-                                          console.log('orderStatus',orderStatus);
+                                          // console.log('orderStatus',orderStatus);
                                           // Read the data from the cache for this query.
-                                          console.log('CREATE_ORDER cache',cache);
+                                          // console.log('CREATE_ORDER cache',cache);
                                           const data = cache.readQuery({ query: GET_ORDER_BY_PROPS,variables: {openid,orderStatus}});
-                                          console.log('data orderList',data);
+                                          // console.log('data orderList',data);
                                           // Add our channel from the mutation to the end.
                                           data.orderList.push(createOrder);
                                           // Write the data back to the cache.
                                           cache.writeQuery({ query: GET_ORDER_BY_PROPS,variables: {openid,orderStatus}, data });
-
                                       }}
                                       onError={error=>sendError(error,'CREATE_ORDER')}
                             >
