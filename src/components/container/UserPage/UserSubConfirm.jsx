@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { withRouter } from "react-router-dom";
 import { Query,Mutation } from "react-apollo";
 import $ from 'jquery';
+import {request} from 'graphql-request';
 
 import moment from 'moment';
 import Icon from 'antd/lib/icon';
@@ -16,8 +17,8 @@ import message from 'antd/lib/message';
 import 'antd/lib/message/style/css';
 
 import './userSubConfirm.css';
-import {CREATE_ORDER,GET_ORDER_BY_PROPS} from '../../graphql/order.js';
-import {GET_CUSTOMER_BY_OPENID,GET_CUSTOMER_AND_ORDER} from '../../graphql/customer.js';
+import {CREATE_ORDER,GET_ORDER_BY_PROPS,GET_WAIT_PAY_ORDER} from '../../graphql/order.js';
+import {GET_CUSTOMER_AND_ORDER} from '../../graphql/customer.js';
 import {Loading}  from "../HomePage/HomePage.jsx";
 const Item = List.Item;
 const Brief = Item.Brief;
@@ -127,6 +128,7 @@ class UserSubConfirm extends Component{
     jsApiPay = (args,confirmContent,createOrder,refetch) => {
         // console.log('args res',args);
         let $this = this;
+        let {openid,id} = confirmContent;
         function onBridgeReady(){
             WeixinJSBridge.invoke(
                 'getBrandWCPayRequest', args,
@@ -136,7 +138,7 @@ class UserSubConfirm extends Component{
                     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回 ok，但并不保证它绝对可靠。
                     if(res.err_msg === "get_brand_wcpay_request:ok" ) {
                         // 成功完成支付
-                        let {openid,id} = confirmContent;
+
                         setTimeout(() => {
                             refetch({variables:openid,id}).then((res)=>{
                                 // console.log('complete pay update res',res);
@@ -144,10 +146,6 @@ class UserSubConfirm extends Component{
                                 if(ishave === "finishPay"){
                                     message.success('支付成功，等待发货');
                                 }else if(ishave === "waitPay"){
-                                    confirmContent.orderStatus = "finishPay";
-                                    createOrder({
-                                        refetchQueries:[{query:GET_ORDER_BY_PROPS,variables: {openid,orderStatus:'waitPay'}}]
-                                    });
                                     message.success('支付成功，等待确认');
                                     sendError('complete pay but status is also waitPay','get_brand_wcpay_request:ok but error')
                                 }
@@ -159,6 +157,7 @@ class UserSubConfirm extends Component{
                         }, 2000);
                     }
                     else{
+                        refetch({variables:openid,id});
                         message.error('支付失败，请稍后重试');
                         $this.props.history.push("/#index=2&tab=1");
                     }
@@ -179,7 +178,6 @@ class UserSubConfirm extends Component{
 
     // ajax请求后端请求获得prepay_id
     getBridgeReady = (createOrder,needPay,telephone,refetch) => {
-
         if(needPay !== 0){
             let {openid,magazineId} = this.props;
             let createAt = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -202,48 +200,47 @@ class UserSubConfirm extends Component{
             let $this = this;
             createOrder({ variables:confirmContent }).then(res => {
                 // console.log('createOrder waitPay order res',res);
-                let {id:id1,createAt:createAt1} = res.data.createOrder;
-                let {id:id2,createAt:createAt2} = confirmContent;
-                if( id1 === id2 && createAt1 === createAt2){
-                    console.log('success');
-                    $.ajax({
-                        url: '/payinfo',
-                        type: 'get',
-                        data: {
-                            needPay:parseInt(needPay * 100,10),
-                            openid: $this.props.openid,
-                            tradeNo:id,
-                            orderData:JSON.stringify(confirmContent)
-                        },
-                        dataType: 'json',
-                        success(res){
-                            // console.log('onBridgeReady res',res);
-                            $this.jsApiPay(res,confirmContent,createOrder,refetch);
-                        },
-                        error(err){
-                            // console.log('onBridgeReady err',err);
-                            $this.props.history.push("/#index=2&tab=1");
+                let id = confirmContent.id;
+                const findOrderId = `{
+                 ishave:order_by_id(id:${id}){
+                 id
+                 orderStatus
+                 }
+                }`;
+
+                request("http://ebookqqsh.ioobot.com/release/graphql", findOrderId)
+                    .then(data => {
+                        // console.log('request data',data, data.ishave.id === id);
+                        if(data.ishave.id === id){
+                            $.ajax({
+                                url: '/payinfo',
+                                type: 'get',
+                                data: {
+                                    needPay:parseInt(needPay * 100,10),
+                                    openid: $this.props.openid,
+                                    tradeNo:id,
+                                    orderData:JSON.stringify(confirmContent)
+                                },
+                                dataType: 'json',
+                                success(res){
+                                    // console.log('onBridgeReady res',res);
+                                    $this.jsApiPay(res,confirmContent,createOrder,refetch);
+                                },
+                                error(err){
+                                    // console.log('onBridgeReady err',err);
+                                    $this.props.history.push("/#index=2&tab=1");
+                                    message.warning('网络或系统故障，请稍后重试');
+                                }
+                            });
+                        }else {
                             message.warning('网络或系统故障，请稍后重试');
                         }
+                    })
+                    .catch(err => {
+                        // console.log(`graphql-request query orderId: ${id} error`,err); // GraphQL response errors
+                        message.warning('网络或系统故障，请稍后重试');
+                        sendError(err,`graphql-request query orderId: ${id} error`);
                     });
-
-                    // setTimeout(() => {
-                    //     refetch({variables:openid,id}).then((res)=>{
-                    //         console.log('data2 res',res);
-                    //         let ishave = res.data.ishaveOrder.orderStatus;
-                    //         if(ishave === "finishPay"){
-                    //             message.success('支付成功，等待发货');
-                    //         }else if(ishave === "waitPay"){
-                    //             console.log('data2 ishave',ishave);
-                    //         }
-                    //         this.props.history.push("/#index=2&tab=0");
-                    //     }).catch((err)=>{
-                    //         console.log('data2 err',err);
-                    //     });
-                    // }, 2000);
-                }
-            }).catch(()=>{
-                message.warning('网络或系统故障，请稍后重试');
             });
         }else {
             message.warning('支付金额不能为0');
@@ -341,19 +338,9 @@ class UserSubConfirm extends Component{
                                 </div>
                             </List>
                             <Mutation mutation={CREATE_ORDER}
-                                      update={(cache, { data:{createOrder} }) => {
-                                          // console.log('createOrder',createOrder);
-                                          let {orderStatus} = createOrder;
-                                          // console.log('orderStatus',orderStatus);
-                                          // Read the data from the cache for this query.
-                                          // console.log('CREATE_ORDER cache',cache);
-                                          const data = cache.readQuery({ query: GET_ORDER_BY_PROPS,variables: {openid,orderStatus}});
-                                          // console.log('data orderList',data);
-                                          // Add our channel from the mutation to the end.
-                                          data.orderList.push(createOrder);
-                                          // Write the data back to the cache.
-                                          cache.writeQuery({ query: GET_ORDER_BY_PROPS,variables: {openid,orderStatus}, data });
-                                      }}
+                                      // refetchQueries={[{query:GET_WAIT_PAY_ORDER,variables: {openid,id:openid}},
+                                      //     {query:GET_ORDER_BY_PROPS,variables: {openid,orderStatus:'waitPay'}}
+                                      // ]}
                                       onError={error=>sendError(error,'CREATE_ORDER')}
                             >
                                 {(createOrder,{ loading, error }) => (

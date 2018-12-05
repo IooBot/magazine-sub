@@ -36,14 +36,10 @@ class UserNotPaid extends Component{
                                 // console.log('complete pay update res',res);
                                 let ishave = res.data.ishaveOrder.orderStatus;
                                 if(ishave === "finishPay"){
-                                    confirmContent.orderStatus = "finishPay";
-                                    updateOrder({variables: confirmContent});
                                     message.success('支付成功，等待发货');
                                 }else if(ishave === "waitPay"){
                                     confirmContent.orderStatus = "finishPay";
-                                    updateOrder({
-                                        variables: confirmContent,
-                                        refetchQueries:[{query:GET_ORDER_BY_PROPS,variables: {openid,orderStatus:'waitPay'}}]});
+                                    updateOrder({variables: confirmContent});
                                     message.success('支付成功，等待确认');
                                     sendError('complete pay but status is also waitPay','get_brand_wcpay_request:ok but error')
                                 }
@@ -78,23 +74,6 @@ class UserNotPaid extends Component{
             openid,
             id
         };
-
-        // confirmContent.orderStatus = "finishPay";
-        // updateOrder({variables: confirmContent});
-        // setTimeout(() => {
-        //     refetch({variables:openid,id}).then((res)=>{
-        //         console.log('data2 res',res);
-        //         let ishave = res.data.ishaveOrder.orderStatus;
-        //         if(ishave === "finishPay"){
-        //             message.success('支付成功，等待发货');
-        //         }else if(ishave === "waitPay"){
-        //             console.log('data2 ishave',ishave);
-        //         }
-        //         this.props.history.push("/#index=2&tab=0");
-        //     }).catch((err)=>{
-        //         console.log('data2 err',err);
-        //     });
-        // }, 1000);
 
         let $this = this;
         $.ajax({

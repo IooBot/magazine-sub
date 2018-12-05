@@ -89,6 +89,6 @@ export const UPDATE_ORDER_MAGAZINE = gql`
 
 export const DELETE_ORDER = gql`
     mutation deleteOrder($id: String){
-        delete_order(id: $id)
+        delete_order(id: $id,orderStatus:"waitPay")
     }
 `;
