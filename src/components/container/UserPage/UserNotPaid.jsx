@@ -12,7 +12,6 @@ import 'antd-mobile/lib/modal/style/css';
 
 import './userSubPage.css';
 import {GET_ORDER_BY_PROPS,DELETE_ORDER,UPDATE_ORDER ,GET_WAIT_PAY_ORDER} from '../../graphql/order.js';
-import {GET_CUSTOMER_AND_ORDER} from '../../graphql/customer.js';
 import {Loading}  from "../HomePage/HomePage.jsx";
 import {sendError} from "./UserSubConfirm.jsx";
 
@@ -203,14 +202,13 @@ class UserNotPaid extends Component{
         let {openid} = this.props;
 
         return(
-            <Query query={GET_CUSTOMER_AND_ORDER} variables={{openid,id:openid}}>
+            <Query query={GET_WAIT_PAY_ORDER} variables={{openid,id:openid}}>
                 {({ loading, error, data, refetch }) => {
                     console.log("notPaid order data",data);
                     if (loading)
                         return <Loading contentHeight={contentHeight} tip=""/>;
                     // if (error) return `Error! ${error.message}`;
                     let notPaid = data.waitPayOrder;
-                    // let notPaid = data.orderList;
                     // console.log('notPaid',notPaid,notPaid === [],!notPaid.length);
 
                     return (

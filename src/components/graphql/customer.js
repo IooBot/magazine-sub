@@ -35,9 +35,6 @@ export const GET_CUSTOMER_AND_ORDER = gql`
         customer:customer_by_openid(openid: $openid) {
             ...customerContent
         }
-#        orderList:order_by_props(openid: $openid,orderStatus:$orderStatus){
-#            ...customerOrder
-#        }
         finishPayOrder:order_by_props(openid: $openid,orderStatus:"finishPay"){
             ...customerOrder
         }

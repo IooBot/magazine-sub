@@ -17,7 +17,7 @@ import message from 'antd/lib/message';
 import 'antd/lib/message/style/css';
 
 import './userSubConfirm.css';
-import {CREATE_ORDER,GET_ORDER_BY_PROPS,GET_WAIT_PAY_ORDER} from '../../graphql/order.js';
+import {CREATE_ORDER} from '../../graphql/order.js';
 import {GET_CUSTOMER_AND_ORDER} from '../../graphql/customer.js';
 import {Loading}  from "../HomePage/HomePage.jsx";
 const Item = List.Item;
@@ -349,9 +349,6 @@ class UserSubConfirm extends Component{
                                 </div>
                             </List>
                             <Mutation mutation={CREATE_ORDER}
-                                      // refetchQueries={[{query:GET_WAIT_PAY_ORDER,variables: {openid,id:openid}},
-                                      //     {query:GET_ORDER_BY_PROPS,variables: {openid,orderStatus:'waitPay'}}
-                                      // ]}
                                       onError={error=>sendError(error,'CREATE_ORDER')}
                             >
                                 {(createOrder,{ loading, error }) => (
