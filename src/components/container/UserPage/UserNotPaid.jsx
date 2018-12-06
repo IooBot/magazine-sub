@@ -204,7 +204,7 @@ class UserNotPaid extends Component{
         return(
             <Query query={GET_WAIT_PAY_ORDER} variables={{openid,id:openid}}>
                 {({ loading, error, data, refetch }) => {
-                    console.log("notPaid order data",data);
+                    // console.log("notPaid order data",data);
                     if (loading)
                         return <Loading contentHeight={contentHeight} tip=""/>;
                     // if (error) return `Error! ${error.message}`;
