@@ -12,6 +12,7 @@ import 'antd-mobile/lib/modal/style/css';
 
 import './userSubPage.css';
 import {GET_ORDER_BY_PROPS,DELETE_ORDER,UPDATE_ORDER ,GET_WAIT_PAY_ORDER} from '../../graphql/order.js';
+import {GET_CUSTOMER_AND_ORDER} from '../../graphql/customer.js';
 import {Loading}  from "../HomePage/HomePage.jsx";
 import {sendError} from "./UserSubConfirm.jsx";
 
@@ -48,10 +49,16 @@ class UserNotPaid extends Component{
                                 // console.log('complete pay update refetch err',err);
                                 sendError(err,'get_brand_wcpay_request:ok but refetch error');
                             });
-                        }, 2000);
+                        }, 1000);
                     }
                     else {
-                        message.error('支付失败，请稍后重试');
+                        if(res.err_msg === "get_brand_wcpay_request:cancel"){
+                            message.warning('您的支付已经取消');
+                        }else if(res.err_msg === "get_brand_wcpay_request:fail"){
+                            message.error('支付失败，请稍后重试');
+                        }else{
+                            message.error('支付失败，请稍后重试');
+                        }
                     }
                 }
             );
@@ -196,13 +203,14 @@ class UserNotPaid extends Component{
         let {openid} = this.props;
 
         return(
-            <Query query={GET_WAIT_PAY_ORDER} variables={{openid,id:openid}}>
+            <Query query={GET_CUSTOMER_AND_ORDER} variables={{openid,id:openid}}>
                 {({ loading, error, data, refetch }) => {
-                    // console.log("notPaid order data",data);
+                    console.log("notPaid order data",data);
                     if (loading)
                         return <Loading contentHeight={contentHeight} tip=""/>;
                     // if (error) return `Error! ${error.message}`;
                     let notPaid = data.waitPayOrder;
+                    // let notPaid = data.orderList;
                     // console.log('notPaid',notPaid,notPaid === [],!notPaid.length);
 
                     return (
@@ -227,9 +235,5 @@ class UserNotPaid extends Component{
         )
     }
 }
-
-UserNotPaid.defaultProps = {
-    notPaid: []
-};
 
 export default withRouter(UserNotPaid);

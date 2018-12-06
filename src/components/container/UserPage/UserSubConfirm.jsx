@@ -84,7 +84,7 @@ class UserSubConfirm extends Component{
             subMonth:"",
             subTime:"",
             year_type:[],
-            addContent:{}
+            payStatus:false,
         };
     }
 
@@ -138,10 +138,9 @@ class UserSubConfirm extends Component{
                     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回 ok，但并不保证它绝对可靠。
                     if(res.err_msg === "get_brand_wcpay_request:ok" ) {
                         // 成功完成支付
-
                         setTimeout(() => {
-                            refetch({variables:openid,id}).then((res)=>{
-                                // console.log('complete pay update res',res);
+                            refetch({openid,id}).then((res)=>{
+                                console.log('complete pay refetch res',res);
                                 let ishave = res.data.ishaveOrder.orderStatus;
                                 if(ishave === "finishPay"){
                                     message.success('支付成功，等待发货');
@@ -154,12 +153,21 @@ class UserSubConfirm extends Component{
                                 // console.log('complete pay update refetch err',err);
                                 sendError(err,'get_brand_wcpay_request:ok but refetch error');
                             });
-                        }, 2000);
+                        }, 1000);
                     }
                     else{
-                        refetch({variables:openid,id});
-                        message.error('支付失败，请稍后重试');
-                        $this.props.history.push("/#index=2&tab=1");
+                        if(res.err_msg === "get_brand_wcpay_request:cancel"){
+                            message.warning('您的支付已经取消');
+                        }else if(res.err_msg === "get_brand_wcpay_request:fail"){
+                            message.error('支付失败，请稍后重试');
+                        }else{
+                            message.error('支付失败，请稍后重试');
+                        }
+                        refetch({openid,id}).then((res)=>{
+                            console.log('fail pay refetch res',res);
+                            $this.props.history.push("/#index=2&tab=1");
+                        });
+
                     }
                 }
             );
@@ -199,48 +207,51 @@ class UserSubConfirm extends Component{
 
             let $this = this;
             createOrder({ variables:confirmContent }).then(res => {
-                // console.log('createOrder waitPay order res',res);
-                let id = confirmContent.id;
-                const findOrderId = `{
-                 ishave:order_by_id(id:${id}){
-                 id
-                 orderStatus
-                 }
-                }`;
-
-                request("http://ebookqqsh.ioobot.com/release/graphql", findOrderId)
-                    .then(data => {
-                        // console.log('request data',data, data.ishave.id === id);
-                        if(data.ishave.id === id){
-                            $.ajax({
-                                url: '/payinfo',
-                                type: 'get',
-                                data: {
-                                    needPay:parseInt(needPay * 100,10),
-                                    openid: $this.props.openid,
-                                    tradeNo:id,
-                                    orderData:JSON.stringify(confirmContent)
-                                },
-                                dataType: 'json',
-                                success(res){
-                                    // console.log('onBridgeReady res',res);
-                                    $this.jsApiPay(res,confirmContent,createOrder,refetch);
-                                },
-                                error(err){
-                                    // console.log('onBridgeReady err',err);
-                                    $this.props.history.push("/#index=2&tab=1");
-                                    message.warning('网络或系统故障，请稍后重试');
-                                }
-                            });
-                        }else {
+                console.log('createOrder waitPay order res',res);
+                console.log('createOrder time',new Date());
+                // refetch({openid,id}).then((res)=>{
+                //     console.log('fail pay refetch res',res);
+                //     $this.props.history.push("/#index=2&tab=1");
+                // });
+                if(res.data.createOrder){
+                    let ajaxTimeOut = $.ajax({
+                        url: '/payinfo',
+                        type: 'get',
+                        timeout: 30000,
+                        data: {
+                            needPay:parseInt(needPay * 100,10),
+                            openid: $this.props.openid,
+                            tradeNo:id,
+                            orderData:JSON.stringify(confirmContent)
+                        },
+                        dataType: 'json',
+                        success(res){
+                            // console.log('onBridgeReady res',res);
+                            console.log('ajax /payinfo data time',new Date());
+                            $this.jsApiPay(res,confirmContent,createOrder,refetch);
+                        },
+                        error(err){
+                            // console.log('onBridgeReady err',err);
+                            $this.props.history.push("/#index=2&tab=1");
                             message.warning('网络或系统故障，请稍后重试');
+                        },
+                        complete: function (XMLHttpRequest, status) { //当请求完成时调用函数
+                            console.log('time out status',status);
+                            if (status === 'timeout') {
+                                //status == 'timeout'意为超时,status的可能取值：success,notmodified,nocontent,error,timeout,abort,parsererror
+                                ajaxTimeOut.abort(); //取消请求
+                                message.warning('网络或系统故障，请稍后重试');
+                            }
                         }
-                    })
-                    .catch(err => {
-                        // console.log(`graphql-request query orderId: ${id} error`,err); // GraphQL response errors
-                        message.warning('网络或系统故障，请稍后重试');
-                        sendError(err,`graphql-request query orderId: ${id} error`);
                     });
+                }else {
+                    message.warning('网络或系统故障，请稍后重试');
+                    sendError(res,'create waitPay order res');
+                }
+            }).catch((err)=>{
+                message.warning('网络或系统故障，请稍后重试');
+                console.log(`create waitPay order error`,err);
+                sendError(err,'create waitPay order error');
             });
         }else {
             message.warning('支付金额不能为0');
@@ -257,7 +268,7 @@ class UserSubConfirm extends Component{
                 variables={{openid,id:openid}}
             >
                 {({ loading,error, data,refetch  }) => {
-                    if (loading) return <Loading contentHeight={window.innerHeight - 90} tip="数据加载中..."/>;
+                    if (loading) return <Loading contentHeight={window.innerHeight - 90} tip="加载中..."/>;
                     // if (error) return `Error!: ${error}`;
                     // console.log('UserSubConfirm data',data);
 
@@ -370,3 +381,97 @@ UserSubConfirm.defaultProps = {
 };
 
 export default withRouter(UserSubConfirm);
+
+// ajax请求后端请求获得prepay_id
+// getBridgeReady = (createOrder,needPay,telephone,refetch) => {
+//     if(needPay !== 0){
+//         let {openid,magazineId} = this.props;
+//         let createAt = moment().format('YYYY-MM-DD HH:mm:ss');
+//         let tag = telephone.replace(/[^0-9]/ig,"").slice(-4);
+//         let id = createAt.replace(/[^0-9]/ig,"").substr(2)+tag;
+//         const confirmContent = {
+//             openid,
+//             magazine_id:magazineId,
+//             subCount:this.state.subCount,
+//             subYear:this.state.subYear,
+//             subMonth:this.state.subMonth,
+//             subMonthCount:this.state.subMonth.length,
+//             havePay:needPay,
+//             createAt,
+//             id,
+//             orderStatus:"waitPay"
+//         };
+//         // console.log('confirmContent',confirmContent);
+//
+//         this.setState({payStatus:true});
+//         createOrder({ variables:confirmContent }).then((res)=>{
+//             console.log('createOrder waitPay order res1',res);
+//         });
+//         let $this = this;
+//         createOrder({ variables:confirmContent }).then(res => {
+//             console.log('createOrder waitPay order res',res);
+//             let id = confirmContent.id;
+//
+//             const findOrderId = `{
+//                  ishave:order_by_id(id:${id}){
+//                  id
+//                  orderStatus
+//                  }
+//                 }`;
+//
+//             request("http://ebookqqsh.ioobot.com/release/graphql", findOrderId)     // test
+//             // request("http://ebookqqsh.snbl.com.cn/release/graphql", findOrderId)      // snbl
+//                 .then(data => {
+//                     // console.log('request data',data, data.ishave.id === id);
+//                     console.log('request data time',new Date());
+//                     refetch({variables:openid,id}).then((res)=>{
+//                         console.log('fail pay refetch res',res);
+//                     });
+//                     if(data.ishave.id === id){
+//                         let ajaxTimeOut = $.ajax({
+//                             url: '/payinfo',
+//                             type: 'get',
+//                             timeout: 10000,
+//                             data: {
+//                                 needPay:parseInt(needPay * 100,10),
+//                                 openid: $this.props.openid,
+//                                 tradeNo:id,
+//                                 orderData:JSON.stringify(confirmContent)
+//                             },
+//                             dataType: 'json',
+//                             success(res){
+//                                 // console.log('onBridgeReady res',res);
+//                                 console.log('ajax /payinfo data time',new Date());
+//                                 $this.setState({payStatus:false});
+//                                 $this.jsApiPay(res,confirmContent,createOrder,refetch);
+//                             },
+//                             error(err){
+//                                 // console.log('onBridgeReady err',err);
+//                                 $this.props.history.push("/#index=2&tab=1");
+//                                 message.warning('网络或系统故障，请稍后重试');
+//                             },
+//                             complete: function (XMLHttpRequest, status) { //当请求完成时调用函数
+//                                 console.log('time out status',status);
+//                                 if (status === 'timeout') {
+//                                     //status == 'timeout'意为超时,status的可能取值：success,notmodified,nocontent,error,timeout,abort,parsererror
+//                                     ajaxTimeOut.abort(); //取消请求
+//                                     message.warning('网络或系统故障，请稍后重试');
+//                                 }
+//                             }
+//                         });
+//                     }else {
+//                         message.warning('网络或系统故障，请稍后重试');
+//                     }
+//                 })
+//                 .catch(err => {
+//                     // console.log(`graphql-request query orderId: ${id} error`,err); // GraphQL response errors
+//                     message.warning('网络或系统故障，请稍后重试');
+//                     sendError(err,`graphql-request query orderId: ${id} error`);
+//                 });
+//         }).catch((err)=>{
+//             console.log(`create waitPay order`,err);
+//         });
+//     }else {
+//         message.warning('支付金额不能为0');
+//     }
+// };
