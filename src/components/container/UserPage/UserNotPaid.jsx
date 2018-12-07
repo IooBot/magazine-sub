@@ -17,6 +17,7 @@ import {sendError} from "./UserSubConfirm.jsx";
 
 const alert = Modal.alert;
 
+let clicktag = 1;  //微信发起支付点击标志
 class UserNotPaid extends Component{
 
     // prepay_id微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
@@ -75,32 +76,36 @@ class UserNotPaid extends Component{
     };
 
     getBridgeReady = (updateOrder,id,needPay,refetch) => {
-        let {openid} = this.props;
-        const confirmContent = {
-            openid,
-            id
-        };
+        if(clicktag === 1) {
+            clicktag = 0;   //进行标志，防止多次点击
+            let {openid} = this.props;
+            const confirmContent = {
+                openid,
+                id
+            };
 
-        let $this = this;
-        $.ajax({
-            url: '/payinfo',
-            type: 'get',
-            data: {
-                needPay:parseInt(needPay * 100,10),
-                openid: $this.props.openid,
-                tradeNo:id
-            },
-            dataType: 'json',
-            success(res){
-                // console.log('onBridgeReady res',res);
-                $this.jsApiPay(res,confirmContent,updateOrder,refetch);
-            },
-            error(err){
-                $this.props.history.push("/#index=2&tab=1");
-                message.warning('网络或系统故障，请稍后重试');
-                // console.log('onBridgeReady err',err);
-            }
-        });
+            let $this = this;
+            $.ajax({
+                url: '/payinfo',
+                type: 'get',
+                data: {
+                    needPay:parseInt(needPay * 100,10),
+                    openid: $this.props.openid,
+                    tradeNo:id
+                },
+                dataType: 'json',
+                success(res){
+                    // console.log('onBridgeReady res',res);
+                    $this.jsApiPay(res,confirmContent,updateOrder,refetch);
+                    setTimeout(()=> {clicktag = 1;}, 5000);
+                },
+                error(err){
+                    $this.props.history.push("/#index=2&tab=1");
+                    message.warning('网络或系统故障，请稍后重试');
+                    // console.log('onBridgeReady err',err);
+                }
+            });
+        }
     };
 
     deleteNotPaidOrder = (e,deleteOrder,openid,orderId) =>{

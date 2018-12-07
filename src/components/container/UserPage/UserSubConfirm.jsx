@@ -74,7 +74,7 @@ export function sendError(error,type) {
         });
     }
 }
-
+let clicktag = 1;  //微信发起支付点击标志
 class UserSubConfirm extends Component{
     constructor(props){
         super(props);
@@ -184,97 +184,175 @@ class UserSubConfirm extends Component{
         }
     };
 
-    // ajax请求后端请求获得prepay_id
+    // ajax请求后端请求获得prepay_id snbl
     getBridgeReady = (createOrder,needPay,telephone,refetch) => {
-        if(needPay !== 0){
-            let {openid,magazineId} = this.props;
-            let createAt = moment().format('YYYY-MM-DD HH:mm:ss');
-            let tag = telephone.replace(/[^0-9]/ig,"").slice(-4);
-            let id = createAt.replace(/[^0-9]/ig,"").substr(2)+tag;
-            const confirmContent = {
-                openid,
-                magazine_id:magazineId,
-                subCount:this.state.subCount,
-                subYear:this.state.subYear,
-                subMonth:this.state.subMonth,
-                subMonthCount:this.state.subMonth.length,
-                havePay:needPay,
-                createAt,
-                id,
-                orderStatus:"waitPay"
-            };
-            // console.log('confirmContent',confirmContent);
+        if(needPay !== 0) {
+            if (clicktag === 1) {
+                clicktag = 0;   //进行标志，防止多次点击
+                let {openid, magazineId} = this.props;
+                let createAt = moment().format('YYYY-MM-DD HH:mm:ss');
+                let tag = telephone.replace(/[^0-9]/ig, "").slice(-4);
+                let id = createAt.replace(/[^0-9]/ig, "").substr(2) + tag;
+                const confirmContent = {
+                    openid,
+                    magazine_id: magazineId,
+                    subCount: this.state.subCount,
+                    subYear: this.state.subYear,
+                    subMonth: this.state.subMonth,
+                    subMonthCount: this.state.subMonth.length,
+                    havePay: needPay,
+                    createAt,
+                    id,
+                    orderStatus: "waitPay"
+                };
+                // console.log('confirmContent',confirmContent);
 
-            this.setState({payStatus:true});
+                this.setState({payStatus: true});
 
-            let $this = this;
-            createOrder({ variables:confirmContent }).then(res => {
-                // console.log('createOrder waitPay order res',res);
-                let id = confirmContent.id;
+                let $this = this;
+                createOrder({variables: confirmContent}).then(res => {
+                    // console.log('createOrder waitPay order res',res);
+                    let id = confirmContent.id;
 
-                const findOrderId = `{
+                    const findOrderId = `{
                  ishave:order_by_id(id:${id}){
                  id
                  orderStatus
                  }
                 }`;
 
-                // request("http://ebookqqsh.ioobot.com/release/graphql", findOrderId)      // test
-                request("http://ebookqqsh.snbl.com.cn/release/graphql", findOrderId)      // snbl
-                    .then(data => {
-                        // console.log('request data',data, data.ishave.id === id);
-                        // console.log('request data time',new Date());
-                        if(data.ishave.id === id){
-                            let ajaxTimeOut = $.ajax({
-                                url: '/payinfo',
-                                type: 'get',
-                                timeout: 30000,
-                                data: {
-                                    needPay:parseInt(needPay * 100,10),
-                                    openid: $this.props.openid,
-                                    tradeNo:id,
-                                    orderData:JSON.stringify(confirmContent)
-                                },
-                                dataType: 'json',
-                                success(res){
-                                    // console.log('onBridgeReady res',res);
-                                    // console.log('ajax /payinfo data time',new Date());
-                                    $this.setState({payStatus:false});
-                                    $this.jsApiPay(res,confirmContent,createOrder,refetch);
-                                },
-                                error(err){
-                                    // console.log('onBridgeReady err',err);
-                                    $this.props.history.push("/#index=2&tab=1");
-                                    message.warning('网络或系统故障，请稍后重试');
-                                },
-                                complete: function (XMLHttpRequest, status) { //当请求完成时调用函数
-                                    // console.log('time out status',status);
-                                    if (status === 'timeout') {
-                                        //status == 'timeout'意为超时,status的可能取值：success,notmodified,nocontent,error,timeout,abort,parsererror
-                                        ajaxTimeOut.abort(); //取消请求
+                    // request("http://ebookqqsh.ioobot.com/release/graphql", findOrderId)      // test
+                    request("http://ebookqqsh.snbl.com.cn/release/graphql", findOrderId)      // snbl
+                        .then(data => {
+                            // console.log('request data',data, data.ishave.id === id);
+                            // console.log('request data time',new Date());
+                            if (data.ishave.id === id) {
+                                let ajaxTimeOut = $.ajax({
+                                    url: '/payinfo',
+                                    type: 'get',
+                                    timeout: 30000,
+                                    data: {
+                                        needPay: parseInt(needPay * 100, 10),
+                                        openid: $this.props.openid,
+                                        tradeNo: id,
+                                        orderData: JSON.stringify(confirmContent)
+                                    },
+                                    dataType: 'json',
+                                    success(res) {
+                                        // console.log('onBridgeReady res',res);
+                                        // console.log('ajax /payinfo data time',new Date());
+                                        $this.setState({payStatus: false});
+                                        $this.jsApiPay(res, confirmContent, createOrder, refetch);
+                                        setTimeout(()=> {clicktag = 1;}, 5000);
+                                    },
+                                    error(err) {
+                                        // console.log('onBridgeReady err',err);
+                                        $this.props.history.push("/#index=2&tab=1");
                                         message.warning('网络或系统故障，请稍后重试');
+                                    },
+                                    complete: function (XMLHttpRequest, status) { //当请求完成时调用函数
+                                        // console.log('time out status',status);
+                                        if (status === 'timeout') {
+                                            //status == 'timeout'意为超时,status的可能取值：success,notmodified,nocontent,error,timeout,abort,parsererror
+                                            ajaxTimeOut.abort(); //取消请求
+                                            message.warning('网络或系统故障，请稍后重试');
+                                        }
                                     }
-                                }
-                            });
-                        }else {
+                                });
+                            } else {
+                                message.warning('网络或系统故障，请稍后重试');
+                                sendError(data, `graphql-request query orderId: ${id} data and res ${res}`);
+                            }
+                        })
+                        .catch(err => {
+                            // console.log(`graphql-request query orderId: ${id} error`,err); // GraphQL response errors
                             message.warning('网络或系统故障，请稍后重试');
-                            sendError(data,`graphql-request query orderId: ${id} data and res ${res}`);
-                        }
-                    })
-                    .catch(err => {
-                        // console.log(`graphql-request query orderId: ${id} error`,err); // GraphQL response errors
-                        message.warning('网络或系统故障，请稍后重试');
-                        sendError(err,`graphql-request query orderId: ${id} error`);
-                    });
-            }).catch((err)=>{
-                message.warning('网络或系统故障，请稍后重试');
-                // console.log(`create waitPay order error`,err);
-                sendError(err,'create waitPay order error');
-            });
-        }else {
-            message.warning('支付金额不能为0');
+                            sendError(err, `graphql-request query orderId: ${id} error`);
+                        });
+                }).catch((err) => {
+                    message.warning('网络或系统故障，请稍后重试');
+                    // console.log(`create waitPay order error`,err);
+                    sendError(err, 'create waitPay order error');
+                });
+            } else {
+                message.warning('支付金额不能为0');
+            }
         }
     };
+
+    // ajax请求后端请求获得prepay_id test
+    // getBridgeReady = (createOrder,needPay,telephone,refetch) => {
+    //     if(needPay !== 0){
+    //         if(clicktag === 1){
+    //             clicktag = 0;   //进行标志，防止多次点击
+    //             let {openid,magazineId} = this.props;
+    //             let createAt = moment().format('YYYY-MM-DD HH:mm:ss');
+    //             let tag = telephone.replace(/[^0-9]/ig,"").slice(-4);
+    //             let id = createAt.replace(/[^0-9]/ig,"").substr(2)+tag;
+    //             const confirmContent = {
+    //                 openid,
+    //                 magazine_id:magazineId,
+    //                 subCount:this.state.subCount,
+    //                 subYear:this.state.subYear,
+    //                 subMonth:this.state.subMonth,
+    //                 subMonthCount:this.state.subMonth.length,
+    //                 havePay:needPay,
+    //                 createAt,
+    //                 id,
+    //                 orderStatus:"waitPay"
+    //             };
+    //             // console.log('confirmContent',confirmContent);
+    //
+    //             let $this = this;
+    //             createOrder({ variables:confirmContent }).then(res => {
+    //                 console.log('createOrder waitPay order res',res);
+    //                 console.log('createOrder time',new Date());
+    //                 if(res.data.createOrder){
+    //                     let ajaxTimeOut = $.ajax({
+    //                         url: '/payinfo',
+    //                         type: 'get',
+    //                         timeout: 30000,
+    //                         data: {
+    //                             needPay:parseInt(needPay * 100,10),
+    //                             openid: $this.props.openid,
+    //                             tradeNo:id,
+    //                             orderData:JSON.stringify(confirmContent)
+    //                         },
+    //                         dataType: 'json',
+    //                         success(res){
+    //                             // console.log('onBridgeReady res',res);
+    //                             console.log('ajax /payinfo data time',new Date());
+    //                             $this.jsApiPay(res,confirmContent,createOrder,refetch);
+    //                             setTimeout(()=> {clicktag = 1;}, 5000);
+    //                         },
+    //                         error(err){
+    //                             // console.log('onBridgeReady err',err);
+    //                             $this.props.history.push("/#index=2&tab=1");
+    //                             message.warning('网络或系统故障，请稍后重试');
+    //                         },
+    //                         complete: function (XMLHttpRequest, status) { //当请求完成时调用函数
+    //                             console.log('time out status',status);
+    //                             if (status === 'timeout') {
+    //                                 //status == 'timeout'意为超时,status的可能取值：success,notmodified,nocontent,error,timeout,abort,parsererror
+    //                                 ajaxTimeOut.abort(); //取消请求
+    //                                 message.warning('网络或系统故障，请稍后重试');
+    //                             }
+    //                         }
+    //                     });
+    //                 }else {
+    //                     message.warning('网络或系统故障，请稍后重试');
+    //                     sendError(res,'create waitPay order res');
+    //                 }
+    //             }).catch((err)=>{
+    //                 message.warning('网络或系统故障，请稍后重试');
+    //                 console.log(`create waitPay order error`,err);
+    //                 sendError(err,'create waitPay order error');
+    //             });
+    //         }
+    //     }else {
+    //         message.warning('支付金额不能为0');
+    //     }
+    // };
 
     render(){
         let { openid,subMagazine,unitPrice} = this.props;
