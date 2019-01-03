@@ -47,10 +47,6 @@ class MainApp extends Component{
         let openid =  getCookie("openid");
         // console.log('openid',openid);
         if (!openid) {
-            // window.location.href = "http://test.ioobot.com/subscribe";  // test
-            // window.location.href = "http://wxchuzhou.snbl.com.cn/subscribe";
-            // window.location.href = "http://wechathf.snbl.com.cn/subscribe";
-            // window.location.href = "http://snbl.ioobot.com/subscribe";   // snbl
             window.location.href = "/subscribe";
         }
     };
