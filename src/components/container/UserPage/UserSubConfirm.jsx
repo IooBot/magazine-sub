@@ -25,8 +25,10 @@ const Brief = Item.Brief;
 
 function changeSubTimeList(subTime) {
     // eslint-disable-next-line
-    let nowTime = parseInt(`${new Date().getFullYear()}` + `${new Date().getMonth()+1}`,10);
-    let res = [],res1 = [];
+    let month = new Date().getMonth() + 1;
+    let monthTime = month < 10 ? `0${month}`:`${month}`;
+    let nowTime = parseInt(`${new Date().getFullYear()}` + monthTime,10);
+    let res = [],res1 = [],isSub;
     let timeType1 = {label:"全年",value:"1"};   // value为数组[1,2,3,4,5,6,7,8,9,10,11,12],label匹配时无法显示
     let timeType2 = {label:"上半年",value:"2"};
     let timeType3 = {label:"下半年",value:"3"};
@@ -37,15 +39,19 @@ function changeSubTimeList(subTime) {
         // 当前时间小于对应杂志订阅时间1月：可订阅时间的全年杂志
         if(nowTime < time1){
             res = [timeType1,timeType2,timeType3];
-
+            isSub = true;
             // 当前时间大于对应杂志订阅时间的1月份并且小于7月份：可订阅时间的下半年
-        }else if(nowTime > time1 && nowTime < time2){
+        }else if(nowTime >= time1 && nowTime < time2){
             res = [timeType3];
+            isSub = true;
+        }else {
+            res = [{label:"暂未到订阅季",value:"4"}];
+            isSub = false;
         }
         if(res.length){
             res1.push({
-                value: item,
-                label: item,
+                value: isSub ? item : item+1,
+                label: isSub ? item : item+1,
                 children:res
             });
         }
@@ -120,7 +126,7 @@ class UserSubConfirm extends Component{
     }
 
     getTimeValueArray = (value) => {
-        let result = {"1":[1,2,3,4,5,6,7,8,9,10,11,12], "2":[1,2,3,4,5,6], "3":[7,8,9,10,11,12]}[value];
+        let result = {"1":[1,2,3,4,5,6,7,8,9,10,11,12], "2":[1,2,3,4,5,6], "3":[7,8,9,10,11,12], "4":[]}[value];
         return result;
     };
 
@@ -274,9 +280,9 @@ class UserSubConfirm extends Component{
                     // console.log(`create waitPay order error`,err);
                     sendError(err, 'create waitPay order error');
                 });
-            } else {
-                message.warning('支付金额不能为0');
             }
+        } else {
+            message.warning('支付金额不能为0');
         }
     };
 
@@ -358,6 +364,7 @@ class UserSubConfirm extends Component{
         let { openid,subMagazine,unitPrice} = this.props;
         let subMonthCount = this.state.subMonth.length;
         let needPay = unitPrice * subMonthCount * this.state.subCount;
+
         return(
             <Query
                 query={GET_CUSTOMER_AND_ORDER}
@@ -440,26 +447,35 @@ class UserSubConfirm extends Component{
                                     <Brief>收货地址:&nbsp;&nbsp;{area["province"]} {area["city"]} {area["district"]}<br />
                                         {school["name"]}  {grade}年级  {gClass}班</Brief>
                                 </Item>
-                                <div className="list" style={{justifyContent: 'flex-end'}}>
-                                    <span>合计:&nbsp;&nbsp;</span>
-                                    <span style={{color:"#ff5f16"}}>¥{needPay}</span>
-                                </div>
+                                {
+                                    needPay !== 0 ?
+                                        <div className="list" style={{justifyContent: 'flex-end'}}>
+                                            <span>合计:&nbsp;&nbsp;</span>
+                                            <span style={{color:"#ff5f16"}}>¥{needPay}</span>
+                                        </div>:
+                                        ''
+                                }
                             </List>
-                            <Mutation mutation={CREATE_ORDER}
-                                      onError={error=>sendError(error,'CREATE_ORDER')}
-                            >
-                                {(createOrder,{ loading, error }) => (
-                                    <div>
-                                        <List.Item>
-                                            <button className="long-button"
-                                                    onClick={()=>this.getBridgeReady(createOrder,needPay,telephone,refetch)}
-                                            >确认并支付</button>
-                                        </List.Item>
-                                        {/*{loading && <p>Loading...</p>}*/}
-                                        {/*{error && <p>Error :( Please try again</p>}*/}
-                                    </div>
-                                )}
-                            </Mutation>
+                            {
+                                needPay !== 0 ?
+                                    <Mutation mutation={CREATE_ORDER}
+                                              onError={error=>sendError(error,'CREATE_ORDER')}
+                                    >
+                                        {(createOrder,{ loading, error }) => (
+                                            <div>
+                                                <List.Item>
+                                                    <button className="long-button"
+                                                            onClick={()=>this.getBridgeReady(createOrder,needPay,telephone,refetch)}
+                                                    >确认并支付</button>
+                                                </List.Item>
+                                                {/*{loading && <p>Loading...</p>}*/}
+                                                {/*{error && <p>Error :( Please try again</p>}*/}
+                                            </div>
+                                        )}
+                                    </Mutation>:
+                                    ''
+                            }
+
                         </div>
                     );
                 }}
