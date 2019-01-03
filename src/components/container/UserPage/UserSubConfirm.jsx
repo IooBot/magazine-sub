@@ -32,8 +32,8 @@ function changeSubTimeList(subTime) {
     let timeType3 = {label:"下半年",value:"3"};
 
     subTime.forEach(function(item) {
-        let time1 = parseInt(`${item}02`,10);        // 201902
-        let time2 = parseInt(`${item}08`,10);        // 201908
+        let time1 = parseInt(`${item}01`,10);        // 201901
+        let time2 = parseInt(`${item}07`,10);        // 201907
         // 当前时间小于对应杂志订阅时间1月：可订阅时间的全年杂志
         if(nowTime < time1){
             res = [timeType1,timeType2,timeType3];

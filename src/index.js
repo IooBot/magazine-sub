@@ -33,6 +33,7 @@ const client = new ApolloClient({
     // uri:uri[0],
     // uri: "http://aliqlsh.ioobot.com/graphql"
     // uri: "http://ebookqqsh.ioobot.com/release/graphql",  // test
+    // uri: "http://test.ioobot.com/graphql",  // test
     // uri: "http://chuzhouapi.snbl.com.cn/release/graphql"
     uri: "http://ebookqqsh.snbl.com.cn/release/graphql"  // snbl
     // uri: "http://localhost:8888/graphql"
@@ -49,7 +50,8 @@ class MainApp extends Component{
             // window.location.href = "http://test.ioobot.com/subscribe";  // test
             // window.location.href = "http://wxchuzhou.snbl.com.cn/subscribe";
             // window.location.href = "http://wechathf.snbl.com.cn/subscribe";
-            window.location.href = "http://snbl.ioobot.com/subscribe";   // snbl
+            // window.location.href = "http://snbl.ioobot.com/subscribe";   // snbl
+            window.location.href = "/subscribe";
         }
     };
 
