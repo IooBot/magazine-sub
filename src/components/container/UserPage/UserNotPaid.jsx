@@ -213,7 +213,7 @@ class UserNotPaid extends Component{
                     if (loading)
                         return <Loading contentHeight={contentHeight} tip=""/>;
                     // if (error) return `Error! ${error.message}`;
-                    let notPaid = data.waitPayOrder;
+                    let notPaid = (data && data.waitPayOrder) || [];
                     // console.log('notPaid',notPaid,notPaid === [],!notPaid.length);
 
                     return (

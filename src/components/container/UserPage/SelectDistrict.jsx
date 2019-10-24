@@ -61,7 +61,7 @@ class SelectDistrict extends Component{
 
     render(){
         const { getFieldProps } = this.props.form;
-        let {area,school,gradeClass,getInputContent} = this.props;
+        let {area = [],school = [],gradeClass = "",getInputContent} = this.props;
 
         return(
             <Query query={GET_AREA}>

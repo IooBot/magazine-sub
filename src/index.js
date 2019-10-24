@@ -9,6 +9,7 @@ import UserInputPage from "./components/container/UserPage/UserInputPage.jsx";
 import UserPayPage from "./components/container/UserPage/UserPayPage.jsx";
 import './main.css';
 import { getCookie } from './api/cookie.js';
+import {setCookie} from "./api/cookie"
 
 // eslint-disable-next-line
 const uriArray = [
@@ -28,26 +29,39 @@ function getUri(arr) {
     return arr;
 }
 
+const graphqlEndpoint = 'http://test.ioobot.com/graphql';
+const graphqlUrl = window.location.hostname !== 'localhost' ? window.location.origin+'/graphql' : graphqlEndpoint;
+
 // let uri = getUri(uriArray);
 const client = new ApolloClient({
     // uri:uri[0],
-    // uri: "http://aliqlsh.ioobot.com/graphql"
     // uri: "http://ebookqqsh.ioobot.com/release/graphql",  // test
-    // uri: "http://test.ioobot.com/graphql",  // test
+    uri: graphqlUrl,  // test
     // uri: "http://chuzhouapi.snbl.com.cn/release/graphql"
-    uri: "http://ebookqqsh.snbl.com.cn/release/graphql"  // snbl
-    // uri: "http://localhost:8888/graphql"
-    // uri: "http://2026f31d.ngrok.io/graphql",
+    // uri: "http://ebookqqsh.snbl.com.cn/release/graphql"  // snbl
 });
+
+export const getIsWechatBrowser = function(){
+  let ua = navigator.userAgent.toLowerCase();
+  let isWechat = /micromessenger/i.test(ua) || typeof navigator.wxuserAgent !== 'undefined';
+  // console.log('isWechat result',isWechat);
+  let isWechatBrowser =  isWechat ? true:false;
+  // console.log('isWechatBrowser',isWechatBrowser);
+  return isWechatBrowser;
+};
 
 class MainApp extends Component{
 // eslint-disable-next-line
     wechatOauthLogin = () => {
         // setCookie("openid","o2fcFv8x3wy5WtcP116S5GzzkgDQ");
-        let openid =  getCookie("openid");
+        const openid =  getCookie("openid");
+        const isWechatBrowser = getIsWechatBrowser();
         // console.log('openid',openid);
-        if (!openid) {
+        if (!openid && isWechatBrowser) {
             window.location.href = "/subscribe";
+        }else {
+          setCookie("openid", "ioobot")
+          console.log("ioobot体验号登陆web版本")
         }
     };
 

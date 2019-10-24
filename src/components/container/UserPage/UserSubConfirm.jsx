@@ -377,13 +377,13 @@ class UserSubConfirm extends Component{
                     // console.log('UserSubConfirm data',data);
 
                     let username='',telephone='',area=[],school=[],grade='',gClass='';
-                    if(data.customer){
-                        username = data.customer.username;
-                        telephone = data.customer.telephone;
-                        area = data.customer.area;
-                        school = data.customer.school;
-                        grade = data.customer.grade;
-                        gClass = data.customer.class;
+                    if(data && data.customer){
+                        username = data.customer.username || null;
+                        telephone = data.customer.telephone || null;
+                        area = data.customer.area || [];
+                        school = data.customer.school || [];
+                        grade = data.customer.grade || null;
+                        gClass = data.customer.class || null;
                     }
 
                     return (
