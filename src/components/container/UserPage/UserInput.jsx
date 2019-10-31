@@ -39,7 +39,7 @@ class UserInput extends Component{
                         </div>;
                     }
 
-                    let {username,telephone,area,school,grade} = data.customer;
+                    let {username,telephone,area = [],school = [],grade=null, class:gradeClass = null} = data.customer;
 
                     return (
                         <div id="userInfo">
@@ -52,7 +52,7 @@ class UserInput extends Component{
                                     收货人:&nbsp;&nbsp;{username} <br/>
                                     <Brief>{telephone}</Brief>
                                     <Brief>收货地址:&nbsp;&nbsp;{area["province"]} {area["city"]} {area["district"]}<br />
-                                        {school["name"]}  {grade}年级  {data.customer.class}班</Brief>
+                                        {school["name"]}  {grade}年级  {gradeClass}班</Brief>
                                 </Item>
                             </List>
                         </div>
